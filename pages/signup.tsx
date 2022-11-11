@@ -7,6 +7,7 @@ import { Inputs } from './login'
 import nookies from 'nookies'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import { useState } from 'react'
+import { FirebaseError } from 'firebase/app'
 
 const SignUp = () => {
   const [signUpSuccessful, setSIgnUpSuccessful] = useState(false)
@@ -23,7 +24,10 @@ const SignUp = () => {
     try {
       await signup(data)
       setSIgnUpSuccessful(true)
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        alert(error)
+      }
       alert(error)
     }
     setButtonDisabled(false)

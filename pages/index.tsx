@@ -1,12 +1,10 @@
 import { logOut } from '@/lib/auth'
 import { adminAuth } from '@/lib/firebaseAdmin'
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
+import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'
 import { useRouter } from 'next/router'
 
-const Index = (
-  props: InferGetServerSidePropsType<typeof getServerSideProps>,
-) => {
+const Index = () => {
   const router = useRouter()
   const handleLogOut = async () => {
     await logOut()
