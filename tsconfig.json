@@ -20,6 +20,13 @@
       "@/*": ["*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "lib/firebaseConfig.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "lib/firebaseConfig.js",
+    "tests/pages/login.spec.js",
+    "tests/pages/login.spects"
+  ],
   "exclude": ["node_modules"]
 }

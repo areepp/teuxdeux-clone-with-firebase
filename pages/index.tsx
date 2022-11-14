@@ -24,18 +24,18 @@ const Index = () => {
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   try {
     const cookies = nookies.get(ctx)
-    const token = await adminAuth.verifyIdToken(cookies.token)
-
-    const { uid, email } = token
+    await adminAuth.verifyIdToken(cookies.token)
 
     return {
-      props: { message: `Your email is ${email} and your UID is ${uid}.` },
+      props: {} as never,
     }
   } catch (err) {
-    ctx.res.writeHead(302, { Location: '/login' })
-    ctx.res.end()
-
-    return { props: {} as never }
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    }
   }
 }
 

@@ -80,15 +80,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   try {
     // user found in the cookies
     const cookies = nookies.get(ctx)
-    const token = await adminAuth.verifyIdToken(cookies.token)
-
-    const { uid } = token
-
-    ctx.res.writeHead(302, { Location: '/' })
-    ctx.res.end()
+    await adminAuth.verifyIdToken(cookies.token)
 
     return {
-      props: { message: `user ${uid} already logged in. Redirect to /` },
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
     }
   } catch (err) {
     //user not found in the cookies
