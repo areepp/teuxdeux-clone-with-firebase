@@ -5,9 +5,9 @@ import Link from 'next/link'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { Inputs } from './login'
 import nookies from 'nookies'
-import { adminAuth } from '@/lib/firebaseAdmin'
 import { useState } from 'react'
 import { FirebaseError } from 'firebase/app'
+import { adminAuth } from '@/lib/firebaseAdmin'
 
 const SignUp = () => {
   const [signUpSuccessful, setSIgnUpSuccessful] = useState(false)
@@ -77,8 +77,8 @@ const SignUp = () => {
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   try {
     // user found in the cookies
-    const cookies = nookies.get(ctx)
-    await adminAuth.verifyIdToken(cookies.token)
+    const { token } = nookies.get(ctx)
+    await adminAuth.verifyIdToken(token)
 
     return {
       redirect: {

@@ -5,8 +5,8 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import nookies from 'nookies'
-import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
+import { adminAuth } from '@/lib/firebaseAdmin'
 
 export interface Inputs {
   email: string
@@ -79,8 +79,8 @@ const Login = () => {
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   try {
     // user found in the cookies
-    const cookies = nookies.get(ctx)
-    await adminAuth.verifyIdToken(cookies.token)
+    const { token } = nookies.get(ctx)
+    await adminAuth.verifyIdToken(token)
 
     return {
       redirect: {

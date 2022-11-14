@@ -8,6 +8,7 @@ const Index = () => {
   const router = useRouter()
   const handleLogOut = async () => {
     await logOut()
+    console.log('hei')
     router.push('/login')
   }
 
@@ -23,8 +24,8 @@ const Index = () => {
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   try {
-    const cookies = nookies.get(ctx)
-    await adminAuth.verifyIdToken(cookies.token)
+    const { token } = nookies.get(ctx)
+    await adminAuth.verifyIdToken(token)
 
     return {
       props: {} as never,
