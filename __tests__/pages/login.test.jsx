@@ -1,38 +1,48 @@
-import React from 'react'
-import { render } from '@testing-library/react'
-
+/* eslint-disable no-undef */
+import { login } from '@/lib/auth'
 import Login from '@/pages/login'
+import { act, fireEvent, render } from '@testing-library/react'
+import { useRouter } from 'next/router'
+import React from 'react'
 
 jest.mock('@/lib/firebaseAdmin', () => jest.fn())
-jest.mock('@/lib/auth', () => jest.fn())
+
+jest.mock('@/lib/auth', () => ({
+  login: jest.fn(() => {
+    return Promise.resolve('success')
+  }),
+  foo: jest.fn(() => Promise.resolve('success')),
+}))
+
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
+}))
 
 describe('Login', () => {
-  // let expectedEmail, expectedPassword, expectedRouterPush
+  let expectedEmail, expectedPassword
 
-  // beforeEach(() => {
-  //   expectedRouterPush = jest.fn()
-  //   useRouter.mockImplementation({ push: expectedRouterPush })
+  beforeEach(() => {
+    expectedEmail = 'test123@gmail.com'
+    expectedPassword = 'test123'
+  })
 
-  //   expectedEmail = 'test123@gmail.com'
-  //   expectedPassword = 'test123'
-  // })
+  it('should redirect on sign in', async () => {
+    const mockRouter = { push: jest.fn() }
+    useRouter.mockReturnValue(mockRouter)
 
-  // it('should redirect on sign in', async () => {
-  //   const { getByText } = render(<Login />)
-  //   const email = getByText('email')
-  //   const password = getByText('password')
-  //   const signInButton = getByText('Sign In')
+    const { getByText, container } = render(<Login />)
 
-  //   fireEvent.change(email, { target: { value: expectedEmail } })
-  //   fireEvent.change(password, { target: { value: expectedPassword } })
-  //   fireEvent.click(signInButton)
+    const email = container.querySelector('#email-input')
+    const password = container.querySelector('#password-input')
+    const loginButton = getByText('Log in')
 
-  //   expect(login).toHaveBeenCalled()
-  //   expect(expectedRouterPush).toHaveBeenCalledWith('/')
-  // })
+    await act(async () => {
+      fireEvent.change(email, { target: { value: expectedEmail } })
+      fireEvent.change(password, { target: { value: expectedPassword } })
+      fireEvent.click(loginButton)
+    })
 
-  it('test', () => {
-    const { container } = render(<Login />)
-    expect(container).toBeInTheDocument()
+    expect(login).toHaveBeenCalled()
+    expect(mockRouter.push).toHaveBeenCalledWith('/')
   })
 })

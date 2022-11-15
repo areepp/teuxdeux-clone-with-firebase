@@ -20,3 +20,7 @@ export const login = async (data: Inputs) => {
 export const logOut = async () => {
   return signOut(clientAuth)
 }
+
+export const foo = async () => {
+  return 'hei'
+}

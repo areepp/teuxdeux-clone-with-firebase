@@ -1,12 +1,12 @@
 import Input from '@/components/Login/Input'
-import { login } from '@/lib/auth'
+import { login, foo } from '@/lib/auth'
+import { adminAuth } from '@/lib/firebaseAdmin'
+import { GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import nookies from 'nookies'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import nookies from 'nookies'
-import { GetServerSidePropsContext } from 'next'
-import { adminAuth } from '@/lib/firebaseAdmin'
 
 export interface Inputs {
   email: string
@@ -26,6 +26,7 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setSubmitDisabled(true)
+    await foo()
     try {
       await login(data)
       router.push('/')
