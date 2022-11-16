@@ -1,5 +1,5 @@
 import Input from '@/components/Login/Input'
-import { login, foo } from '@/lib/auth'
+import { login } from '@/lib/auth'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
@@ -26,7 +26,6 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setSubmitDisabled(true)
-    await foo()
     try {
       await login(data)
       router.push('/')

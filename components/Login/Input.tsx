@@ -16,6 +16,7 @@ const Input = ({ text, register }: Props) => {
         id={`${text}-input`}
         type="text"
         className="focus:outline-none"
+        aria-label={`${text} input`}
         {...register(text, { required: true })}
       />
     </div>

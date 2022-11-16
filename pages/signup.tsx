@@ -1,16 +1,22 @@
 import Input from '@/components/Login/Input'
 import { signup } from '@/lib/auth'
+import { adminAuth } from '@/lib/firebaseAdmin'
+import { FirebaseError } from 'firebase/app'
 import { GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { Inputs } from './login'
 import nookies from 'nookies'
 import { useState } from 'react'
-import { FirebaseError } from 'firebase/app'
-import { adminAuth } from '@/lib/firebaseAdmin'
+import { SubmitHandler, useForm } from 'react-hook-form'
+
+import { Inputs } from './login'
+
+interface IMessage {
+  text: string
+  type: 'success' | 'error'
+}
 
 const SignUp = () => {
-  const [signUpSuccessful, setSIgnUpSuccessful] = useState(false)
+  const [message, setMessage] = useState<IMessage | null>(null)
   const [buttonDisabled, setButtonDisabled] = useState(false)
 
   const {
@@ -23,12 +29,11 @@ const SignUp = () => {
     setButtonDisabled(true)
     try {
       await signup(data)
-      setSIgnUpSuccessful(true)
+      setMessage({ text: 'Sign up succesful', type: 'success' })
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
-        alert(error)
+        setMessage({ text: error.message, type: 'error' })
       }
-      alert(error)
     }
     setButtonDisabled(false)
   }
@@ -40,9 +45,15 @@ const SignUp = () => {
           SIGN UP
         </h1>
         <form className="mt-16 space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          {signUpSuccessful && (
-            <div className="w-full bg-green-500 text-white text-center py-4 rounded">
-              Sign up succesful
+          {message && (
+            <div
+              className={`w-full ${
+                message.type == 'error'
+                  ? 'bg-red-100 border-stone-300'
+                  : 'bg-green-500 text-white'
+              }  text-center py-4 rounded`}
+            >
+              {message.text}
             </div>
           )}
           <Input text="email" register={register} />

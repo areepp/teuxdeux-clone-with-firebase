@@ -1,17 +1,14 @@
-/* eslint-disable no-undef */
 import { login } from '@/lib/auth'
 import Login from '@/pages/login'
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'
 import React from 'react'
+import util from 'util'
 
 jest.mock('@/lib/firebaseAdmin', () => jest.fn())
 
 jest.mock('@/lib/auth', () => ({
-  login: jest.fn(() => {
-    return Promise.resolve('success')
-  }),
-  foo: jest.fn(() => Promise.resolve('success')),
+  login: jest.fn(),
 }))
 
 jest.mock('next/router', () => ({
@@ -19,30 +16,75 @@ jest.mock('next/router', () => ({
 }))
 
 describe('Login', () => {
-  let expectedEmail, expectedPassword
+  let correctData = { email: '', password: '' }
+  let wrongData = { email: '', password: '' }
 
   beforeEach(() => {
-    expectedEmail = 'test123@gmail.com'
-    expectedPassword = 'test123'
+    correctData.email = 'test123@gmail.com'
+    correctData.password = 'test123'
+    wrongData.email = 'wrong@gmail.com'
+    wrongData.password = 'wrong123'
+
+    const mockedLogin = jest.fn((data) => {
+      if (util.isDeepStrictEqual(data, correctData)) {
+        return Promise.resolve('success')
+      } else {
+        return Promise.reject('fail')
+      }
+    })
+    login.mockImplementation(mockedLogin)
   })
 
   it('should redirect on sign in', async () => {
     const mockRouter = { push: jest.fn() }
     useRouter.mockReturnValue(mockRouter)
 
-    const { getByText, container } = render(<Login />)
-
-    const email = container.querySelector('#email-input')
-    const password = container.querySelector('#password-input')
-    const loginButton = getByText('Log in')
+    render(<Login />)
+    const emailInput = screen.getByLabelText('email input')
+    const passwordInput = screen.getByLabelText('password input')
+    const loginButton = screen.getByRole('button')
 
     await act(async () => {
-      fireEvent.change(email, { target: { value: expectedEmail } })
-      fireEvent.change(password, { target: { value: expectedPassword } })
+      fireEvent.change(emailInput, { target: { value: correctData.email } })
+      fireEvent.change(passwordInput, {
+        target: { value: correctData.password },
+      })
       fireEvent.click(loginButton)
     })
 
-    expect(login).toHaveBeenCalled()
+    expect(login).toHaveBeenCalledWith(correctData)
     expect(mockRouter.push).toHaveBeenCalledWith('/')
+  })
+
+  it('should show error on failed sign in', async () => {
+    const mockRouter = { push: jest.fn() }
+    useRouter.mockReturnValue(mockRouter)
+
+    render(<Login />)
+    const emailInput = screen.getByLabelText('email input')
+    const passwordInput = screen.getByLabelText('password input')
+    const loginButton = screen.getByRole('button')
+
+    await act(async () => {
+      fireEvent.change(emailInput, { target: { value: wrongData.email } })
+      fireEvent.change(passwordInput, { target: { value: wrongData.password } })
+      fireEvent.click(loginButton)
+    })
+
+    const errorMessage = screen.getByText('Incorrect email and/or password')
+
+    expect(login).toHaveBeenCalledWith(wrongData)
+    expect(errorMessage).toBeVisible()
+  })
+
+  it('should show error when trying to submit without entering input value', async () => {
+    render(<Login />)
+    const loginButton = screen.getByRole('button')
+
+    await act(async () => {
+      fireEvent.click(loginButton)
+    })
+
+    expect(screen.getAllByText('This field is required')).toHaveLength(2)
   })
 })
