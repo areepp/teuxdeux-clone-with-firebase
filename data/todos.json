@@ -1,0 +1,16 @@
+{
+  "todos": [
+    {
+      "id": "1",
+      "todo": "can you show me something"
+    },
+    {
+      "id": "2",
+      "todo": "i'm lost"
+    },
+    {
+      "id": "3",
+      "todo": "can you show me something"
+    }
+  ]
+}

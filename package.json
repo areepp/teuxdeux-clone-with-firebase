@@ -11,6 +11,7 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
+    "@react-query-firebase/firestore": "^1.0.0-dev.7",
     "eslint": "8.27.0",
     "eslint-config-next": "13.0.2",
     "firebase": "^9.13.0",

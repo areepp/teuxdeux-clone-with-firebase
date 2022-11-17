@@ -3,6 +3,8 @@ import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'
 import { useRouter } from 'next/router'
+import Header from '@/components/Dashboard/Header'
+import Todos from '@/components/Dashboard/Todos'
 
 const Index = () => {
   const router = useRouter()
@@ -14,10 +16,16 @@ const Index = () => {
 
   return (
     <>
-      <div className="font-display text-5xl tracking-tighter">
-        MONDAY TUESDAY
+      <Header />
+      <div className="p-4">
+        <div className="mt-12 w-full text-center">
+          <div className="font-gothic text-6xl text-red-600">THURSDAY</div>
+        </div>
+        <Todos />
       </div>
-      <button onClick={handleLogOut}>log out</button>
+      <button className="fixed top-3 right-4 text-white" onClick={handleLogOut}>
+        log out
+      </button>
     </>
   )
 }

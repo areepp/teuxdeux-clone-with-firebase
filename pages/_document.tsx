@@ -14,6 +14,13 @@ export default function Document() {
           href="https://fonts.googleapis.com/css2?family=Oswald&display=swap"
           rel="stylesheet"
         />
+        <link
+          rel="preload"
+          href="/fonts/alternate-gothic-no1-d.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
       </Head>
       <body>
         <Main />

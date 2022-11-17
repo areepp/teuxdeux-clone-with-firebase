@@ -11,6 +11,7 @@ module.exports = {
     extend: {
       fontFamily: {
         display: ['Oswald', ...defaultTheme.fontFamily.sans],
+        gothic: ['AlternateGothic', ...defaultTheme.fontFamily.sans],
       },
     },
   },
