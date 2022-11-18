@@ -13,6 +13,10 @@ module.exports = {
         display: ['Oswald', ...defaultTheme.fontFamily.sans],
         gothic: ['AlternateGothic', ...defaultTheme.fontFamily.sans],
       },
+      backgroundImage: {
+        'horizontal-lines':
+          'repeating-linear-gradient(transparent,transparent 48px, rgba(0,0,0,.08) 48px, rgba(0,0,0,.08) 49px, transparent 49px)',
+      },
     },
   },
   plugins: [],
