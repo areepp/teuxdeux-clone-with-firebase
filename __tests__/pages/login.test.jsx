@@ -1,4 +1,4 @@
-import { login } from '@/lib/auth'
+import { login } from '@/lib/authService'
 import Login from '@/pages/login'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'

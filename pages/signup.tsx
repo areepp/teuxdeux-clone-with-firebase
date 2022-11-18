@@ -1,6 +1,7 @@
 import Input from '@/components/Login/Input'
-import { signup } from '@/lib/auth'
+import { signup } from '@/lib/authService'
 import { adminAuth } from '@/lib/firebaseAdmin'
+import { storeUserToFirestore } from '@/lib/userService'
 import { FirebaseError } from 'firebase/app'
 import { GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
@@ -22,14 +23,18 @@ const SignUp = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<Inputs>()
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setButtonDisabled(true)
     try {
-      await signup(data)
+      const res = await signup(data)
+      const { uid, email } = res.user
+      if (email) await storeUserToFirestore({ uid, email })
       setMessage({ text: 'Sign up succesful', type: 'success' })
+      reset()
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
         setMessage({ text: error.message, type: 'error' })

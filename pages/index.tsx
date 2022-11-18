@@ -1,4 +1,4 @@
-import { logOut } from '@/lib/auth'
+import { logOut } from '@/lib/authService'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'

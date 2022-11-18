@@ -1,5 +1,5 @@
 import Input from '@/components/Login/Input'
-import { login } from '@/lib/auth'
+import { login } from '@/lib/authService'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
