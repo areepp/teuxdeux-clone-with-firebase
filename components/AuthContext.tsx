@@ -9,6 +9,7 @@ const AuthContext = createContext<{ user: User | null }>({
 
 export function AuthProvider({ children }: any) {
   const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState<Boolean>(true)
 
   // listen for token changes
   useEffect(() => {
@@ -16,9 +17,11 @@ export function AuthProvider({ children }: any) {
       if (!user) {
         setUser(null)
         nookies.set(undefined, 'token', '', { path: '/' })
+        setLoading(false)
       } else {
         const token = await user.getIdToken()
         setUser(user)
+        setLoading(false)
         nookies.set(undefined, 'token', token, { path: '/' })
       }
     })
@@ -36,7 +39,9 @@ export function AuthProvider({ children }: any) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user }}>
+      {!loading && children}
+    </AuthContext.Provider>
   )
 }
 
