@@ -3,11 +3,12 @@ import {
   deleteTodo,
   editTodoChecked,
   getTodos,
+  editTodo,
 } from '@/lib/todoService'
 import { QuerySnapshot } from 'firebase/firestore'
 import { useState, KeyboardEvent, useEffect } from 'react'
 import { useAuth } from '../AuthContext'
-import { HiOutlineX } from 'react-icons/hi'
+import { HiOutlineX, HiPencil } from 'react-icons/hi'
 
 export interface ITodo {
   id: string
@@ -19,6 +20,7 @@ const Todos = () => {
   const { user } = useAuth()
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
   const [todos, setTodos] = useState<ITodo[] | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -62,6 +64,11 @@ const Todos = () => {
     )
     await editTodoChecked(user!.uid, todoId, data)
   }
+
+  const handleEditTodo = async (todoId: string, data: { todo: string }) => {
+    await editTodo(user!.uid, todoId, data)
+  }
+
   const handleKeyDown = async (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       await handleAddTodo()
@@ -73,16 +80,47 @@ const Todos = () => {
       {todos &&
         todos.map((item) => (
           <div
-            onClick={() => handleCheckTodo(item.id, { checked: !item.checked })}
-            className={`h-[49px] flex items-center justify-between cursor-grab ${
-              item.checked ? 'line-through text-stone-300' : ''
-            }`}
+            className="h-[49px] flex items-center justify-between"
             key={item.id}
           >
-            {item.todo}
-            <button onClick={() => handleDeleteTodo(item.id)}>
-              <HiOutlineX />
-            </button>
+            {isEditing ? (
+              <input
+                type="text"
+                value={item.todo}
+                onChange={(e) =>
+                  setTodos((todos) =>
+                    todos
+                      ? todos.map((todo) =>
+                          todo.id === item.id
+                            ? { ...todo, todo: e.target.value }
+                            : todo,
+                        )
+                      : null,
+                  )
+                }
+                onBlur={() => handleEditTodo(item.id, { todo: item.todo })}
+              />
+            ) : (
+              <div
+                className={`w-full cursor-grab ${
+                  item.checked ? 'line-through text-stone-300' : ''
+                }`}
+                onClick={() =>
+                  handleCheckTodo(item.id, { checked: !item.checked })
+                }
+              >
+                {item.todo}
+              </div>
+            )}
+            {item.checked ? (
+              <button onClick={() => handleDeleteTodo(item.id)}>
+                <HiOutlineX />
+              </button>
+            ) : (
+              <button onClick={() => setIsEditing(true)}>
+                <HiPencil />
+              </button>
+            )}
           </div>
         ))}
       <input

@@ -34,3 +34,11 @@ export const editTodoChecked = async (
 ) => {
   return updateDoc(getTodoDoc(userId, todoId), newData)
 }
+
+export const editTodo = async (
+  userId: string,
+  todoId: string,
+  newData: Pick<ITodo, 'todo'>,
+) => {
+  return updateDoc(getTodoDoc(userId, todoId), newData)
+}
