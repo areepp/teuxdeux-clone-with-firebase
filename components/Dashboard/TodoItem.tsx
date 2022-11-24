@@ -48,6 +48,13 @@ const TodoItem = ({ item, setTodos }: Props) => {
     await editTodo(user!.uid, todoId, data)
   }
 
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key === 'Enter') {
+      editTodoInputRef.current?.blur()
+      await editTodo(user!.uid, item.id, { todo: item.todo })
+    }
+  }
+
   return (
     <div className="h-[49px] flex items-center justify-between" key={item.id}>
       {isEditing ? (
@@ -64,6 +71,7 @@ const TodoItem = ({ item, setTodos }: Props) => {
             )
           }
           onBlur={() => handleOnBlur(item.id, { todo: item.todo })}
+          onKeyDown={handleKeyDown}
         />
       ) : (
         <div
@@ -80,11 +88,7 @@ const TodoItem = ({ item, setTodos }: Props) => {
           <HiOutlineX />
         </button>
       ) : (
-        <button
-          onClick={() => {
-            setIsEditing(true)
-          }}
-        >
+        <button onClick={() => setIsEditing(true)}>
           <HiPencil />
         </button>
       )}
