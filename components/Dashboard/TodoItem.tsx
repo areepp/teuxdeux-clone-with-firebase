@@ -1,6 +1,13 @@
-import { ItemTypes } from '@/data/ItemTypes'
 import { deleteTodo, editTodo, editTodoChecked } from '@/lib/todoService'
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import update from 'immutability-helper'
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { HiOutlineX, HiPencil } from 'react-icons/hi'
 
@@ -18,7 +25,6 @@ interface Props {
   item: ITodo
   setTodos: Dispatch<SetStateAction<ITodo[]>>
   index: number
-  moveCard: (_dragIndex: number, _hoverIndex: number) => void
 }
 
 interface DragItem {
@@ -27,7 +33,7 @@ interface DragItem {
   type: string
 }
 
-const TodoItem = ({ item, setTodos, index, moveCard }: Props) => {
+const TodoItem = ({ item, setTodos, index }: Props) => {
   const { user } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const editTodoInputRef = useRef<HTMLInputElement>(null)
@@ -63,12 +69,26 @@ const TodoItem = ({ item, setTodos, index, moveCard }: Props) => {
     }
   }
 
+  const moveCard = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      setTodos((prevTodos: ITodo[]) =>
+        update(prevTodos, {
+          $splice: [
+            [dragIndex, 1],
+            [hoverIndex, 0, prevTodos[dragIndex] as ITodo],
+          ],
+        }),
+      )
+    },
+    [setTodos],
+  )
+
   const [{ handlerId }, drop] = useDrop<
     DragItem,
     void,
     { handlerId: Identifier | null }
   >({
-    accept: ItemTypes.TODO,
+    accept: 'todo',
     collect(monitor) {
       return {
         handlerId: monitor.getHandlerId(),
@@ -125,7 +145,7 @@ const TodoItem = ({ item, setTodos, index, moveCard }: Props) => {
   })
 
   const [{ isDragging }, drag] = useDrag({
-    type: ItemTypes.TODO,
+    type: 'todo',
     item: () => {
       return { id: item.id, index }
     },
