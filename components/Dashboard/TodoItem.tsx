@@ -6,7 +6,7 @@ import { useAuth } from '../AuthContext'
 
 export interface ITodo {
   id: string
-  todo: string
+  text: string
   checked: boolean
 }
 
@@ -24,34 +24,29 @@ const TodoItem = ({ item, setTodos }: Props) => {
     editTodoInputRef.current?.focus()
   }, [isEditing])
 
-  const handleDeleteTodo = async (deletedTodoId: string) => {
-    await deleteTodo(user!.uid, deletedTodoId)
-    setTodos((prev) =>
-      prev ? prev.filter((el) => el.id !== deletedTodoId) : prev,
-    )
+  const handleDeleteTodo = async () => {
+    await deleteTodo(user!.uid, item.id)
+    setTodos((prev) => (prev ? prev.filter((el) => el.id !== item.id) : prev))
   }
 
-  const handleCheckTodo = async (
-    todoId: string,
-    data: { checked: boolean },
-  ) => {
+  const handleCheckTodo = async (data: { checked: boolean }) => {
     setTodos((todos) =>
       todos.map((todo) =>
-        todo.id === todoId ? { ...todo, checked: data.checked } : todo,
+        todo.id === item.id ? { ...todo, checked: data.checked } : todo,
       ),
     )
-    await editTodoChecked(user!.uid, todoId, data)
+    await editTodoChecked(user!.uid, item.id, data)
   }
 
-  const handleOnBlur = async (todoId: string, data: { todo: string }) => {
+  const handleOnBlur = async (data: { text: string }) => {
     setIsEditing(false)
-    await editTodo(user!.uid, todoId, data)
+    await editTodo(user!.uid, item.id, data)
   }
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Enter') {
       editTodoInputRef.current?.blur()
-      await editTodo(user!.uid, item.id, { todo: item.todo })
+      await editTodo(user!.uid, item.id, { text: item.text })
     }
   }
 
@@ -62,15 +57,15 @@ const TodoItem = ({ item, setTodos }: Props) => {
           ref={editTodoInputRef}
           className="h-[49px] flex items-center w-full focus:outline-none bg-transparent"
           type="text"
-          value={item.todo}
+          value={item.text}
           onChange={(e) =>
             setTodos((todos) =>
               todos.map((todo) =>
-                todo.id === item.id ? { ...todo, todo: e.target.value } : todo,
+                todo.id === item.id ? { ...todo, text: e.target.value } : todo,
               ),
             )
           }
-          onBlur={() => handleOnBlur(item.id, { todo: item.todo })}
+          onBlur={() => handleOnBlur({ text: item.text })}
           onKeyDown={handleKeyDown}
         />
       ) : (
@@ -78,13 +73,13 @@ const TodoItem = ({ item, setTodos }: Props) => {
           className={`w-full cursor-grab ${
             item.checked ? 'line-through text-stone-300' : ''
           }`}
-          onClick={() => handleCheckTodo(item.id, { checked: !item.checked })}
+          onClick={() => handleCheckTodo({ checked: !item.checked })}
         >
-          {item.todo}
+          {item.text}
         </div>
       )}
       {item.checked ? (
-        <button onClick={() => handleDeleteTodo(item.id)}>
+        <button onClick={() => handleDeleteTodo()}>
           <HiOutlineX />
         </button>
       ) : (

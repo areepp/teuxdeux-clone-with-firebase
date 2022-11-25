@@ -21,13 +21,13 @@ const Todos = () => {
 
   const handleAddTodo = async () => {
     const res = await addTodo(user!.uid, {
-      todo: newTodoInputValue,
+      text: newTodoInputValue,
       checked: false,
     })
     setTodos((prev) =>
       prev
-        ? [...prev, { id: res.id, todo: newTodoInputValue, checked: false }]
-        : [{ id: res.id, todo: newTodoInputValue, checked: false }],
+        ? [...prev, { id: res.id, text: newTodoInputValue, checked: false }]
+        : [{ id: res.id, text: newTodoInputValue, checked: false }],
     )
     setNewTodoInputValue('')
   }
