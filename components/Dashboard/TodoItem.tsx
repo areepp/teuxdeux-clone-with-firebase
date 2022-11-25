@@ -30,7 +30,6 @@ interface Props {
 interface DragItem {
   index: number
   id: string
-  type: string
 }
 
 const TodoItem = ({ item, setTodos, index }: Props) => {
@@ -69,6 +68,16 @@ const TodoItem = ({ item, setTodos, index }: Props) => {
     }
   }
 
+  const [{ isDragging }, drag] = useDrag({
+    type: 'todo',
+    item: () => {
+      return { id: item.id, index }
+    },
+    collect: (monitor: any) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  })
+
   const moveCard = useCallback(
     (dragIndex: number, hoverIndex: number) => {
       setTodos((prevTodos: ITodo[]) =>
@@ -94,11 +103,11 @@ const TodoItem = ({ item, setTodos, index }: Props) => {
         handlerId: monitor.getHandlerId(),
       }
     },
-    hover(item: DragItem, monitor) {
+    hover(dragged: DragItem, monitor) {
       if (!divRef.current) {
         return
       }
-      const dragIndex = item.index
+      const dragIndex = dragged.index
       const hoverIndex = index
 
       // Don't replace items with themselves
@@ -106,22 +115,18 @@ const TodoItem = ({ item, setTodos, index }: Props) => {
         return
       }
 
-      // Determine rectangle on screen
-      const hoverBoundingRect = divRef.current.getBoundingClientRect()
+      console.log(dragged)
 
-      // Get vertical middle
+      // Determine todo item's vertical center point
+      const hoverBoundingRect = divRef.current.getBoundingClientRect()
       const hoverMiddleY =
         (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
 
-      // Determine mouse position
+      // Determine mouse position distance to the top
       const clientOffset = monitor.getClientOffset()
-
-      // Get pixels to the top
       const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top
 
       // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
 
       // Dragging downwards
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
@@ -140,18 +145,8 @@ const TodoItem = ({ item, setTodos, index }: Props) => {
       // Generally it's better to avoid mutations,
       // but it's good here for the sake of performance
       // to avoid expensive index searches.
-      item.index = hoverIndex
+      dragged.index = hoverIndex
     },
-  })
-
-  const [{ isDragging }, drag] = useDrag({
-    type: 'todo',
-    item: () => {
-      return { id: item.id, index }
-    },
-    collect: (monitor: any) => ({
-      isDragging: monitor.isDragging(),
-    }),
   })
 
   drag(drop(divRef))
