@@ -5,6 +5,8 @@ import nookies from 'nookies'
 import { useRouter } from 'next/router'
 import Header from '@/components/Dashboard/Header'
 import Todos from '@/components/Dashboard/Todos'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 const Index = () => {
   const router = useRouter()
@@ -15,7 +17,7 @@ const Index = () => {
   }
 
   return (
-    <>
+    <DndProvider backend={HTML5Backend}>
       <Header />
       <main className="p-4 min-h-[575px] flex flex-col">
         <div className="mt-12 w-full text-center">
@@ -26,7 +28,7 @@ const Index = () => {
       <button className="fixed top-3 right-4 text-white" onClick={handleLogOut}>
         log out
       </button>
-    </>
+    </DndProvider>
   )
 }
 
