@@ -1,4 +1,4 @@
-import { addTodo, getList, getTodos } from '@/lib/todoService'
+import { addTodo, addToListOrder, getList, getTodos } from '@/lib/todoService'
 import { useState, KeyboardEvent, useEffect } from 'react'
 import { useAuth } from '../AuthContext'
 
@@ -39,6 +39,9 @@ const Todos = () => {
       text: newTodoInputValue,
       checked: false,
     })
+
+    await addToListOrder(user!.uid, res.id)
+
     setTodos((prev) =>
       prev
         ? [...prev, { id: res.id, text: newTodoInputValue, checked: false }]

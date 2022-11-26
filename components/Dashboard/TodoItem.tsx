@@ -2,7 +2,8 @@ import {
   deleteTodo,
   editTodoText,
   editTodoChecked,
-  rearrange,
+  rearrangeListOrder,
+  deleteFromListOrder,
 } from '@/lib/todoService'
 import update from 'immutability-helper'
 import {
@@ -49,8 +50,10 @@ const TodoItem = ({ item, todos, setTodos, index }: Props) => {
   }, [isEditing])
 
   const handleDeleteTodo = async () => {
-    await deleteTodo(user!.uid, item.id)
+    console.log(item.id)
     setTodos((prev) => (prev ? prev.filter((el) => el.id !== item.id) : prev))
+    await deleteTodo(user!.uid, item.id)
+    deleteFromListOrder(user!.uid, item.id)
   }
 
   const handleCheckTodo = async (data: { checked: boolean }) => {
@@ -147,15 +150,11 @@ const TodoItem = ({ item, todos, setTodos, index }: Props) => {
       // Time to actually perform the action
       moveCard(dragIndex, hoverIndex)
 
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
       dragged.index = hoverIndex
     },
     drop() {
       // save order to firestore
-      rearrange(
+      rearrangeListOrder(
         user!.uid,
         todos.map((todo) => todo.id),
       )
@@ -170,7 +169,6 @@ const TodoItem = ({ item, todos, setTodos, index }: Props) => {
       className={`h-[49px] flex items-center justify-between cursor-grab ${
         isDragging ? 'opacity-0' : 'opacity-1'
       }`}
-      onClick={() => handleCheckTodo({ checked: !item.checked })}
       data-handler-id={handlerId}
     >
       {isEditing ? (
@@ -191,9 +189,10 @@ const TodoItem = ({ item, todos, setTodos, index }: Props) => {
         />
       ) : (
         <div
-          className={`w-full ${
+          className={`w-full h-full flex items-center ${
             item.checked ? 'line-through  text-stone-300' : ''
           }`}
+          onClick={() => handleCheckTodo({ checked: !item.checked })}
         >
           {item.text}
         </div>

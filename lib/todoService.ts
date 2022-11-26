@@ -7,6 +7,8 @@ import {
   getDoc,
   getDocs,
   updateDoc,
+  arrayUnion,
+  arrayRemove,
 } from 'firebase/firestore'
 import { db } from './firebaseClient'
 
@@ -15,6 +17,9 @@ const getTodoCollection = (userId: string) =>
 
 const getTodoDoc = (userId: string, todoId: string) =>
   doc(db, 'users', userId, 'todos', todoId)
+
+const getListDoc = (userId: string) =>
+  doc(db, 'users', userId, 'lists', 'today')
 
 export const getTodos = (userId: string) => {
   return getDocs(getTodoCollection(userId))
@@ -44,12 +49,24 @@ export const editTodoText = async (
   return updateDoc(getTodoDoc(userId, todoId), newData)
 }
 
-export const rearrange = async (userId: string, order: string[]) => {
-  return updateDoc(doc(db, 'users', userId, 'lists', 'today'), {
+export const rearrangeListOrder = async (userId: string, order: string[]) => {
+  return updateDoc(getListDoc(userId), {
     order,
   })
 }
 
 export const getList = async (userId: string) => {
-  return getDoc(doc(db, 'users', userId, 'lists', 'today'))
+  return getDoc(getListDoc(userId))
+}
+
+export const addToListOrder = async (userId: string, todoId: string) => {
+  return updateDoc(getListDoc(userId), {
+    order: arrayUnion(todoId),
+  })
+}
+
+export const deleteFromListOrder = async (userId: string, todoId: string) => {
+  return updateDoc(getListDoc(userId), {
+    order: arrayRemove(todoId),
+  })
 }
