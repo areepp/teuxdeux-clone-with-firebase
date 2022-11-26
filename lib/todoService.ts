@@ -4,6 +4,7 @@ import {
   collection,
   doc,
   deleteDoc,
+  getDoc,
   getDocs,
   updateDoc,
 } from 'firebase/firestore'
@@ -35,10 +36,20 @@ export const editTodoChecked = async (
   return updateDoc(getTodoDoc(userId, todoId), newData)
 }
 
-export const editTodo = async (
+export const editTodoText = async (
   userId: string,
   todoId: string,
   newData: Pick<ITodo, 'text'>,
 ) => {
   return updateDoc(getTodoDoc(userId, todoId), newData)
+}
+
+export const rearrange = async (userId: string, order: string[]) => {
+  return updateDoc(doc(db, 'users', userId, 'lists', 'today'), {
+    order,
+  })
+}
+
+export const getList = async (userId: string) => {
+  return getDoc(doc(db, 'users', userId, 'lists', 'today'))
 }

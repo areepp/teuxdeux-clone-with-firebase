@@ -1,4 +1,9 @@
-import { deleteTodo, editTodo, editTodoChecked } from '@/lib/todoService'
+import {
+  deleteTodo,
+  editTodoText,
+  editTodoChecked,
+  rearrange,
+} from '@/lib/todoService'
 import update from 'immutability-helper'
 import {
   Dispatch,
@@ -23,6 +28,7 @@ export interface ITodo {
 
 interface Props {
   item: ITodo
+  todos: ITodo[]
   setTodos: Dispatch<SetStateAction<ITodo[]>>
   index: number
 }
@@ -32,7 +38,7 @@ interface DragItem {
   id: string
 }
 
-const TodoItem = ({ item, setTodos, index }: Props) => {
+const TodoItem = ({ item, todos, setTodos, index }: Props) => {
   const { user } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const editTodoInputRef = useRef<HTMLInputElement>(null)
@@ -58,13 +64,13 @@ const TodoItem = ({ item, setTodos, index }: Props) => {
 
   const handleOnBlur = async (data: { text: string }) => {
     setIsEditing(false)
-    await editTodo(user!.uid, item.id, data)
+    await editTodoText(user!.uid, item.id, data)
   }
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Enter') {
       editTodoInputRef.current?.blur()
-      await editTodo(user!.uid, item.id, { text: item.text })
+      await editTodoText(user!.uid, item.id, { text: item.text })
     }
   }
 
@@ -147,6 +153,13 @@ const TodoItem = ({ item, setTodos, index }: Props) => {
       // to avoid expensive index searches.
       dragged.index = hoverIndex
     },
+    drop() {
+      // save order to firestore
+      rearrange(
+        user!.uid,
+        todos.map((todo) => todo.id),
+      )
+    },
   })
 
   drag(drop(divRef))
@@ -157,6 +170,7 @@ const TodoItem = ({ item, setTodos, index }: Props) => {
       className={`h-[49px] flex items-center justify-between cursor-grab ${
         isDragging ? 'opacity-0' : 'opacity-1'
       }`}
+      onClick={() => handleCheckTodo({ checked: !item.checked })}
       data-handler-id={handlerId}
     >
       {isEditing ? (
@@ -177,10 +191,9 @@ const TodoItem = ({ item, setTodos, index }: Props) => {
         />
       ) : (
         <div
-          className={`w-full${
-            item.checked ? 'line-through text-stone-300' : ''
+          className={`w-full ${
+            item.checked ? 'line-through  text-stone-300' : ''
           }`}
-          onClick={() => handleCheckTodo({ checked: !item.checked })}
         >
           {item.text}
         </div>
