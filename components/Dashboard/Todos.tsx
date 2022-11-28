@@ -1,4 +1,4 @@
-import { addTodo, addToListOrder, getList, getTodos } from '@/lib/todoService'
+import * as todoService from '@/lib/todo.service'
 import { useState, KeyboardEvent, useEffect } from 'react'
 import { useAuth } from '../AuthContext'
 
@@ -13,8 +13,8 @@ const Todos = () => {
   useEffect(() => {
     async function fetchData() {
       const [todoResponse, listResponse] = await Promise.all([
-        getTodos(user!.uid),
-        getList(user!.uid),
+        todoService.getTodos(user!.uid),
+        todoService.getList(user!.uid),
       ])
 
       const todos = todoResponse.docs.map((doc) => ({
@@ -35,12 +35,12 @@ const Todos = () => {
   }, [user])
 
   const handleAddTodo = async () => {
-    const res = await addTodo(user!.uid, {
+    const res = await todoService.addTodo(user!.uid, {
       text: newTodoInputValue,
       checked: false,
     })
 
-    await addToListOrder(user!.uid, res.id)
+    await todoService.addToListOrder(user!.uid, res.id)
 
     setTodos((prev) =>
       prev

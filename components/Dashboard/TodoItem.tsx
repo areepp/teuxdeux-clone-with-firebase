@@ -1,10 +1,4 @@
-import {
-  deleteTodo,
-  editTodoText,
-  editTodoChecked,
-  rearrangeListOrder,
-  deleteFromListOrder,
-} from '@/lib/todoService'
+import * as todoService from '@/lib/todo.service'
 import update from 'immutability-helper'
 import {
   Dispatch,
@@ -52,8 +46,8 @@ const TodoItem = ({ item, todos, setTodos, index }: Props) => {
   const handleDeleteTodo = async () => {
     console.log(item.id)
     setTodos((prev) => (prev ? prev.filter((el) => el.id !== item.id) : prev))
-    await deleteTodo(user!.uid, item.id)
-    deleteFromListOrder(user!.uid, item.id)
+    await todoService.deleteTodo(user!.uid, item.id)
+    todoService.deleteFromListOrder(user!.uid, item.id)
   }
 
   const handleCheckTodo = async (data: { checked: boolean }) => {
@@ -62,18 +56,18 @@ const TodoItem = ({ item, todos, setTodos, index }: Props) => {
         todo.id === item.id ? { ...todo, checked: data.checked } : todo,
       ),
     )
-    await editTodoChecked(user!.uid, item.id, data)
+    await todoService.editTodoChecked(user!.uid, item.id, data)
   }
 
   const handleOnBlur = async (data: { text: string }) => {
     setIsEditing(false)
-    await editTodoText(user!.uid, item.id, data)
+    await todoService.editTodoText(user!.uid, item.id, data)
   }
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Enter') {
       editTodoInputRef.current?.blur()
-      await editTodoText(user!.uid, item.id, { text: item.text })
+      await todoService.editTodoText(user!.uid, item.id, { text: item.text })
     }
   }
 
@@ -154,7 +148,7 @@ const TodoItem = ({ item, todos, setTodos, index }: Props) => {
     },
     drop() {
       // save order to firestore
-      rearrangeListOrder(
+      todoService.rearrangeListOrder(
         user!.uid,
         todos.map((todo) => todo.id),
       )

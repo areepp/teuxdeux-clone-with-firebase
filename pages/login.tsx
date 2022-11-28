@@ -1,5 +1,5 @@
 import Input from '@/components/Login/Input'
-import { login } from '@/lib/authService'
+import * as authService from '@/lib/auth.service'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
@@ -27,7 +27,7 @@ const Login = () => {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setSubmitDisabled(true)
     try {
-      await login(data)
+      await authService.login(data)
       router.push('/')
     } catch (error: any) {
       setError('Incorrect email and/or password')

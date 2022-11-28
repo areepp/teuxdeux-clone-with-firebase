@@ -1,4 +1,4 @@
-import { logOut } from '@/lib/authService'
+import * as authService from '@/lib/auth.service'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'
@@ -11,7 +11,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 const Index = () => {
   const router = useRouter()
   const handleLogOut = async () => {
-    await logOut()
+    await authService.logOut()
     console.log('hei')
     router.push('/login')
   }
