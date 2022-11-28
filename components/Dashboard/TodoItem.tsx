@@ -1,4 +1,5 @@
 import * as todoService from '@/lib/todo.service'
+import * as columnService from '@/lib/column.service'
 import update from 'immutability-helper'
 import {
   Dispatch,
@@ -25,6 +26,7 @@ interface Props {
   item: ITodo
   todos: ITodo[]
   setTodos: Dispatch<SetStateAction<ITodo[]>>
+  colId: string
   index: number
 }
 
@@ -33,7 +35,7 @@ interface DragItem {
   id: string
 }
 
-const TodoItem = ({ item, todos, setTodos, index }: Props) => {
+const TodoItem = ({ item, todos, setTodos, colId, index }: Props) => {
   const { user } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const editTodoInputRef = useRef<HTMLInputElement>(null)
@@ -47,7 +49,7 @@ const TodoItem = ({ item, todos, setTodos, index }: Props) => {
     console.log(item.id)
     setTodos((prev) => (prev ? prev.filter((el) => el.id !== item.id) : prev))
     await todoService.deleteTodo(user!.uid, item.id)
-    todoService.deleteFromListOrder(user!.uid, item.id)
+    columnService.deleteFromOrderList(user!.uid, colId, item.id)
   }
 
   const handleCheckTodo = async (data: { checked: boolean }) => {
@@ -148,8 +150,9 @@ const TodoItem = ({ item, todos, setTodos, index }: Props) => {
     },
     drop() {
       // save order to firestore
-      todoService.rearrangeListOrder(
+      columnService.rearrangeOrder(
         user!.uid,
+        colId,
         todos.map((todo) => todo.id),
       )
     },
