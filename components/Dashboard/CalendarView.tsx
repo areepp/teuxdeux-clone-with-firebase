@@ -6,7 +6,7 @@ import * as columnService from '@/lib/column.service'
 import * as todoService from '@/lib/todo.service'
 import { ITodo } from './TodoItem'
 
-const Todos = () => {
+const CalendarView = () => {
   const { user } = useAuth()
   const [columns, setColumns] = useState<IColumn[]>([])
   const [todos, setTodos] = useState<ITodo[]>([])
@@ -139,4 +139,4 @@ const Todos = () => {
   )
 }
 
-export default Todos
+export default CalendarView

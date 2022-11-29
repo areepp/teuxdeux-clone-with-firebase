@@ -1,5 +1,5 @@
 import Header from '@/components/Dashboard/Header'
-import Todos from '@/components/Dashboard/Todos'
+import CalendarView from '@/components/Dashboard/CalendarView'
 import * as authService from '@/lib/auth.service'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
@@ -18,7 +18,7 @@ const Index = () => {
     <>
       <Header />
       <main className="p-4 min-h-[575px] flex flex-col">
-        <Todos />
+        <CalendarView />
       </main>
       <button className="fixed top-3 right-4 text-white" onClick={handleLogOut}>
         log out

@@ -83,16 +83,16 @@ const Column = ({ todos, column, setTodos, setColumns }: Props) => {
                   )
                 })}
               {provided.placeholder}
+              <input
+                className="h-[49px] flex items-center w-full focus:outline-none bg-transparent"
+                type="text"
+                value={newTodoInputValue}
+                onChange={(e) => setNewTodoInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
             </div>
           )}
         </Droppable>
-        <input
-          className="h-[49px] flex items-center w-full focus:outline-none bg-transparent"
-          type="text"
-          value={newTodoInputValue}
-          onChange={(e) => setNewTodoInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
       </div>
     </div>
   )
