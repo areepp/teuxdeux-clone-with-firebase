@@ -18,7 +18,11 @@ const getTodoCollectionRef = (userId: string) =>
 const getTodoDocRef = (userId: string, todoId: string) =>
   doc(db, 'users', userId, 'todos', todoId)
 
-export const getColumnTodos = (userId: string, columnTodosIds: string) => {
+export const getAllTodos = (userId: string) => {
+  return getDocs(getTodoCollectionRef(userId))
+}
+
+export const getColumnTodos = (userId: string, columnTodosIds: string[]) => {
   const q = query(
     getTodoCollectionRef(userId),
     where(documentId(), 'in', columnTodosIds),

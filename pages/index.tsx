@@ -5,8 +5,6 @@ import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
 import nookies from 'nookies'
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
 
 const Index = () => {
   const router = useRouter()
@@ -17,7 +15,7 @@ const Index = () => {
   }
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <>
       <Header />
       <main className="p-4 min-h-[575px] flex flex-col">
         <Todos />
@@ -25,7 +23,7 @@ const Index = () => {
       <button className="fixed top-3 right-4 text-white" onClick={handleLogOut}>
         log out
       </button>
-    </DndProvider>
+    </>
   )
 }
 
