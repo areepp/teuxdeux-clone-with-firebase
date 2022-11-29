@@ -1,8 +1,10 @@
 import {
   arrayRemove,
   arrayUnion,
+  collection,
   doc,
   getDoc,
+  getDocs,
   updateDoc,
 } from 'firebase/firestore'
 import { db } from './firebaseClient'
@@ -18,6 +20,10 @@ export const rearrangeOrder = async (
   return updateDoc(getColumnDocRef(userId, columnId), {
     order,
   })
+}
+
+export const getAllColumn = async (userId: string) => {
+  return getDocs(collection(db, 'users', userId, 'lists'))
 }
 
 export const getColumn = async (userId: string, columnId: string) => {
