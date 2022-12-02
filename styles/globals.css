@@ -15,6 +15,11 @@
 }
 
 @layer components {
-  .todo-item {
+  .my-slide {
+    @apply bg-blue-200;
   }
+}
+
+.rdp-day_today:not(.rdp-day_outside) {
+  @apply bg-red-600 text-white;
 }
