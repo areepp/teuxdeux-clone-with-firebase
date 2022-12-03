@@ -23,3 +23,8 @@
 .rdp-day_today:not(.rdp-day_outside) {
   @apply bg-red-600 text-white;
 }
+
+.drag-fix {
+  top: auto !important;
+  left: auto !important;
+}

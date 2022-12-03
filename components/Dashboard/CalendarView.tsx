@@ -9,20 +9,23 @@ import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 import Navigation from './Navigation'
 
-import COLUMN_DATA from '@/data/columns.json'
-import { getNextFourDays, getPastFourDays } from '@/utils/dateHelper'
+import {
+  getInitialDays,
+  getNextFourDays,
+  getPastFourDays,
+} from '@/utils/dateHelper'
 
 const CalendarView = () => {
   const { user } = useAuth()
-  const [columns, setColumns] = useState<IColumn[]>(COLUMN_DATA.columns)
+
+  const [columns, setColumns] = useState<IColumn[]>(getInitialDays())
   const [todos, setTodos] = useState<ITodo[]>([])
-  const [currentSlide, setCurrentSlide] = useState(0)
   const [sliderRef, instanceRef] = useKeenSlider({
-    initial: 6,
+    initial: 7, // initial slide set to today
     drag: false,
     renderMode: 'performance',
     slides: {
-      number: columns.length,
+      number: 1000,
     },
     slideChanged(slider) {
       if (slider.track.details.rel === slider.slides.length - 3) {
@@ -49,50 +52,37 @@ const CalendarView = () => {
     },
   })
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     const [columnResponse, todoResponse] = await Promise.all([
-  //       columnService.getAllColumn(user!.uid),
-  //       todoService.getAllTodos(user!.uid),
-  //     ])
+  useEffect(() => {
+    async function fetchData() {
+      const initialDays = getInitialDays()
+      const [columnResponse, todoResponse] = await Promise.all([
+        columnService.getColumnByIds(
+          user!.uid,
+          initialDays.map((day) => day.id),
+        ),
+        todoService.getAllTodos(user!.uid),
+      ])
 
-  //     setColumns(
-  //       columnResponse.docs.map((col) => ({
-  //         ...col.data(),
-  //         id: col.id,
-  //       })) as IColumn[],
-  //     )
+      const columnFromFirestore = columnResponse.flat() as IColumn[]
 
-  //     setTodos(
-  //       todoResponse.docs.map((doc) => ({
-  //         ...doc.data(),
-  //         id: doc.id,
-  //       })) as ITodo[],
-  //     )
-  //   }
+      setColumns((initialColumns) =>
+        initialColumns.map(
+          (initial) =>
+            columnFromFirestore.find((fire) => fire.id === initial.id) ||
+            initial,
+        ),
+      )
 
-  //   fetchData()
-  // }, [user])
+      setTodos(
+        todoResponse.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        })) as ITodo[],
+      )
+    }
 
-  // useEffect(() => {
-  //   if (!instanceRef?.current?.slides.length) {
-  //     return
-  //   } else {
-  //     if (currentSlide === instanceRef.current.slides.length - 2) {
-  //       const fourDaysForward = getFourDaysForward(
-  //         columns[columns.length - 1].id,
-  //       )
-  //       setColumns((prev) => [...prev, ...fourDaysForward])
-  //       instanceRef.current.update({
-  //         slides: {
-  //           number: columns.length,
-  //         },
-  //       })
-  //     }
-  //   }
-
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [currentSlide])
+    fetchData()
+  }, [user])
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result
@@ -167,52 +157,67 @@ const CalendarView = () => {
     }
   }
 
-  console.log
-
   return (
     <main className="min-h-[575px] py-12">
       <Navigation instanceRef={instanceRef} />
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="relative md:hidden">
-          <div ref={sliderRef} className="keen-slider">
-            {columns.map((column, index) => (
-              <div
-                className={`keen-slider__slide number-slide${index + 1}`}
-                key={column.id}
-              >
+      <div className="md:hidden">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="relative">
+            <div ref={sliderRef} className="keen-slider">
+              {columns.map((column, index) => {
+                let columnTodos
+                if (column.order.length === 0) {
+                  // there are no todos in the column
+                  columnTodos = null
+                } else {
+                  columnTodos = column.order.map(
+                    (id) => todos.find((todo) => todo.id === id) as ITodo,
+                  )
+                }
+                return (
+                  <div
+                    className={`keen-slider__slide number-slide${index + 1}`}
+                    key={column.id}
+                  >
+                    <Column
+                      todos={columnTodos}
+                      setTodos={setTodos}
+                      column={column}
+                      setColumns={setColumns}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </DragDropContext>
+      </div>
+      <div className="hidden md:block">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="hidden md:grid grid-cols-3 gap-4">
+            {columns.map((column) => {
+              let columnTodos
+              if (column.order.length === 0) {
+                // there are no todos in the column
+                columnTodos = null
+              } else {
+                columnTodos = column.order.map(
+                  (id) => todos.find((todo) => todo.id === id) as ITodo,
+                )
+              }
+              return (
                 <Column
-                  todos={todos}
-                  setTodos={setTodos}
+                  key={column.id}
                   column={column}
                   setColumns={setColumns}
+                  todos={columnTodos}
+                  setTodos={setTodos}
                 />
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="hidden md:grid grid-cols-3 gap-4">
-          {columns.map((column) => {
-            let columnTodos
-            if (column.order.length === 0) {
-              // there are no todos in the column
-              columnTodos = null
-            } else {
-              columnTodos = column.order.map(
-                (id) => todos.find((todo) => todo.id === id) as ITodo,
               )
-            }
-            return (
-              <Column
-                key={column.id}
-                column={column}
-                setColumns={setColumns}
-                todos={columnTodos}
-                setTodos={setTodos}
-              />
-            )
-          })}
-        </div>
-      </DragDropContext>
+            })}
+          </div>
+        </DragDropContext>
+      </div>
     </main>
   )
 }

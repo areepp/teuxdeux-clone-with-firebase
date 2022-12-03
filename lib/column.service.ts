@@ -5,12 +5,17 @@ import {
   doc,
   getDoc,
   getDocs,
+  setDoc,
   updateDoc,
+  query,
+  where,
+  documentId,
 } from 'firebase/firestore'
 import { db } from './firebaseClient'
 
 const getColumnDocRef = (userId: string, columnId: string) =>
-  doc(db, 'users', userId, 'lists', columnId)
+  // firestore doesn't accept forward slash as id, so i transform the forward slash of the date to '-' first
+  doc(db, 'users', userId, 'calendar', columnId)
 
 export const rearrangeOrder = async (
   userId: string,
@@ -22,8 +27,27 @@ export const rearrangeOrder = async (
   })
 }
 
-export const getAllColumn = async (userId: string) => {
-  return getDocs(collection(db, 'users', userId, 'lists'))
+export const getColumnByIds = async (
+  userId: string,
+  columnTodosIds: string[],
+) => {
+  const batches = []
+
+  while (columnTodosIds.length) {
+    const batch = columnTodosIds.splice(0, 10)
+    const q = query(
+      collection(db, 'users', userId, 'calendar'),
+      where(documentId(), 'in', [...batch]),
+    )
+
+    batches.push(
+      getDocs(q).then((results) =>
+        results.docs.map((result) => ({ id: result.id, ...result.data() })),
+      ),
+    )
+  }
+
+  return Promise.all(batches)
 }
 
 export const getColumn = async (userId: string, columnId: string) => {
@@ -35,9 +59,13 @@ export const addToOrderList = async (
   columnId: string,
   todoId: string,
 ) => {
-  return updateDoc(getColumnDocRef(userId, columnId), {
-    order: arrayUnion(todoId),
-  })
+  return setDoc(
+    getColumnDocRef(userId, columnId),
+    {
+      order: arrayUnion(todoId),
+    },
+    { merge: true },
+  )
 }
 
 export const deleteFromOrderList = async (
@@ -45,7 +73,11 @@ export const deleteFromOrderList = async (
   columnId: string,
   todoId: string,
 ) => {
-  return updateDoc(getColumnDocRef(userId, columnId), {
-    order: arrayRemove(todoId),
-  })
+  return setDoc(
+    getColumnDocRef(userId, columnId),
+    {
+      order: arrayRemove(todoId),
+    },
+    { merge: true },
+  )
 }

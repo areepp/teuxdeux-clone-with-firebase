@@ -62,7 +62,7 @@ const TodoItem = ({ item, setTodos, index, colId }: Props) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`h-[49px] flex items-center justify-between cursor-grab`}
+          className={`h-[49px] flex items-center justify-between cursor-grab drag-fix`} // drag-fix class is used to fix the dragged item not inline with cursor issue
         >
           {isEditing ? (
             <input
