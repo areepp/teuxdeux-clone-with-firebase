@@ -10,21 +10,48 @@ import 'keen-slider/keen-slider.min.css'
 import Navigation from './Navigation'
 
 import COLUMN_DATA from '@/data/columns.json'
+import {
+  getFourDaysForward,
+  getNextFourDays,
+  getPastFourDays,
+} from '@/utils/addColumn'
 
 const CalendarView = () => {
   const { user } = useAuth()
   const [columns, setColumns] = useState<IColumn[]>(COLUMN_DATA.columns)
   const [todos, setTodos] = useState<ITodo[]>([])
-  const [, setCurrentSlide] = useState(0)
+  const [currentSlide, setCurrentSlide] = useState(0)
   const [sliderRef, instanceRef] = useKeenSlider({
-    initial: 0,
+    initial: 6,
     drag: false,
+    renderMode: 'performance',
+    slides: {
+      number: columns.length,
+    },
     slideChanged(slider) {
-      setCurrentSlide(slider.track.details.rel)
+      if (slider.track.details.rel === slider.slides.length - 3) {
+        instanceRef?.current?.update({
+          slides: {
+            number: columns.length + 4,
+          },
+        })
+
+        const nextFourDays = getNextFourDays(columns[columns.length - 1].id)
+        setColumns((prev) => [...prev, ...nextFourDays])
+      } else if (slider.track.details.rel === 2) {
+        instanceRef?.current?.update(
+          {
+            slides: {
+              number: columns.length + 4,
+            },
+          },
+          6,
+        )
+        const pastFourDays = getPastFourDays(columns[0].id)
+        setColumns((prev) => [...pastFourDays.reverse(), ...prev])
+      }
     },
   })
-
-  console.log(columns)
 
   // useEffect(() => {
   //   async function fetchData() {
@@ -50,6 +77,26 @@ const CalendarView = () => {
 
   //   fetchData()
   // }, [user])
+
+  // useEffect(() => {
+  //   if (!instanceRef?.current?.slides.length) {
+  //     return
+  //   } else {
+  //     if (currentSlide === instanceRef.current.slides.length - 2) {
+  //       const fourDaysForward = getFourDaysForward(
+  //         columns[columns.length - 1].id,
+  //       )
+  //       setColumns((prev) => [...prev, ...fourDaysForward])
+  //       instanceRef.current.update({
+  //         slides: {
+  //           number: columns.length,
+  //         },
+  //       })
+  //     }
+  //   }
+
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentSlide])
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result
@@ -124,6 +171,8 @@ const CalendarView = () => {
     }
   }
 
+  console.log
+
   return (
     <main className="min-h-[575px] py-12">
       <Navigation instanceRef={instanceRef} />
@@ -132,7 +181,7 @@ const CalendarView = () => {
           <div ref={sliderRef} className="keen-slider">
             {columns.map((column, index) => (
               <div
-                className={`keen-slider__slide number-slide${index}`}
+                className={`keen-slider__slide number-slide${index + 1}`}
                 key={column.id}
               >
                 <Column
