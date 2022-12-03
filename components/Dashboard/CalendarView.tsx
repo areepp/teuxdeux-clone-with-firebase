@@ -10,11 +10,7 @@ import 'keen-slider/keen-slider.min.css'
 import Navigation from './Navigation'
 
 import COLUMN_DATA from '@/data/columns.json'
-import {
-  getFourDaysForward,
-  getNextFourDays,
-  getPastFourDays,
-} from '@/utils/addColumn'
+import { getNextFourDays, getPastFourDays } from '@/utils/dateHelper'
 
 const CalendarView = () => {
   const { user } = useAuth()

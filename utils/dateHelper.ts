@@ -34,3 +34,18 @@ export const getPastFourDays = (startDate: string) => {
 
   return pastFourDays
 }
+
+export const getDayOfTheWeek = (prop: string) => {
+  const date = new Date(prop)
+
+  return date.toLocaleDateString('en-US', { weekday: 'long' })
+}
+
+export const getFullDate = (prop: string) => {
+  const date = new Date(prop)
+  return date.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
