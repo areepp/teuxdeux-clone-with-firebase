@@ -1,11 +1,13 @@
-import * as todoService from '@/lib/todo.service'
 import * as columnService from '@/lib/column.service'
-import { useState, KeyboardEvent } from 'react'
-import { useAuth } from '../AuthContext'
+import * as todoService from '@/lib/todo.service'
 import update from 'immutability-helper'
+import { KeyboardEvent, useState } from 'react'
 
-import TodoItem, { ITodo } from './TodoItem'
+import { useAuth } from '../AuthContext'
+
 import { Droppable } from 'react-beautiful-dnd'
+import TodoItem, { ITodo } from './TodoItem'
+import { getDayOfTheWeek, getFullDate } from '@/utils/dateHelper'
 
 export interface IColumn {
   id: string
@@ -59,13 +61,18 @@ const Column = ({ todos, column, setTodos, setColumns }: Props) => {
   }
 
   return (
-    <div className="mt-12 h-full flex-grow">
+    <div className="px-4 h-full flex-grow">
       <div className="w-full text-center">
-        <div className="font-gothic text-6xl text-red-600">
-          {column.id.toUpperCase()}
+        <div className=" text-red-600">
+          <h1 className="font-gothic text-6xl">
+            {getDayOfTheWeek(column.id).toUpperCase()}
+          </h1>
+          <p className="mt-2 font-inter text-xs  ">
+            {getFullDate(column.id).toUpperCase()}
+          </p>
         </div>
       </div>
-      <div className="bg-horizontal-lines min-h-[150px]">
+      <div className="mt-20 bg-horizontal-lines min-h-[150px]">
         <Droppable droppableId={column.id}>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>

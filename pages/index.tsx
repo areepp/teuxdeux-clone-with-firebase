@@ -17,9 +17,7 @@ const Index = () => {
   return (
     <>
       <Header />
-      <main className="p-4 min-h-[575px] flex flex-col">
-        <CalendarView />
-      </main>
+      <CalendarView />
       <button className="fixed top-3 right-4 text-white" onClick={handleLogOut}>
         log out
       </button>

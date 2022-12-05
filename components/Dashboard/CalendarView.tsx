@@ -1,28 +1,48 @@
-import { useEffect, useState } from 'react'
-import Column, { IColumn } from './Column'
-import { DragDropContext, DropResult } from 'react-beautiful-dnd'
-import { useAuth } from '../AuthContext'
 import * as columnService from '@/lib/column.service'
 import * as todoService from '@/lib/todo.service'
+import { useEffect, useState } from 'react'
+import { DragDropContext, DropResult } from 'react-beautiful-dnd'
+import SwiperCore from 'swiper'
+import 'swiper/css'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { useAuth } from '../AuthContext'
+import Column, { IColumn } from './Column'
+import Navigation from './Navigation'
 import { ITodo } from './TodoItem'
+
+import {
+  getInitialDays,
+  getNextFourDays,
+  getPastFourDays,
+} from '@/utils/dateHelper'
 
 const CalendarView = () => {
   const { user } = useAuth()
-  const [columns, setColumns] = useState<IColumn[]>([])
+
+  const [columns, setColumns] = useState<IColumn[]>(getInitialDays())
   const [todos, setTodos] = useState<ITodo[]>([])
+  const [swiperRef, setSwiperRef] = useState<SwiperCore>()
+  const [navigationDisabled, setNavigationDisabled] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
+      const initialDays = getInitialDays()
       const [columnResponse, todoResponse] = await Promise.all([
-        columnService.getAllColumn(user!.uid),
+        columnService.getColumnByIds(
+          user!.uid,
+          initialDays.map((day) => day.id),
+        ),
         todoService.getAllTodos(user!.uid),
       ])
 
-      setColumns(
-        columnResponse.docs.map((col) => ({
-          ...col.data(),
-          id: col.id,
-        })) as IColumn[],
+      const columnFromFirestore = columnResponse.flat() as IColumn[]
+
+      setColumns((initialColumns) =>
+        initialColumns.map(
+          (initial) =>
+            columnFromFirestore.find((fire) => fire.id === initial.id) ||
+            initial,
+        ),
       )
 
       setTodos(
@@ -110,32 +130,89 @@ const CalendarView = () => {
   }
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div className="md:grid md:grid-cols-3 md:gap-4">
-        {columns.map((column) => {
-          let columnTodos
-
-          if (column.order.length === 0) {
-            // there are no todos in the column
-            columnTodos = null
-          } else {
-            columnTodos = column.order.map(
-              (id) => todos.find((todo) => todo.id === id) as ITodo,
-            )
-          }
-
-          return (
-            <Column
-              key={column.id}
-              column={column}
-              setColumns={setColumns}
-              todos={columnTodos}
-              setTodos={setTodos}
-            />
-          )
-        })}
+    <main className="min-h-[575px] py-12">
+      <Navigation
+        navigationDisabled={navigationDisabled}
+        swiperRef={swiperRef}
+      />
+      <div className="md:hidden">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Swiper
+            onSwiper={setSwiperRef}
+            initialSlide={7}
+            slidesPerView={1}
+            allowTouchMove={false}
+            onSlideChangeTransitionStart={() => setNavigationDisabled(true)}
+            onSlideChangeTransitionEnd={() => setNavigationDisabled(false)}
+            onTransitionEnd={(e) => {
+              if (e.activeIndex === columns.length - 4) {
+                const nextFourDays = getNextFourDays(
+                  columns[columns.length - 1].id,
+                )
+                setColumns((prev) => [...prev, ...nextFourDays])
+              }
+              if (e.activeIndex === 3) {
+                const pastFourDays = getPastFourDays(columns[0].id)
+                setColumns((prev) => [...pastFourDays.reverse(), ...prev])
+              }
+            }}
+            onSlidesLengthChange={(e) => {
+              if (e.activeIndex === 3) {
+                swiperRef?.slideTo(7, 0)
+              }
+            }}
+          >
+            {columns.map((column) => {
+              let columnTodos
+              if (column.order.length === 0) {
+                // there are no todos in the column
+                columnTodos = null
+              } else {
+                columnTodos = column.order.map(
+                  (id) => todos.find((todo) => todo.id === id) as ITodo,
+                )
+              }
+              return (
+                <SwiperSlide key={column.id}>
+                  <Column
+                    todos={columnTodos}
+                    setTodos={setTodos}
+                    column={column}
+                    setColumns={setColumns}
+                  />
+                </SwiperSlide>
+              )
+            })}
+          </Swiper>
+        </DragDropContext>
       </div>
-    </DragDropContext>
+      <div className="hidden md:block">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="hidden md:grid grid-cols-3 gap-4">
+            {columns.map((column) => {
+              let columnTodos
+              if (column.order.length === 0) {
+                // there are no todos in the column
+                columnTodos = null
+              } else {
+                columnTodos = column.order.map(
+                  (id) => todos.find((todo) => todo.id === id) as ITodo,
+                )
+              }
+              return (
+                <Column
+                  key={column.id}
+                  column={column}
+                  setColumns={setColumns}
+                  todos={columnTodos}
+                  setTodos={setTodos}
+                />
+              )
+            })}
+          </div>
+        </DragDropContext>
+      </div>
+    </main>
   )
 }
 

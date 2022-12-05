@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+
 import { AuthProvider } from '@/components/AuthContext'
 import type { AppProps } from 'next/app'
 
