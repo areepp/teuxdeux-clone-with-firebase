@@ -2,12 +2,13 @@ import * as columnService from '@/lib/column.service'
 import * as todoService from '@/lib/todo.service'
 import { useEffect, useState } from 'react'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
+import SwiperCore from 'swiper'
+import 'swiper/css'
+import { Swiper, SwiperSlide } from 'swiper/react'
 import { useAuth } from '../AuthContext'
 import Column, { IColumn } from './Column'
-import { ITodo } from './TodoItem'
-import { useKeenSlider } from 'keen-slider/react'
-import 'keen-slider/keen-slider.min.css'
 import Navigation from './Navigation'
+import { ITodo } from './TodoItem'
 
 import {
   getInitialDays,
@@ -20,37 +21,8 @@ const CalendarView = () => {
 
   const [columns, setColumns] = useState<IColumn[]>(getInitialDays())
   const [todos, setTodos] = useState<ITodo[]>([])
-  const [sliderRef, instanceRef] = useKeenSlider({
-    initial: 7, // initial slide set to today
-    drag: false,
-    renderMode: 'performance',
-    slides: {
-      number: 1000,
-    },
-    slideChanged(slider) {
-      if (slider.track.details.rel === slider.slides.length - 3) {
-        instanceRef?.current?.update({
-          slides: {
-            number: columns.length + 4,
-          },
-        })
-
-        const nextFourDays = getNextFourDays(columns[columns.length - 1].id)
-        setColumns((prev) => [...prev, ...nextFourDays])
-      } else if (slider.track.details.rel === 2) {
-        instanceRef?.current?.update(
-          {
-            slides: {
-              number: columns.length + 4,
-            },
-          },
-          6,
-        )
-        const pastFourDays = getPastFourDays(columns[0].id)
-        setColumns((prev) => [...pastFourDays.reverse(), ...prev])
-      }
-    },
-  })
+  const [swiperRef, setSwiperRef] = useState<SwiperCore>()
+  const [navigationDisabled, setNavigationDisabled] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -159,37 +131,59 @@ const CalendarView = () => {
 
   return (
     <main className="min-h-[575px] py-12">
-      <Navigation instanceRef={instanceRef} />
+      <Navigation
+        navigationDisabled={navigationDisabled}
+        swiperRef={swiperRef}
+      />
       <div className="md:hidden">
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="relative">
-            <div ref={sliderRef} className="keen-slider">
-              {columns.map((column, index) => {
-                let columnTodos
-                if (column.order.length === 0) {
-                  // there are no todos in the column
-                  columnTodos = null
-                } else {
-                  columnTodos = column.order.map(
-                    (id) => todos.find((todo) => todo.id === id) as ITodo,
-                  )
-                }
-                return (
-                  <div
-                    className={`keen-slider__slide number-slide${index + 1}`}
-                    key={column.id}
-                  >
-                    <Column
-                      todos={columnTodos}
-                      setTodos={setTodos}
-                      column={column}
-                      setColumns={setColumns}
-                    />
-                  </div>
+          <Swiper
+            onSwiper={setSwiperRef}
+            initialSlide={7}
+            slidesPerView={1}
+            allowTouchMove={false}
+            onSlideChangeTransitionStart={() => setNavigationDisabled(true)}
+            onSlideChangeTransitionEnd={() => setNavigationDisabled(false)}
+            onTransitionEnd={(e) => {
+              if (e.activeIndex === columns.length - 4) {
+                const nextFourDays = getNextFourDays(
+                  columns[columns.length - 1].id,
                 )
-              })}
-            </div>
-          </div>
+                setColumns((prev) => [...prev, ...nextFourDays])
+              }
+              if (e.activeIndex === 3) {
+                const pastFourDays = getPastFourDays(columns[0].id)
+                setColumns((prev) => [...pastFourDays.reverse(), ...prev])
+              }
+            }}
+            onSlidesLengthChange={(e) => {
+              if (e.activeIndex === 3) {
+                swiperRef?.slideTo(7, 0)
+              }
+            }}
+          >
+            {columns.map((column) => {
+              let columnTodos
+              if (column.order.length === 0) {
+                // there are no todos in the column
+                columnTodos = null
+              } else {
+                columnTodos = column.order.map(
+                  (id) => todos.find((todo) => todo.id === id) as ITodo,
+                )
+              }
+              return (
+                <SwiperSlide key={column.id}>
+                  <Column
+                    todos={columnTodos}
+                    setTodos={setTodos}
+                    column={column}
+                    setColumns={setColumns}
+                  />
+                </SwiperSlide>
+              )
+            })}
+          </Swiper>
         </DragDropContext>
       </div>
       <div className="hidden md:block">

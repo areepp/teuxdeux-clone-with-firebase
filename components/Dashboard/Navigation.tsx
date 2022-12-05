@@ -1,20 +1,17 @@
 import Arrow from './Arrow'
 import { IoCalendar, IoHome } from 'react-icons/io5'
 import { DayPicker } from 'react-day-picker'
+import SwiperCore from 'swiper'
 
 import 'react-day-picker/dist/style.css'
 import { useState } from 'react'
-import { KeenSliderHooks, KeenSliderInstance } from 'keen-slider'
 
 interface Props {
-  instanceRef: React.MutableRefObject<KeenSliderInstance<
-    {},
-    {},
-    KeenSliderHooks
-  > | null>
+  swiperRef: SwiperCore | undefined
+  navigationDisabled: boolean
 }
 
-const Navigation = ({ instanceRef }: Props) => {
+const Navigation = ({ swiperRef, navigationDisabled }: Props) => {
   const [selectedDay, setSelectedDay] = useState<Date>()
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
@@ -23,9 +20,8 @@ const Navigation = ({ instanceRef }: Props) => {
       <div className="absolute flex flex-col items-center top-3 left-2">
         <Arrow
           left
-          onClick={(e: any) =>
-            e.stopPropagation() || instanceRef.current?.prev()
-          }
+          navigationDisabled={navigationDisabled}
+          onClick={(e: any) => e.stopPropagation() || swiperRef?.slidePrev()}
         />
         <button className="mt-2 text-xl text-gray-400">
           <IoHome />
@@ -33,9 +29,8 @@ const Navigation = ({ instanceRef }: Props) => {
       </div>
       <div className="absolute flex flex-col items-center top-3 right-2">
         <Arrow
-          onClick={(e: any) =>
-            e.stopPropagation() || instanceRef.current?.next()
-          }
+          navigationDisabled={navigationDisabled}
+          onClick={(e: any) => e.stopPropagation() || swiperRef?.slideNext()}
         />
         <button
           className="mt-2 text-xl text-gray-400"
