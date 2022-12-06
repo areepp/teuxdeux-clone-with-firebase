@@ -6,7 +6,6 @@ import {
   getDoc,
   getDocs,
   setDoc,
-  updateDoc,
   query,
   where,
   documentId,
@@ -22,9 +21,13 @@ export const rearrangeOrder = async (
   columnId: string,
   order: string[],
 ) => {
-  return updateDoc(getColumnDocRef(userId, columnId), {
-    order,
-  })
+  return setDoc(
+    getColumnDocRef(userId, columnId),
+    {
+      order,
+    },
+    { merge: true },
+  )
 }
 
 export const getColumnByIds = async (
