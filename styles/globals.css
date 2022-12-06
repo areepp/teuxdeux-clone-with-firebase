@@ -8,6 +8,15 @@
     @apply box-border;
   }
 
+  html,
+  body {
+    @apply h-full;
+  }
+
+  #__next {
+    @apply h-full;
+  }
+
   @font-face {
     font-family: 'AlternateGothic';
     src: url('/fonts/alternate-gothic-no1-d.ttf') format('truetype');

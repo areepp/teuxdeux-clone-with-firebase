@@ -61,10 +61,10 @@ const Column = ({ todos, column, setTodos, setColumns }: Props) => {
   }
 
   return (
-    <div className="px-4 h-full flex-grow">
+    <div className="px-4 h-full flex-grow border-l border-stone-200">
       <div className="w-full text-center">
         <div className=" text-red-600">
-          <h1 className="font-gothic text-6xl">
+          <h1 className="font-gothic text-6xl md:text-4xl">
             {getDayOfTheWeek(column.id).toUpperCase()}
           </h1>
           <p className="mt-2 font-inter text-xs  ">
@@ -72,7 +72,7 @@ const Column = ({ todos, column, setTodos, setColumns }: Props) => {
           </p>
         </div>
       </div>
-      <div className="mt-20 bg-horizontal-lines min-h-[150px]">
+      <div className="h-full mt-20 md:mt-4 md:text-sm bg-mobile-horizontal-lines md:bg-md-horizontal-lines">
         <Droppable droppableId={column.id}>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
@@ -91,7 +91,7 @@ const Column = ({ todos, column, setTodos, setColumns }: Props) => {
                 })}
               {provided.placeholder}
               <input
-                className="h-[49px] flex items-center w-full focus:outline-none bg-transparent"
+                className="h-[49px] md:h-[27px] flex items-center w-full focus:outline-none bg-transparent"
                 type="text"
                 value={newTodoInputValue}
                 onChange={(e) => setNewTodoInputValue(e.target.value)}

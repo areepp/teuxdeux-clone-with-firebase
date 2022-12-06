@@ -62,12 +62,12 @@ const TodoItem = ({ item, setTodos, index, colId }: Props) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`h-[49px] flex items-center justify-between cursor-grab drag-fix`} // drag-fix class is used to fix the dragged item not inline with cursor issue
+          className={`h-[49px] md:h-[27px] flex items-center justify-between cursor-grab drag-fix`} // drag-fix class is used to fix the dragged item not inline with cursor issue
         >
           {isEditing ? (
             <input
               ref={editTodoInputRef}
-              className="h-[49px] flex items-center w-full focus:outline-none bg-transparent"
+              className="h-full flex items-center w-full focus:outline-none bg-transparent"
               type="text"
               value={item.text}
               onChange={(e) =>
