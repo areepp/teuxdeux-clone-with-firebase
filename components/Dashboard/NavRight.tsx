@@ -16,7 +16,7 @@ const NavRight = ({ navigationDisabled, swiperRef }: Props) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
   return (
-    <nav className="z-50 pt-2 md:w-1/12 absolute top-14 right-2 md:static  md:border-l border-stone-200">
+    <nav className="z-50 pt-2 md:w-16 absolute top-14 right-2 md:static  md:border-l border-stone-200">
       <div className="flex flex-col items-center relative">
         <Arrow
           navigationDisabled={navigationDisabled}

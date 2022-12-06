@@ -63,7 +63,7 @@ const Column = ({ todos, column, setTodos, setColumns }: Props) => {
   return (
     <div className="px-4 h-full flex-grow border-l border-stone-200">
       <div className="w-full text-center">
-        <div className=" text-red-600">
+        <div className=" text-primary">
           <h1 className="font-gothic text-6xl md:text-4xl">
             {getDayOfTheWeek(column.id).toUpperCase()}
           </h1>

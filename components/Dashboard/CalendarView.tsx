@@ -132,7 +132,7 @@ const CalendarView = () => {
   return (
     <main className="relative flex-auto pt-12 md:flex">
       <NavLeft swiperRef={swiperRef} navigationDisabled={navigationDisabled} />
-      <div className="h-full md:w-10/12">
+      <div className="h-full md:w-main">
         <DragDropContext onDragEnd={onDragEnd}>
           <Swiper
             className="h-full"
@@ -190,32 +190,6 @@ const CalendarView = () => {
           </Swiper>
         </DragDropContext>
       </div>
-      {/* <div className="hidden md:block">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <div className="hidden md:grid grid-cols-3 gap-4">
-            {columns.map((column) => {
-              let columnTodos
-              if (column.order.length === 0) {
-                // there are no todos in the column
-                columnTodos = null
-              } else {
-                columnTodos = column.order.map(
-                  (id) => todos.find((todo) => todo.id === id) as ITodo,
-                )
-              }
-              return (
-                <Column
-                  key={column.id}
-                  column={column}
-                  setColumns={setColumns}
-                  todos={columnTodos}
-                  setTodos={setTodos}
-                />
-              )
-            })}
-          </div>
-        </DragDropContext>
-      </div> */}
       <NavRight swiperRef={swiperRef} navigationDisabled={navigationDisabled} />
     </main>
   )
