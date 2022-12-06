@@ -7,7 +7,7 @@ import { useAuth } from '../AuthContext'
 
 import { Droppable } from 'react-beautiful-dnd'
 import TodoItem, { ITodo } from './TodoItem'
-import { getDayOfTheWeek, getFullDate } from '@/utils/dateHelper'
+import { checkIsToday, getDayOfTheWeek, getFullDate } from '@/utils/dateHelper'
 
 export interface IColumn {
   id: string
@@ -24,6 +24,7 @@ interface Props {
 const Column = ({ todos, column, setTodos, setColumns }: Props) => {
   const { user } = useAuth()
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
+  const isToday = checkIsToday(column.id)
 
   const handleAddTodo = async () => {
     const res = await todoService.addTodo(user!.uid, {
@@ -61,9 +62,13 @@ const Column = ({ todos, column, setTodos, setColumns }: Props) => {
   }
 
   return (
-    <div className="px-4 h-full flex-grow border-l border-stone-200">
+    <div
+      className={`px-4 h-full text-primary flex-grow border-l border-stone-200 ${
+        isToday ? 'text-primary' : 'text-gray-900'
+      }`}
+    >
       <div className="w-full text-center">
-        <div className=" text-primary">
+        <div className=" ">
           <h1 className="font-gothic text-6xl md:text-4xl">
             {getDayOfTheWeek(column.id).toUpperCase()}
           </h1>
@@ -91,7 +96,7 @@ const Column = ({ todos, column, setTodos, setColumns }: Props) => {
                 })}
               {provided.placeholder}
               <input
-                className="h-[49px] md:h-[27px] flex items-center w-full focus:outline-none bg-transparent"
+                className="h-[49px] text-gray-900 md:h-[27px] flex items-center w-full focus:outline-none bg-transparent"
                 type="text"
                 value={newTodoInputValue}
                 onChange={(e) => setNewTodoInputValue(e.target.value)}

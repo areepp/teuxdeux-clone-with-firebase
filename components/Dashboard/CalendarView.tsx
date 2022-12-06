@@ -137,7 +137,7 @@ const CalendarView = () => {
           <Swiper
             className="h-full"
             onSwiper={setSwiperRef}
-            initialSlide={7}
+            initialSlide={6} // initial set to current day
             slidesPerView={1}
             allowTouchMove={false}
             speed={600}
