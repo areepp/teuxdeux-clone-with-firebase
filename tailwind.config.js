@@ -15,8 +15,10 @@ module.exports = {
         gothic: ['AlternateGothic', ...defaultTheme.fontFamily.sans],
       },
       backgroundImage: {
-        'horizontal-lines':
-          'repeating-linear-gradient(transparent,transparent 48px, rgba(0,0,0,.08) 48px, rgba(0,0,0,.08) 49px, transparent 49px)',
+        'mobile-horizontal-lines':
+          'repeating-linear-gradient(transparent,transparent 48px, #e7e5e4 48px, #e7e5e4 49px, transparent 49px)',
+        'md-horizontal-lines':
+          'repeating-linear-gradient(transparent,transparent 26px, #e7e5e4 26px, #e7e5e4 27px, transparent 27px)',
       },
     },
   },

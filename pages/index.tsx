@@ -15,13 +15,13 @@ const Index = () => {
   }
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       <Header />
       <CalendarView />
       <button className="fixed top-3 right-4 text-white" onClick={handleLogOut}>
         log out
       </button>
-    </>
+    </div>
   )
 }
 

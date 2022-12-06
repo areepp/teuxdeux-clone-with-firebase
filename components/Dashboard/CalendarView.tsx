@@ -1,5 +1,10 @@
 import * as columnService from '@/lib/column.service'
 import * as todoService from '@/lib/todo.service'
+import {
+  getInitialDays,
+  getNextFourDays,
+  getPastFourDays,
+} from '@/utils/dateHelper'
 import { useEffect, useState } from 'react'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import SwiperCore from 'swiper'
@@ -7,14 +12,9 @@ import 'swiper/css'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { useAuth } from '../AuthContext'
 import Column, { IColumn } from './Column'
-import Navigation from './Navigation'
+import NavLeft from './NavLeft'
+import NavRight from './NavRight'
 import { ITodo } from './TodoItem'
-
-import {
-  getInitialDays,
-  getNextFourDays,
-  getPastFourDays,
-} from '@/utils/dateHelper'
 
 const CalendarView = () => {
   const { user } = useAuth()
@@ -130,18 +130,22 @@ const CalendarView = () => {
   }
 
   return (
-    <main className="min-h-[575px] py-12">
-      <Navigation
-        navigationDisabled={navigationDisabled}
-        swiperRef={swiperRef}
-      />
-      <div className="md:hidden">
+    <main className="relative flex-auto pt-12 md:flex">
+      <NavLeft swiperRef={swiperRef} navigationDisabled={navigationDisabled} />
+      <div className="h-full md:w-10/12">
         <DragDropContext onDragEnd={onDragEnd}>
           <Swiper
+            className="h-full"
             onSwiper={setSwiperRef}
             initialSlide={7}
             slidesPerView={1}
             allowTouchMove={false}
+            speed={600}
+            breakpoints={{
+              768: {
+                slidesPerView: 3,
+              },
+            }}
             onSlideChangeTransitionStart={() => setNavigationDisabled(true)}
             onSlideChangeTransitionEnd={() => setNavigationDisabled(false)}
             onTransitionEnd={(e) => {
@@ -186,7 +190,7 @@ const CalendarView = () => {
           </Swiper>
         </DragDropContext>
       </div>
-      <div className="hidden md:block">
+      {/* <div className="hidden md:block">
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="hidden md:grid grid-cols-3 gap-4">
             {columns.map((column) => {
@@ -211,7 +215,8 @@ const CalendarView = () => {
             })}
           </div>
         </DragDropContext>
-      </div>
+      </div> */}
+      <NavRight swiperRef={swiperRef} navigationDisabled={navigationDisabled} />
     </main>
   )
 }
