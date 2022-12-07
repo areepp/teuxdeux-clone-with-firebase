@@ -56,6 +56,37 @@ const CalendarView = () => {
     fetchData()
   }, [user])
 
+  useEffect(() => {
+    async function fetchData() {
+      const [columnResponse, todoResponse] = await Promise.all([
+        columnService.getColumnByIds(
+          user!.uid,
+          columns.map((day) => day.id),
+        ),
+        todoService.getAllTodos(user!.uid),
+      ])
+
+      const columnFromFirestore = columnResponse.flat() as IColumn[]
+
+      setColumns((initialColumns) =>
+        initialColumns.map(
+          (initial) =>
+            columnFromFirestore.find((fire) => fire.id === initial.id) ||
+            initial,
+        ),
+      )
+
+      setTodos(
+        todoResponse.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        })) as ITodo[],
+      )
+    }
+
+    fetchData()
+  }, [user, columns])
+
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result
 
