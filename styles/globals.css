@@ -30,7 +30,7 @@
 }
 
 .rdp-day_today:not(.rdp-day_outside) {
-  @apply bg-red-600 text-white;
+  @apply bg-primary text-white;
 }
 
 .drag-fix {

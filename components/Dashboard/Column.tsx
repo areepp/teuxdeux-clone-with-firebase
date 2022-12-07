@@ -1,13 +1,12 @@
 import * as columnService from '@/lib/column.service'
 import * as todoService from '@/lib/todo.service'
+import { checkIsToday, getDayOfTheWeek, getFullDate } from '@/utils/dateHelper'
 import update from 'immutability-helper'
 import { KeyboardEvent, useState } from 'react'
-
-import { useAuth } from '../AuthContext'
-
 import { Droppable } from 'react-beautiful-dnd'
+import SwiperCore from 'swiper'
+import { useAuth } from '../AuthContext'
 import TodoItem, { ITodo } from './TodoItem'
-import { checkIsToday, getDayOfTheWeek, getFullDate } from '@/utils/dateHelper'
 
 export interface IColumn {
   id: string
@@ -19,12 +18,22 @@ interface Props {
   column: IColumn
   setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>
   setColumns: React.Dispatch<React.SetStateAction<IColumn[]>>
+  swiperRef: SwiperCore | undefined
+  index: number
 }
 
-const Column = ({ todos, column, setTodos, setColumns }: Props) => {
+const Column = ({
+  todos,
+  column,
+  setTodos,
+  setColumns,
+  index,
+  swiperRef,
+}: Props) => {
   const { user } = useAuth()
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
   const isToday = checkIsToday(column.id)
+  const isRealIndex = index === swiperRef?.realIndex
 
   const handleAddTodo = async () => {
     const res = await todoService.addTodo(user!.uid, {
@@ -63,9 +72,10 @@ const Column = ({ todos, column, setTodos, setColumns }: Props) => {
 
   return (
     <div
-      className={`px-4 h-full text-primary flex-grow border-l border-stone-200 ${
+      className={`px-4 h-full text-primary flex-grow ${
         isToday ? 'text-primary' : 'text-gray-900'
-      }`}
+      } ${isRealIndex ? '' : 'border-l border-stone-200'}
+      `}
     >
       <div className="w-full text-center">
         <div className=" ">

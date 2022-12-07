@@ -131,13 +131,18 @@ const CalendarView = () => {
 
   return (
     <main className="relative flex-auto pt-12 md:flex">
-      <NavLeft swiperRef={swiperRef} navigationDisabled={navigationDisabled} />
+      <NavLeft
+        columns={columns}
+        setColumns={setColumns}
+        swiperRef={swiperRef}
+        navigationDisabled={navigationDisabled}
+      />
       <div className="h-full md:w-main">
         <DragDropContext onDragEnd={onDragEnd}>
           <Swiper
             className="h-full"
             onSwiper={setSwiperRef}
-            initialSlide={6} // initial set to current day
+            initialSlide={7} // initial set to current day
             slidesPerView={1}
             allowTouchMove={false}
             speed={600}
@@ -166,7 +171,7 @@ const CalendarView = () => {
               }
             }}
           >
-            {columns.map((column) => {
+            {columns.map((column, index) => {
               let columnTodos
               if (column.order.length === 0) {
                 // there are no todos in the column
@@ -183,6 +188,8 @@ const CalendarView = () => {
                     setTodos={setTodos}
                     column={column}
                     setColumns={setColumns}
+                    swiperRef={swiperRef}
+                    index={index}
                   />
                 </SwiperSlide>
               )
@@ -190,7 +197,12 @@ const CalendarView = () => {
           </Swiper>
         </DragDropContext>
       </div>
-      <NavRight swiperRef={swiperRef} navigationDisabled={navigationDisabled} />
+      <NavRight
+        columns={columns}
+        setColumns={setColumns}
+        swiperRef={swiperRef}
+        navigationDisabled={navigationDisabled}
+      />
     </main>
   )
 }

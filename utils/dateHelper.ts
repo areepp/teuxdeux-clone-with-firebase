@@ -40,6 +40,14 @@ export const getInitialDays = (): IColumn[] => {
   ]
 }
 
+export const getReInitiatedDays = (date: Date): IColumn[] => {
+  return [
+    ...getDaysColumns(date, 7, 'past').reverse(),
+    columnFactory(date.toLocaleDateString()),
+    ...getDaysColumns(date, 7, 'future'),
+  ]
+}
+
 export const getNextFourDays = (startDate: string): IColumn[] => {
   const date = new Date(startDate)
 
