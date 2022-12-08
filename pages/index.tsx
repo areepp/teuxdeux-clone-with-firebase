@@ -1,10 +1,8 @@
 import Header from '@/components/Dashboard/Header'
 import CalendarView from '@/components/Dashboard/CalendarView'
 import * as authService from '@/lib/auth.service'
-import { adminAuth } from '@/lib/firebaseAdmin'
-import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
-import nookies from 'nookies'
+import { withAuthServerSideProps } from '@/lib/withAuthServerSideProps'
 
 const Index = () => {
   const router = useRouter()
@@ -25,22 +23,6 @@ const Index = () => {
   )
 }
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  try {
-    const { token } = nookies.get(ctx)
-    await adminAuth.verifyIdToken(token)
-
-    return {
-      props: {} as never,
-    }
-  } catch (err) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    }
-  }
-}
+export const getServerSideProps = withAuthServerSideProps()
 
 export default Index
