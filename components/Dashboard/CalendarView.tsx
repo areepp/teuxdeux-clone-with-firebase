@@ -24,37 +24,38 @@ const CalendarView = () => {
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
   const [navigationDisabled, setNavigationDisabled] = useState(false)
 
+  const syncToFirebase = async (localState: IColumn[]) => {
+    console.log(localState)
+
+    const [columnResponse, todoResponse] = await Promise.all([
+      columnService.getColumnByIds(
+        user!.uid,
+        localState.map((day) => day.id),
+      ),
+      todoService.getAllTodos(user!.uid),
+    ])
+
+    const columnFromFirestore = columnResponse.flat() as IColumn[]
+
+    setColumns((initialColumns) =>
+      initialColumns.map(
+        (initial) =>
+          columnFromFirestore.find((fire) => fire.id === initial.id) || initial,
+      ),
+    )
+
+    setTodos(
+      todoResponse.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as ITodo[],
+    )
+  }
+
   useEffect(() => {
-    async function fetchData() {
-      const initialDays = getInitialDays()
-      const [columnResponse, todoResponse] = await Promise.all([
-        columnService.getColumnByIds(
-          user!.uid,
-          initialDays.map((day) => day.id),
-        ),
-        todoService.getAllTodos(user!.uid),
-      ])
-
-      const columnFromFirestore = columnResponse.flat() as IColumn[]
-
-      setColumns((initialColumns) =>
-        initialColumns.map(
-          (initial) =>
-            columnFromFirestore.find((fire) => fire.id === initial.id) ||
-            initial,
-        ),
-      )
-
-      setTodos(
-        todoResponse.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        })) as ITodo[],
-      )
-    }
-
-    fetchData()
-  }, [user])
+    syncToFirebase(getInitialDays())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result
@@ -131,13 +132,19 @@ const CalendarView = () => {
 
   return (
     <main className="relative flex-auto pt-12 md:flex">
-      <NavLeft swiperRef={swiperRef} navigationDisabled={navigationDisabled} />
-      <div className="h-full md:w-10/12">
+      <NavLeft
+        columns={columns}
+        setColumns={setColumns}
+        swiperRef={swiperRef}
+        navigationDisabled={navigationDisabled}
+        syncToFirebase={syncToFirebase}
+      />
+      <div className="h-full md:w-main">
         <DragDropContext onDragEnd={onDragEnd}>
           <Swiper
             className="h-full"
             onSwiper={setSwiperRef}
-            initialSlide={7}
+            initialSlide={7} // initial set to current day
             slidesPerView={1}
             allowTouchMove={false}
             speed={600}
@@ -148,7 +155,7 @@ const CalendarView = () => {
             }}
             onSlideChangeTransitionStart={() => setNavigationDisabled(true)}
             onSlideChangeTransitionEnd={() => setNavigationDisabled(false)}
-            onTransitionEnd={(e) => {
+            onTransitionEnd={async (e) => {
               if (e.activeIndex === columns.length - 4) {
                 const nextFourDays = getNextFourDays(
                   columns[columns.length - 1].id,
@@ -158,6 +165,7 @@ const CalendarView = () => {
               if (e.activeIndex === 3) {
                 const pastFourDays = getPastFourDays(columns[0].id)
                 setColumns((prev) => [...pastFourDays.reverse(), ...prev])
+                await syncToFirebase([...pastFourDays.reverse(), ...columns])
               }
             }}
             onSlidesLengthChange={(e) => {
@@ -166,7 +174,7 @@ const CalendarView = () => {
               }
             }}
           >
-            {columns.map((column) => {
+            {columns.map((column, index) => {
               let columnTodos
               if (column.order.length === 0) {
                 // there are no todos in the column
@@ -183,6 +191,8 @@ const CalendarView = () => {
                     setTodos={setTodos}
                     column={column}
                     setColumns={setColumns}
+                    swiperRef={swiperRef}
+                    index={index}
                   />
                 </SwiperSlide>
               )
@@ -190,33 +200,13 @@ const CalendarView = () => {
           </Swiper>
         </DragDropContext>
       </div>
-      {/* <div className="hidden md:block">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <div className="hidden md:grid grid-cols-3 gap-4">
-            {columns.map((column) => {
-              let columnTodos
-              if (column.order.length === 0) {
-                // there are no todos in the column
-                columnTodos = null
-              } else {
-                columnTodos = column.order.map(
-                  (id) => todos.find((todo) => todo.id === id) as ITodo,
-                )
-              }
-              return (
-                <Column
-                  key={column.id}
-                  column={column}
-                  setColumns={setColumns}
-                  todos={columnTodos}
-                  setTodos={setTodos}
-                />
-              )
-            })}
-          </div>
-        </DragDropContext>
-      </div> */}
-      <NavRight swiperRef={swiperRef} navigationDisabled={navigationDisabled} />
+      <NavRight
+        columns={columns}
+        setColumns={setColumns}
+        swiperRef={swiperRef}
+        navigationDisabled={navigationDisabled}
+        syncToFirebase={syncToFirebase}
+      />
     </main>
   )
 }

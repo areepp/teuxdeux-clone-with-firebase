@@ -1,13 +1,18 @@
 import * as columnService from '@/lib/column.service'
 import * as todoService from '@/lib/todo.service'
+import {
+  checkIsPast,
+  checkIsToday,
+  getDayOfTheWeek,
+  getFullDate,
+} from '@/utils/dateHelper'
 import update from 'immutability-helper'
 import { KeyboardEvent, useState } from 'react'
-
-import { useAuth } from '../AuthContext'
-
 import { Droppable } from 'react-beautiful-dnd'
+import SwiperCore from 'swiper'
+import { useAuth } from '../AuthContext'
 import TodoItem, { ITodo } from './TodoItem'
-import { getDayOfTheWeek, getFullDate } from '@/utils/dateHelper'
+import clsx from 'clsx'
 
 export interface IColumn {
   id: string
@@ -19,11 +24,23 @@ interface Props {
   column: IColumn
   setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>
   setColumns: React.Dispatch<React.SetStateAction<IColumn[]>>
+  swiperRef: SwiperCore | undefined
+  index: number
 }
 
-const Column = ({ todos, column, setTodos, setColumns }: Props) => {
+const Column = ({
+  todos,
+  column,
+  setTodos,
+  setColumns,
+  index,
+  swiperRef,
+}: Props) => {
   const { user } = useAuth()
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
+  const isToday = checkIsToday(column.id)
+  const isPast = checkIsPast(column.id)
+  const isRealIndex = index === swiperRef?.realIndex
 
   const handleAddTodo = async () => {
     const res = await todoService.addTodo(user!.uid, {
@@ -61,9 +78,17 @@ const Column = ({ todos, column, setTodos, setColumns }: Props) => {
   }
 
   return (
-    <div className="px-4 h-full flex-grow border-l border-stone-200">
+    <div
+      className={clsx(
+        isPast && 'text-stone-300',
+        isToday && 'text-primary',
+        !isPast && !isToday && 'text-gray-900',
+        !isRealIndex && 'border-l border-stone-200',
+        'px-4 h-full text-primary flex-grow',
+      )}
+    >
       <div className="w-full text-center">
-        <div className=" text-red-600">
+        <div className="">
           <h1 className="font-gothic text-6xl md:text-4xl">
             {getDayOfTheWeek(column.id).toUpperCase()}
           </h1>
@@ -91,7 +116,7 @@ const Column = ({ todos, column, setTodos, setColumns }: Props) => {
                 })}
               {provided.placeholder}
               <input
-                className="h-[49px] md:h-[27px] flex items-center w-full focus:outline-none bg-transparent"
+                className="h-[49px] text-gray-900 md:h-[27px] flex items-center w-full focus:outline-none bg-transparent"
                 type="text"
                 value={newTodoInputValue}
                 onChange={(e) => setNewTodoInputValue(e.target.value)}

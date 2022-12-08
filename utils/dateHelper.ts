@@ -40,6 +40,14 @@ export const getInitialDays = (): IColumn[] => {
   ]
 }
 
+export const getReInitiatedDays = (date: Date): IColumn[] => {
+  return [
+    ...getDaysColumns(date, 7, 'past').reverse(),
+    columnFactory(date.toLocaleDateString()),
+    ...getDaysColumns(date, 7, 'future'),
+  ]
+}
+
 export const getNextFourDays = (startDate: string): IColumn[] => {
   const date = new Date(startDate)
 
@@ -69,4 +77,18 @@ export const getFullDate = (prop: string) => {
 
 export const transformDateSlashToDash = (date: string) => {
   return date.replace(/\//g, '-')
+}
+
+export const checkIsToday = (date: string) => {
+  const todayDate = new Date()
+  const inputDate = new Date(date)
+
+  return inputDate.setHours(0, 0, 0, 0) == todayDate.setHours(0, 0, 0, 0)
+}
+
+export const checkIsPast = (date: string) => {
+  const todayDate = new Date()
+  const inputDate = new Date(date)
+
+  return inputDate.setHours(0, 0, 0, 0) < todayDate.setHours(0, 0, 0, 0)
 }
