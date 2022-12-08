@@ -24,68 +24,38 @@ const CalendarView = () => {
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
   const [navigationDisabled, setNavigationDisabled] = useState(false)
 
-  useEffect(() => {
-    async function fetchData() {
-      const initialDays = getInitialDays()
-      const [columnResponse, todoResponse] = await Promise.all([
-        columnService.getColumnByIds(
-          user!.uid,
-          initialDays.map((day) => day.id),
-        ),
-        todoService.getAllTodos(user!.uid),
-      ])
+  const syncToFirebase = async (localState: IColumn[]) => {
+    console.log(localState)
 
-      const columnFromFirestore = columnResponse.flat() as IColumn[]
+    const [columnResponse, todoResponse] = await Promise.all([
+      columnService.getColumnByIds(
+        user!.uid,
+        localState.map((day) => day.id),
+      ),
+      todoService.getAllTodos(user!.uid),
+    ])
 
-      setColumns((initialColumns) =>
-        initialColumns.map(
-          (initial) =>
-            columnFromFirestore.find((fire) => fire.id === initial.id) ||
-            initial,
-        ),
-      )
+    const columnFromFirestore = columnResponse.flat() as IColumn[]
 
-      setTodos(
-        todoResponse.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        })) as ITodo[],
-      )
-    }
+    setColumns((initialColumns) =>
+      initialColumns.map(
+        (initial) =>
+          columnFromFirestore.find((fire) => fire.id === initial.id) || initial,
+      ),
+    )
 
-    fetchData()
-  }, [user])
+    setTodos(
+      todoResponse.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as ITodo[],
+    )
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      const [columnResponse, todoResponse] = await Promise.all([
-        columnService.getColumnByIds(
-          user!.uid,
-          columns.map((day) => day.id),
-        ),
-        todoService.getAllTodos(user!.uid),
-      ])
-
-      const columnFromFirestore = columnResponse.flat() as IColumn[]
-
-      setColumns((initialColumns) =>
-        initialColumns.map(
-          (initial) =>
-            columnFromFirestore.find((fire) => fire.id === initial.id) ||
-            initial,
-        ),
-      )
-
-      setTodos(
-        todoResponse.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        })) as ITodo[],
-      )
-    }
-
-    fetchData()
-  }, [user, columns])
+    syncToFirebase(getInitialDays())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result
@@ -167,6 +137,7 @@ const CalendarView = () => {
         setColumns={setColumns}
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
+        syncToFirebase={syncToFirebase}
       />
       <div className="h-full md:w-main">
         <DragDropContext onDragEnd={onDragEnd}>
@@ -184,7 +155,7 @@ const CalendarView = () => {
             }}
             onSlideChangeTransitionStart={() => setNavigationDisabled(true)}
             onSlideChangeTransitionEnd={() => setNavigationDisabled(false)}
-            onTransitionEnd={(e) => {
+            onTransitionEnd={async (e) => {
               if (e.activeIndex === columns.length - 4) {
                 const nextFourDays = getNextFourDays(
                   columns[columns.length - 1].id,
@@ -194,6 +165,7 @@ const CalendarView = () => {
               if (e.activeIndex === 3) {
                 const pastFourDays = getPastFourDays(columns[0].id)
                 setColumns((prev) => [...pastFourDays.reverse(), ...prev])
+                await syncToFirebase([...pastFourDays.reverse(), ...columns])
               }
             }}
             onSlidesLengthChange={(e) => {
@@ -233,6 +205,7 @@ const CalendarView = () => {
         setColumns={setColumns}
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
+        syncToFirebase={syncToFirebase}
       />
     </main>
   )

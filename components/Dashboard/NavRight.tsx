@@ -16,6 +16,7 @@ interface Props {
   swiperRef: SwiperCore | undefined
   columns: IColumn[]
   setColumns: React.Dispatch<React.SetStateAction<IColumn[]>>
+  syncToFirebase: (_localState: IColumn[]) => Promise<void>
 }
 
 const NavRight = ({
@@ -23,6 +24,7 @@ const NavRight = ({
   swiperRef,
   columns,
   setColumns,
+  syncToFirebase,
 }: Props) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const [isCalendarClicked, setIsCalendarClicked] = useState(false)
@@ -34,7 +36,7 @@ const NavRight = ({
     }
   }
 
-  const handleDayClick = (day: Date) => {
+  const handleDayClick = async (day: Date) => {
     const clickedDayIndex = columns
       .map((col) => col.id)
       .indexOf(transformDateSlashToDash(day.toLocaleDateString()))
@@ -53,6 +55,7 @@ const NavRight = ({
       swiperRef?.slideTo(clickedDayIndex, 600)
     } else {
       setColumns(getReInitiatedDays(day))
+      await syncToFirebase(getReInitiatedDays(day))
       swiperRef?.slideTo(7, 0)
     }
 

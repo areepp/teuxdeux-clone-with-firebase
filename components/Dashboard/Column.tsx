@@ -1,12 +1,18 @@
 import * as columnService from '@/lib/column.service'
 import * as todoService from '@/lib/todo.service'
-import { checkIsToday, getDayOfTheWeek, getFullDate } from '@/utils/dateHelper'
+import {
+  checkIsPast,
+  checkIsToday,
+  getDayOfTheWeek,
+  getFullDate,
+} from '@/utils/dateHelper'
 import update from 'immutability-helper'
 import { KeyboardEvent, useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
 import SwiperCore from 'swiper'
 import { useAuth } from '../AuthContext'
 import TodoItem, { ITodo } from './TodoItem'
+import clsx from 'clsx'
 
 export interface IColumn {
   id: string
@@ -33,6 +39,7 @@ const Column = ({
   const { user } = useAuth()
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
   const isToday = checkIsToday(column.id)
+  const isPast = checkIsPast(column.id)
   const isRealIndex = index === swiperRef?.realIndex
 
   const handleAddTodo = async () => {
@@ -72,13 +79,16 @@ const Column = ({
 
   return (
     <div
-      className={`px-4 h-full text-primary flex-grow ${
-        isToday ? 'text-primary' : 'text-gray-900'
-      } ${isRealIndex ? '' : 'border-l border-stone-200'}
-      `}
+      className={clsx(
+        isPast && 'text-stone-300',
+        isToday && 'text-primary',
+        !isPast && !isToday && 'text-gray-900',
+        !isRealIndex && 'border-l border-stone-200',
+        'px-4 h-full text-primary flex-grow',
+      )}
     >
       <div className="w-full text-center">
-        <div className=" ">
+        <div className="">
           <h1 className="font-gothic text-6xl md:text-4xl">
             {getDayOfTheWeek(column.id).toUpperCase()}
           </h1>

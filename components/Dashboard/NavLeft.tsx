@@ -9,6 +9,7 @@ interface Props {
   swiperRef: SwiperCore | undefined
   columns: IColumn[]
   setColumns: React.Dispatch<React.SetStateAction<IColumn[]>>
+  syncToFirebase: (_localState: IColumn[]) => Promise<void>
 }
 
 const NavLeft = ({
@@ -16,14 +17,16 @@ const NavLeft = ({
   setColumns,
   navigationDisabled,
   swiperRef,
+  syncToFirebase,
 }: Props) => {
-  const onClick = () => {
+  const onClick = async () => {
     const today = transformDateSlashToDash(new Date().toLocaleDateString())
     const todayIndex = columns.map((col) => col.id).indexOf(today)
     if (todayIndex !== -1) {
       swiperRef?.slideTo(todayIndex, 600)
     } else {
       setColumns(getInitialDays())
+      await syncToFirebase(getInitialDays())
     }
   }
 

@@ -85,3 +85,10 @@ export const checkIsToday = (date: string) => {
 
   return inputDate.setHours(0, 0, 0, 0) == todayDate.setHours(0, 0, 0, 0)
 }
+
+export const checkIsPast = (date: string) => {
+  const todayDate = new Date()
+  const inputDate = new Date(date)
+
+  return inputDate.setHours(0, 0, 0, 0) < todayDate.setHours(0, 0, 0, 0)
+}
