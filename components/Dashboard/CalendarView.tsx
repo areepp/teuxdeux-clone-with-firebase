@@ -131,7 +131,7 @@ const CalendarView = () => {
   }
 
   return (
-    <main className="relative flex-auto pt-12 md:flex">
+    <main className="relative flex-auto min-h-[450px] pt-12 md:flex">
       <NavLeft
         columns={columns}
         setColumns={setColumns}
