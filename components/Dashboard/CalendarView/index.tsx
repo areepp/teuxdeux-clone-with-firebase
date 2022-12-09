@@ -1,30 +1,26 @@
 import * as columnService from '@/lib/column.service'
 import * as todoService from '@/lib/todo.service'
+import useColumnStore from '@/stores/columns'
 import {
-  getInitialDays,
+  getInitialColumns,
   getNextFourDays,
   getPastFourDays,
 } from '@/utils/dateHelper'
 import { useEffect, useState } from 'react'
-import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import SwiperCore from 'swiper'
 import 'swiper/css'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { useAuth } from '../../AuthContext'
-import Column, { IColumn } from './Column'
+import { IColumn } from '@/stores/columns'
 import NavLeft from './NavLeft'
 import NavRight from './NavRight'
 import { ITodo } from './TodoItem'
+import Column from './Column'
 
-interface Props {
-  columns: IColumn[]
-  setColumns: React.Dispatch<React.SetStateAction<IColumn[]>>
-}
-
-const CalendarView = ({ columns, setColumns }: Props) => {
+const CalendarView = () => {
   const { user } = useAuth()
+  const columnStore = useColumnStore()
 
-  // const [columns, setColumns] = useState<IColumn[]>(getInitialDays())
   const [todos, setTodos] = useState<ITodo[]>([])
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
   const [navigationDisabled, setNavigationDisabled] = useState(false)
@@ -42,12 +38,7 @@ const CalendarView = ({ columns, setColumns }: Props) => {
 
     const columnFromFirestore = columnResponse.flat() as IColumn[]
 
-    setColumns((initialColumns) =>
-      initialColumns.map(
-        (initial) =>
-          columnFromFirestore.find((fire) => fire.id === initial.id) || initial,
-      ),
-    )
+    columnStore.syncColumns(columnFromFirestore)
 
     setTodos(
       todoResponse.docs.map((doc) => ({
@@ -58,94 +49,18 @@ const CalendarView = ({ columns, setColumns }: Props) => {
   }
 
   useEffect(() => {
-    syncToFirebase(getInitialDays())
+    syncToFirebase(getInitialColumns())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  // const onDragEnd = (result: DropResult) => {
-  //   const { destination, source, draggableId } = result
-
-  //   if (!destination) return
-
-  //   // do nothing if the position of the dragged item is not changed
-  //   if (
-  //     destination.droppableId === source.droppableId &&
-  //     destination.index === source.index
-  //   ) {
-  //     return
-  //   }
-
-  //   const startColumn = columns.find(
-  //     (col) => col.id === source.droppableId,
-  //   ) as IColumn
-  //   const finishColumn = columns.find(
-  //     (col) => col.id === destination.droppableId,
-  //   ) as IColumn
-
-  //   if (startColumn === finishColumn) {
-  //     // reorder array within the same column
-  //     const newOrder = Array.from(startColumn.order)
-  //     newOrder.splice(source.index, 1)
-  //     newOrder.splice(destination.index, 0, draggableId)
-
-  //     const newColumn = {
-  //       ...startColumn,
-  //       order: newOrder,
-  //     }
-
-  //     setColumns((prev) =>
-  //       prev.map((el) => (el.id === newColumn.id ? newColumn : el)),
-  //     )
-
-  //     // sync to firebase
-  //     columnService.rearrangeOrder(user!.uid, finishColumn.id, newOrder)
-  //   } else {
-  //     // move todo from one column to another
-  //     const newStartOrder = Array.from(startColumn.order)
-  //     newStartOrder.splice(source.index, 1)
-
-  //     const newStartColumn = {
-  //       ...startColumn,
-  //       order: newStartOrder,
-  //     }
-
-  //     const newFinishOrder = Array.from(finishColumn.order)
-  //     newFinishOrder.splice(destination.index, 0, draggableId)
-
-  //     const newFinishColumn = {
-  //       ...finishColumn,
-  //       order: newFinishOrder,
-  //     }
-
-  //     setColumns((prev) =>
-  //       prev.map((col) => {
-  //         if (col.id === startColumn.id) {
-  //           return newStartColumn
-  //         } else if (col.id === finishColumn.id) {
-  //           return newFinishColumn
-  //         } else {
-  //           return col
-  //         }
-  //       }),
-  //     )
-
-  //     // sync to firebase
-  //     columnService.rearrangeOrder(user!.uid, startColumn.id, newStartOrder)
-  //     columnService.rearrangeOrder(user!.uid, finishColumn.id, newFinishOrder)
-  //   }
-  // }
 
   return (
     <main className="relative flex-auto min-h-[450px] pt-12 md:flex">
       <NavLeft
-        columns={columns}
-        setColumns={setColumns}
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
         syncToFirebase={syncToFirebase}
       />
       <div className="h-full md:w-main">
-        {/* <DragDropContext onDragEnd={onDragEnd}> */}
         <Swiper
           className="h-full"
           onSwiper={setSwiperRef}
@@ -161,16 +76,20 @@ const CalendarView = ({ columns, setColumns }: Props) => {
           onSlideChangeTransitionStart={() => setNavigationDisabled(true)}
           onSlideChangeTransitionEnd={() => setNavigationDisabled(false)}
           onTransitionEnd={async (e) => {
-            if (e.activeIndex === columns.length - 4) {
+            if (e.activeIndex === columnStore.columns.length - 4) {
               const nextFourDays = getNextFourDays(
-                columns[columns.length - 1].id,
+                columnStore.columns[columnStore.columns.length - 1].id,
               )
-              setColumns((prev) => [...prev, ...nextFourDays])
+              columnStore.pushColumns(nextFourDays)
+              await syncToFirebase([...columnStore.columns, ...nextFourDays])
             }
             if (e.activeIndex === 3) {
-              const pastFourDays = getPastFourDays(columns[0].id)
-              setColumns((prev) => [...pastFourDays.reverse(), ...prev])
-              await syncToFirebase([...pastFourDays.reverse(), ...columns])
+              const pastFourDays = getPastFourDays(columnStore.columns[0].id)
+              columnStore.unshiftColumns(pastFourDays.reverse())
+              await syncToFirebase([
+                ...pastFourDays.reverse(),
+                ...columnStore.columns,
+              ])
             }
           }}
           onSlidesLengthChange={(e) => {
@@ -179,7 +98,7 @@ const CalendarView = ({ columns, setColumns }: Props) => {
             }
           }}
         >
-          {columns.map((column, index) => {
+          {columnStore.columns.map((column, index) => {
             let columnTodos
             if (column.order.length === 0) {
               // there are no todos in the column
@@ -193,9 +112,8 @@ const CalendarView = ({ columns, setColumns }: Props) => {
               <SwiperSlide key={column.id}>
                 <Column
                   todos={columnTodos}
-                  setTodos={setTodos}
                   column={column}
-                  setColumns={setColumns}
+                  setTodos={setTodos}
                   swiperRef={swiperRef}
                   index={index}
                 />
@@ -203,11 +121,8 @@ const CalendarView = ({ columns, setColumns }: Props) => {
             )
           })}
         </Swiper>
-        {/* </DragDropContext> */}
       </div>
       <NavRight
-        columns={columns}
-        setColumns={setColumns}
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
         syncToFirebase={syncToFirebase}

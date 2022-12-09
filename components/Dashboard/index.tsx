@@ -1,12 +1,14 @@
 import CalendarView from '@/components/Dashboard/CalendarView/'
-import { getInitialDays } from '@/utils/dateHelper'
-import { useState } from 'react'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
-import { IColumn } from './CalendarView/Column'
+import { IColumn } from '@/stores/columns'
 import ListView from './ListView'
+import * as columnService from '@/lib/column.service'
+import { useAuth } from '../AuthContext'
+import useColumnStore from '@/stores/columns'
 
 const Dashboard = () => {
-  const [columns, setColumns] = useState<IColumn[]>(getInitialDays())
+  const { user } = useAuth()
+  const columnStore = useColumnStore()
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result
@@ -21,10 +23,10 @@ const Dashboard = () => {
       return
     }
 
-    const startColumn = columns.find(
+    const startColumn = columnStore.columns.find(
       (col) => col.id === source.droppableId,
     ) as IColumn
-    const finishColumn = columns.find(
+    const finishColumn = columnStore.columns.find(
       (col) => col.id === destination.droppableId,
     ) as IColumn
 
@@ -39,12 +41,10 @@ const Dashboard = () => {
         order: newOrder,
       }
 
-      setColumns((prev) =>
-        prev.map((el) => (el.id === newColumn.id ? newColumn : el)),
-      )
+      columnStore.editColumn(newColumn.id, newColumn)
 
       // sync to firebase
-      // columnService.rearrangeOrder(user!.uid, finishColumn.id, newOrder)
+      columnService.rearrangeOrder(user!.uid, finishColumn.id, newOrder)
     } else {
       // move todo from one column to another
       const newStartOrder = Array.from(startColumn.order)
@@ -63,28 +63,19 @@ const Dashboard = () => {
         order: newFinishOrder,
       }
 
-      setColumns((prev) =>
-        prev.map((col) => {
-          if (col.id === startColumn.id) {
-            return newStartColumn
-          } else if (col.id === finishColumn.id) {
-            return newFinishColumn
-          } else {
-            return col
-          }
-        }),
-      )
+      columnStore.editColumn(startColumn.id, newStartColumn)
+      columnStore.editColumn(finishColumn.id, newFinishColumn)
 
       // sync to firebase
-      // columnService.rearrangeOrder(user!.uid, startColumn.id, newStartOrder)
-      // columnService.rearrangeOrder(user!.uid, finishColumn.id, newFinishOrder)
+      columnService.rearrangeOrder(user!.uid, startColumn.id, newStartOrder)
+      columnService.rearrangeOrder(user!.uid, finishColumn.id, newFinishOrder)
     }
   }
 
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
-        <CalendarView columns={columns} setColumns={setColumns} />
+        <CalendarView />
         <ListView />
       </DragDropContext>
     </>

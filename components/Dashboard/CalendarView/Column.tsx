@@ -13,30 +13,21 @@ import SwiperCore from 'swiper'
 import { useAuth } from '../../AuthContext'
 import TodoItem, { ITodo } from './TodoItem'
 import clsx from 'clsx'
-
-export interface IColumn {
-  id: string
-  order: string[]
-}
+import useColumnStore from '@/stores/columns'
+import { IColumn } from '@/stores/columns'
 
 interface Props {
   todos: ITodo[] | null
   column: IColumn
   setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>
-  setColumns: React.Dispatch<React.SetStateAction<IColumn[]>>
   swiperRef: SwiperCore | undefined
   index: number
 }
 
-const Column = ({
-  todos,
-  column,
-  setTodos,
-  setColumns,
-  index,
-  swiperRef,
-}: Props) => {
+const Column = ({ todos, column, setTodos, index, swiperRef }: Props) => {
   const { user } = useAuth()
+  const columnStore = useColumnStore()
+
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
   const isToday = checkIsToday(column.id)
   const isPast = checkIsPast(column.id)
@@ -50,17 +41,7 @@ const Column = ({
 
     setNewTodoInputValue('')
 
-    setColumns((prev) =>
-      prev.map((c) =>
-        c.id === column.id
-          ? update(c, {
-              order: {
-                $push: [res.id],
-              },
-            })
-          : c,
-      ),
-    )
+    columnStore.pushToColumnOrder(column.id, res.id)
 
     setTodos((prev) =>
       update(prev, {

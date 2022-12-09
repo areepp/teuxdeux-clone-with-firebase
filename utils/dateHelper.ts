@@ -1,4 +1,4 @@
-import { IColumn } from '@/components/Dashboard/Column'
+import { IColumn } from '@/stores/columns'
 
 const columnFactory = (date: string) => {
   return {
@@ -27,7 +27,7 @@ const getDaysColumns = (
   return returnValue
 }
 
-export const getInitialDays = (): IColumn[] => {
+export const getInitialColumns = (): IColumn[] => {
   // returns an array of column that contains 21 days (last week and next 2 weeks)
   const today = new Date()
   let nextTwoWeeks = getDaysColumns(today, 14, 'future')

@@ -9,23 +9,17 @@ import {
   getReInitiatedDays,
   transformDateSlashToDash,
 } from '@/utils/dateHelper'
-import { IColumn } from './Column'
+import useColumnStore, { IColumn } from '@/stores/columns'
 
 interface Props {
   navigationDisabled: boolean
   swiperRef: SwiperCore | undefined
-  columns: IColumn[]
-  setColumns: React.Dispatch<React.SetStateAction<IColumn[]>>
   syncToFirebase: (_localState: IColumn[]) => Promise<void>
 }
 
-const NavRight = ({
-  navigationDisabled,
-  swiperRef,
-  columns,
-  setColumns,
-  syncToFirebase,
-}: Props) => {
+const NavRight = ({ navigationDisabled, swiperRef, syncToFirebase }: Props) => {
+  const columnStore = useColumnStore()
+
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const [isCalendarClicked, setIsCalendarClicked] = useState(false)
 
@@ -37,14 +31,17 @@ const NavRight = ({
   }
 
   const handleDayClick = async (day: Date) => {
-    const clickedDayIndex = columns
+    const clickedDayIndex = columnStore.columns
       .map((col) => col.id)
       .indexOf(transformDateSlashToDash(day.toLocaleDateString()))
 
     const withinReach = () => {
       if (clickedDayIndex === -1) {
         return false
-      } else if (clickedDayIndex > columns.length - 4 || clickedDayIndex < 3) {
+      } else if (
+        clickedDayIndex > columnStore.columns.length - 4 ||
+        clickedDayIndex < 3
+      ) {
         return false
       } else {
         return true
@@ -54,7 +51,7 @@ const NavRight = ({
     if (withinReach()) {
       swiperRef?.slideTo(clickedDayIndex, 600)
     } else {
-      setColumns(getReInitiatedDays(day))
+      columnStore.setColumns(getReInitiatedDays(day))
       await syncToFirebase(getReInitiatedDays(day))
       swiperRef?.slideTo(7, 0)
     }
