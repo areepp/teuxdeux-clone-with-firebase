@@ -14,14 +14,15 @@ import { useAuth } from '../../AuthContext'
 import { IColumn } from '@/stores/columns'
 import NavLeft from './NavLeft'
 import NavRight from './NavRight'
-import { ITodo } from './TodoItem'
+import { ITodo } from '@/stores/todos'
 import Column from './Column'
+import useTodoStore from '@/stores/todos'
 
 const CalendarView = () => {
   const { user } = useAuth()
   const columnStore = useColumnStore()
+  const todoStore = useTodoStore()
 
-  const [todos, setTodos] = useState<ITodo[]>([])
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
   const [navigationDisabled, setNavigationDisabled] = useState(false)
 
@@ -40,12 +41,11 @@ const CalendarView = () => {
 
     columnStore.syncColumns(columnFromFirestore)
 
-    setTodos(
-      todoResponse.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      })) as ITodo[],
-    )
+    const todosMapped = todoResponse.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }))
+    todoStore.setTodos(todosMapped as ITodo[])
   }
 
   useEffect(() => {
@@ -105,7 +105,7 @@ const CalendarView = () => {
               columnTodos = null
             } else {
               columnTodos = column.order.map(
-                (id) => todos.find((todo) => todo.id === id) as ITodo,
+                (id) => todoStore.todos.find((todo) => todo.id === id) as ITodo,
               )
             }
             return (
@@ -113,7 +113,6 @@ const CalendarView = () => {
                 <Column
                   todos={columnTodos}
                   column={column}
-                  setTodos={setTodos}
                   swiperRef={swiperRef}
                   index={index}
                 />

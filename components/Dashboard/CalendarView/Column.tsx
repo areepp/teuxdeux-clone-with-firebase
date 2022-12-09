@@ -6,27 +6,27 @@ import {
   getDayOfTheWeek,
   getFullDate,
 } from '@/utils/dateHelper'
-import update from 'immutability-helper'
 import { KeyboardEvent, useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
 import SwiperCore from 'swiper'
 import { useAuth } from '../../AuthContext'
-import TodoItem, { ITodo } from './TodoItem'
+import TodoItem from './TodoItem'
 import clsx from 'clsx'
 import useColumnStore from '@/stores/columns'
 import { IColumn } from '@/stores/columns'
+import useTodoStore, { ITodo } from '@/stores/todos'
 
 interface Props {
   todos: ITodo[] | null
   column: IColumn
-  setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>
   swiperRef: SwiperCore | undefined
   index: number
 }
 
-const Column = ({ todos, column, setTodos, index, swiperRef }: Props) => {
+const Column = ({ todos, column, index, swiperRef }: Props) => {
   const { user } = useAuth()
   const columnStore = useColumnStore()
+  const todoStore = useTodoStore()
 
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
   const isToday = checkIsToday(column.id)
@@ -43,11 +43,7 @@ const Column = ({ todos, column, setTodos, index, swiperRef }: Props) => {
 
     columnStore.pushToColumnOrder(column.id, res.id)
 
-    setTodos((prev) =>
-      update(prev, {
-        $push: [{ id: res.id, text: newTodoInputValue, checked: false }],
-      }),
-    )
+    todoStore.pushTodo({ id: res.id, text: newTodoInputValue, checked: false })
 
     await columnService.addToOrderList(user!.uid, column.id, res.id)
   }
@@ -90,7 +86,6 @@ const Column = ({ todos, column, setTodos, index, swiperRef }: Props) => {
                       item={item}
                       index={i}
                       key={item.id}
-                      setTodos={setTodos}
                       colId={column.id}
                     />
                   )
