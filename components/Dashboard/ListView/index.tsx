@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { IoIosAdd, IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io'
 
 const ListView = () => {
-  const [isListVisible, setIsListVisible] = useState(true)
+  const [isListVisible, setIsListVisible] = useState(false)
   return (
     <div className="bg-zinc-50 px-5 py-2">
       <div className="flex items-center justify-between">

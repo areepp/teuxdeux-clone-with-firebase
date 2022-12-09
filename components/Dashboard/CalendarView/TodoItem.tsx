@@ -3,7 +3,7 @@ import * as columnService from '@/lib/column.service'
 import { useEffect, useRef, useState } from 'react'
 import { HiOutlineX, HiPencil } from 'react-icons/hi'
 
-import { useAuth } from '../AuthContext'
+import { useAuth } from '../../AuthContext'
 import { Draggable } from 'react-beautiful-dnd'
 
 export interface ITodo {

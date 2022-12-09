@@ -10,7 +10,7 @@ import update from 'immutability-helper'
 import { KeyboardEvent, useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
 import SwiperCore from 'swiper'
-import { useAuth } from '../AuthContext'
+import { useAuth } from '../../AuthContext'
 import TodoItem, { ITodo } from './TodoItem'
 import clsx from 'clsx'
 

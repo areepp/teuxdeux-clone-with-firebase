@@ -1,4 +1,4 @@
-import Header from '@/components/Dashboard/Header'
+import Header from '@/components/Header'
 import * as authService from '@/lib/auth.service'
 import { useRouter } from 'next/router'
 import { withAuthServerSideProps } from '@/lib/withAuthServerSideProps'
