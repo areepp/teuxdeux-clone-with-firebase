@@ -1,5 +1,5 @@
 import * as todoService from '@/lib/todo.service'
-import * as columnService from '@/lib/column.service'
+import * as calendarService from '@/lib/calendar.service'
 import { useEffect, useRef, useState } from 'react'
 import { HiOutlineX, HiPencil } from 'react-icons/hi'
 
@@ -27,7 +27,7 @@ const TodoItem = ({ item, index, colId }: Props) => {
   const handleDeleteTodo = async () => {
     todoStore.deleteTodo(item.id)
     await todoService.deleteTodo(user!.uid, item.id)
-    columnService.deleteFromOrderList(user!.uid, colId, item.id)
+    calendarService.deleteFromOrderList(user!.uid, colId, item.id)
   }
 
   const handleCheckTodo = async (data: { checked: boolean }) => {

@@ -7,10 +7,14 @@ import useColumnStore, { IColumn } from '@/stores/columns'
 interface Props {
   navigationDisabled: boolean
   swiperRef: SwiperCore | undefined
-  syncToFirebase: (_localState: IColumn[]) => Promise<void>
+  syncColumnToFIrebase: (_localState: IColumn[]) => Promise<void>
 }
 
-const NavLeft = ({ navigationDisabled, swiperRef, syncToFirebase }: Props) => {
+const NavLeft = ({
+  navigationDisabled,
+  swiperRef,
+  syncColumnToFIrebase,
+}: Props) => {
   const columnStore = useColumnStore()
   const onClick = async () => {
     const today = transformDateSlashToDash(new Date().toLocaleDateString())
@@ -19,7 +23,7 @@ const NavLeft = ({ navigationDisabled, swiperRef, syncToFirebase }: Props) => {
       swiperRef?.slideTo(todayIndex, 600)
     } else {
       columnStore.setColumns(getInitialColumns())
-      await syncToFirebase(getInitialColumns())
+      await syncColumnToFIrebase(getInitialColumns())
     }
   }
 

@@ -1,4 +1,4 @@
-import * as columnService from '@/lib/column.service'
+import * as calendarService from '@/lib/calendar.service'
 import * as todoService from '@/lib/todo.service'
 import {
   checkIsPast,
@@ -45,7 +45,7 @@ const Column = ({ todos, column, index, swiperRef }: Props) => {
 
     todoStore.pushTodo({ id: res.id, text: newTodoInputValue, checked: false })
 
-    await columnService.addToOrderList(user!.uid, column.id, res.id)
+    await calendarService.addToOrderList(user!.uid, column.id, res.id)
   }
 
   const handleKeyDown = async (e: KeyboardEvent) => {

@@ -1,4 +1,4 @@
-import { ITodo } from '@/components/Dashboard/CalendarView/TodoItem'
+import { ITodo } from '@/stores/todos'
 import {
   addDoc,
   collection,

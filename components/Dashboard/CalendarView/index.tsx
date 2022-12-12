@@ -1,5 +1,4 @@
-import * as columnService from '@/lib/column.service'
-import * as todoService from '@/lib/todo.service'
+import * as calendarService from '@/lib/calendar.service'
 import useColumnStore from '@/stores/columns'
 import {
   getInitialColumns,
@@ -22,34 +21,20 @@ const CalendarView = () => {
   const { user } = useAuth()
   const columnStore = useColumnStore()
   const todoStore = useTodoStore()
-
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
   const [navigationDisabled, setNavigationDisabled] = useState(false)
 
-  const syncToFirebase = async (localState: IColumn[]) => {
-    console.log(localState)
-
-    const [columnResponse, todoResponse] = await Promise.all([
-      columnService.getColumnByIds(
-        user!.uid,
-        localState.map((day) => day.id),
-      ),
-      todoService.getAllTodos(user!.uid),
-    ])
-
-    const columnFromFirestore = columnResponse.flat() as IColumn[]
-
+  const syncColumnToFIrebase = async (localState: IColumn[]) => {
+    const calendarResponse = await calendarService.getColumnByIds(
+      user!.uid,
+      localState.map((day) => day.id),
+    )
+    const columnFromFirestore = calendarResponse.flat() as IColumn[]
     columnStore.syncColumns(columnFromFirestore)
-
-    const todosMapped = todoResponse.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id,
-    }))
-    todoStore.setTodos(todosMapped as ITodo[])
   }
 
   useEffect(() => {
-    syncToFirebase(getInitialColumns())
+    syncColumnToFIrebase(getInitialColumns())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -58,7 +43,7 @@ const CalendarView = () => {
       <NavLeft
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
-        syncToFirebase={syncToFirebase}
+        syncColumnToFIrebase={syncColumnToFIrebase}
       />
       <div className="h-full md:w-main">
         <Swiper
@@ -81,12 +66,15 @@ const CalendarView = () => {
                 columnStore.columns[columnStore.columns.length - 1].id,
               )
               columnStore.pushColumns(nextFourDays)
-              await syncToFirebase([...columnStore.columns, ...nextFourDays])
+              await syncColumnToFIrebase([
+                ...columnStore.columns,
+                ...nextFourDays,
+              ])
             }
             if (e.activeIndex === 3) {
               const pastFourDays = getPastFourDays(columnStore.columns[0].id)
               columnStore.unshiftColumns(pastFourDays.reverse())
-              await syncToFirebase([
+              await syncColumnToFIrebase([
                 ...pastFourDays.reverse(),
                 ...columnStore.columns,
               ])
@@ -124,7 +112,7 @@ const CalendarView = () => {
       <NavRight
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
-        syncToFirebase={syncToFirebase}
+        syncColumnToFIrebase={syncColumnToFIrebase}
       />
     </main>
   )

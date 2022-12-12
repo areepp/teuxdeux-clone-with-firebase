@@ -14,10 +14,14 @@ import useColumnStore, { IColumn } from '@/stores/columns'
 interface Props {
   navigationDisabled: boolean
   swiperRef: SwiperCore | undefined
-  syncToFirebase: (_localState: IColumn[]) => Promise<void>
+  syncColumnToFIrebase: (_localState: IColumn[]) => Promise<void>
 }
 
-const NavRight = ({ navigationDisabled, swiperRef, syncToFirebase }: Props) => {
+const NavRight = ({
+  navigationDisabled,
+  swiperRef,
+  syncColumnToFIrebase,
+}: Props) => {
   const columnStore = useColumnStore()
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
@@ -52,7 +56,7 @@ const NavRight = ({ navigationDisabled, swiperRef, syncToFirebase }: Props) => {
       swiperRef?.slideTo(clickedDayIndex, 600)
     } else {
       columnStore.setColumns(getReInitiatedDays(day))
-      await syncToFirebase(getReInitiatedDays(day))
+      await syncColumnToFIrebase(getReInitiatedDays(day))
       swiperRef?.slideTo(7, 0)
     }
 
