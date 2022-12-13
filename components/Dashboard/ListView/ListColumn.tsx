@@ -43,7 +43,7 @@ const ListColumn = ({ todos, list, index }: Props) => {
         <div
           {...provided.draggableProps}
           ref={provided.innerRef}
-          className="px-4 text-gray-900 flex-grow"
+          className="h-full px-4 w-full text-gray-900 flex-grow"
         >
           <div
             {...provided.dragHandleProps}
@@ -52,7 +52,6 @@ const ListColumn = ({ todos, list, index }: Props) => {
             <IoReorderTwoOutline />
           </div>
           <input
-            autoFocus
             type="text"
             value={list.title}
             onChange={(e) => listStore.setListTitle(list.id, e.target.value)}
@@ -61,7 +60,7 @@ const ListColumn = ({ todos, list, index }: Props) => {
                 title: list.title,
               })
             }
-            className=" w-full mx-auto bg-inherit font-gothic text-center uppercase text-6xl md:text-4xl focus:outline-none hover:bg-stone-300 transition-all"
+            className="flex items-center mx-auto bg-inherit font-gothic text-center uppercase text-6xl md:text-4xl focus:outline-none hover:bg-stone-300 transition-all"
           />
           <div className="h-full mt-10 md:mt-4 md:text-sm bg-mobile-horizontal-lines md:bg-md-horizontal-lines">
             <Droppable droppableId={`list-${list.id}`} type="todo">

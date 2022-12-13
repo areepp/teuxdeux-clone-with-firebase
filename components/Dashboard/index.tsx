@@ -146,12 +146,12 @@ const Dashboard = () => {
   }
 
   return (
-    <>
+    <main className="flex-auto flex flex-col">
       <DragDropContext onDragEnd={onDragEnd}>
         <CalendarView />
         <ListView />
       </DragDropContext>
-    </>
+    </main>
   )
 }
 

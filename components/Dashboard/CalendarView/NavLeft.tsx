@@ -1,7 +1,7 @@
 import { getInitialColumns, transformDateSlashToDash } from '@/utils/dateHelper'
 import { IoHome } from 'react-icons/io5'
 import SwiperCore from 'swiper'
-import Arrow from './Arrow'
+import Arrow from '../Common/Arrow'
 import useColumnStore, { IColumn } from '@/stores/columns'
 
 interface Props {

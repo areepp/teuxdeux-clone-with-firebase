@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { DayPicker } from 'react-day-picker'
 import { IoCalendar } from 'react-icons/io5'
 import SwiperCore from 'swiper'
-import Arrow from './Arrow'
+import Arrow from '../Common/Arrow'
 
 import 'react-day-picker/dist/style.css'
 import {

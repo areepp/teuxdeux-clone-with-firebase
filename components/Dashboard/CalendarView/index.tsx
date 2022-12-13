@@ -39,7 +39,7 @@ const CalendarView = () => {
   }, [])
 
   return (
-    <main className="relative flex-auto min-h-[450px] pt-12 md:flex">
+    <div className="relative flex-grow min-h-[500px] pt-12 md:flex">
       <NavLeft
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
@@ -114,7 +114,7 @@ const CalendarView = () => {
         navigationDisabled={navigationDisabled}
         syncColumnToFirebase={syncColumnToFirebase}
       />
-    </main>
+    </div>
   )
 }
 

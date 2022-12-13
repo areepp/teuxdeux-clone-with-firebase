@@ -3,7 +3,7 @@ import { FaChevronRight, FaChevronLeft } from 'react-icons/fa'
 interface Props {
   left?: boolean
   onClick: React.MouseEventHandler
-  navigationDisabled: boolean
+  navigationDisabled?: boolean
 }
 
 const Arrow = ({ left, onClick, navigationDisabled }: Props) => {

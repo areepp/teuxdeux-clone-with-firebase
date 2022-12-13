@@ -6,12 +6,17 @@ import ListColumn from './ListColumn'
 import * as listService from '@/lib/list.service'
 import { Droppable } from 'react-beautiful-dnd'
 import useTodoStore, { ITodo } from '@/stores/todos'
+import SwiperCore from 'swiper'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import NavLeft from './NavLeft'
+import NavRight from './NavRight'
 
 const ListView = () => {
-  const [isListVisible, setIsListVisible] = useState(false)
+  const [isListVisible, setIsListVisible] = useState(true)
   const listStore = useListStore()
   const todoStore = useTodoStore()
   const { user } = useAuth()
+  const [swiperRef, setSwiperRef] = useState<SwiperCore>()
 
   useEffect(() => {
     async function syncColumnToFirebase() {
@@ -38,8 +43,8 @@ const ListView = () => {
   }
 
   return (
-    <div className="bg-zinc-50 px-5 py-2">
-      <div className="flex items-center justify-between">
+    <div className="bg-zinc-50 py-2">
+      <div className="px-5 flex items-center justify-between">
         <button
           className={`text-3xl ${
             isListVisible ? 'text-primary' : 'text-gray-400'
@@ -54,40 +59,64 @@ const ListView = () => {
         </button>
       </div>
       {isListVisible && (
-        <Droppable droppableId="all-lists" direction="horizontal" type="list">
-          {(provided) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="relative flex min-h-[500px]"
-            >
-              {listStore.listOrder.map((id, index) => {
-                let listTodos
+        <div className="relative flex">
+          <NavLeft swiperRef={swiperRef} />
+          <Droppable droppableId="all-lists" direction="horizontal" type="list">
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="relative flex min-h-[500px] w-full md:w-main"
+              >
+                <Swiper
+                  className="w-full h-full"
+                  onSwiper={setSwiperRef}
+                  initialSlide={0}
+                  slidesPerView={1}
+                  allowTouchMove={false}
+                  speed={600}
+                  breakpoints={{
+                    768: {
+                      slidesPerView: 3,
+                    },
+                  }}
+                >
+                  {listStore.listOrder.map((id, index) => {
+                    let listTodos
 
-                const list = listStore.lists.filter((list) => list.id === id)[0]
+                    const list = listStore.lists.filter(
+                      (list) => list.id === id,
+                    )[0]
 
-                if (list.order.length === 0) {
-                  listTodos = null
-                } else {
-                  listTodos = list.order.map(
-                    (id) =>
-                      todoStore.todos.find((todo) => todo.id === id) as ITodo,
-                  )
-                }
+                    if (list.order.length === 0) {
+                      listTodos = null
+                    } else {
+                      listTodos = list.order.map(
+                        (id) =>
+                          todoStore.todos.find(
+                            (todo) => todo.id === id,
+                          ) as ITodo,
+                      )
+                    }
 
-                return (
-                  <ListColumn
-                    list={list}
-                    todos={listTodos}
-                    key={list.id}
-                    index={index}
-                  />
-                )
-              })}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+                    return (
+                      <SwiperSlide className="w-full" key={list.id}>
+                        <ListColumn
+                          list={list}
+                          todos={listTodos}
+                          key={list.id}
+                          index={index}
+                        />
+                      </SwiperSlide>
+                    )
+                  })}
+                  {provided.placeholder}
+                </Swiper>
+              </div>
+            )}
+          </Droppable>
+          <NavRight swiperRef={swiperRef} />
+        </div>
       )}
     </div>
   )
