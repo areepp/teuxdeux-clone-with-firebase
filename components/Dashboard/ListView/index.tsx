@@ -15,21 +15,26 @@ const ListView = () => {
 
   useEffect(() => {
     async function syncColumnToFirebase() {
-      const listResponse = await listService.getLists(user!.uid)
+      const [listResponse, listOrderResponse] = await Promise.all([
+        listService.getLists(user!.uid),
+        listService.getListOrder(user!.uid),
+      ])
       const listMapped = listResponse.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
       }))
+
       listStore.setLists(listMapped as IList[])
-      listStore.setListOrder(listMapped.map((list) => list.id))
+      listStore.setListOrder(listOrderResponse!.data()!.order)
     }
     syncColumnToFirebase()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleAddList = async () => {
-    listStore.addList()
-    await listService.addList(user!.uid)
+    const res = await listService.addList(user!.uid)
+    await listService.addToListOrder(user!.uid, res.id)
+    listStore.addList(res.id)
   }
 
   return (

@@ -31,7 +31,7 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = async (result: DropResult) => {
     const { destination, source, draggableId, type } = result
 
     if (!destination) return
@@ -42,6 +42,8 @@ const Dashboard = () => {
       newListOrder.splice(destination.index, 0, draggableId)
 
       listStore.setListOrder(newListOrder)
+      listService.rearrangeListOrder(user!.uid, newListOrder)
+
       return
     }
 

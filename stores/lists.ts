@@ -10,7 +10,7 @@ export interface IList {
 interface ListStore {
   lists: IList[]
   listOrder: string[]
-  addList: () => void
+  addList: (_id: string) => void
   setListTitle: (_listId: string, _title: string) => void
   setLists: (_newLists: IList[]) => void
   setListOrder: (_listOrder: string[]) => void
@@ -25,9 +25,10 @@ interface State {
 const useListStore = create<ListStore>((set: any) => ({
   lists: [],
   listOrder: [],
-  addList: () =>
+  addList: (id: string) =>
     set((state: any) => ({
-      lists: [...state.lists, { id: '', title: '', order: [] }],
+      lists: [...state.lists, { id, title: '', order: [] }],
+      listOrder: [...state.listOrder, id],
     })),
   setListTitle: (listId: string, title: string) =>
     set((state: State) => ({

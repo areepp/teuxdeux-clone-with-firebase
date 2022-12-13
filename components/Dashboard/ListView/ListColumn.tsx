@@ -28,7 +28,7 @@ const ListColumn = ({ todos, list, index }: Props) => {
     setNewTodoInputValue('')
     listStore.pushToListOrder(list.id, res.id)
     todoStore.pushTodo({ id: res.id, text: newTodoInputValue, checked: false })
-    await listService.addToListOrder(user!.uid, list.id, res.id)
+    await listService.addTodoToListOrder(user!.uid, list.id, res.id)
   }
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -56,6 +56,11 @@ const ListColumn = ({ todos, list, index }: Props) => {
             type="text"
             value={list.title}
             onChange={(e) => listStore.setListTitle(list.id, e.target.value)}
+            onBlur={async () =>
+              await listService.editListTitle(user!.uid, list.id, {
+                title: list.title,
+              })
+            }
             className=" w-full mx-auto bg-inherit font-gothic text-center uppercase text-6xl md:text-4xl focus:outline-none hover:bg-stone-300 transition-all"
           />
           <div className="h-full mt-10 md:mt-4 md:text-sm bg-mobile-horizontal-lines md:bg-md-horizontal-lines">
