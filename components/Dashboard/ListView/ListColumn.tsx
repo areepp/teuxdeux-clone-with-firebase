@@ -7,6 +7,7 @@ import { IoReorderTwoOutline } from 'react-icons/io5'
 import TodoItem from './TodoItem'
 import * as todoService from '@/lib/todo.service'
 import * as listService from '@/lib/list.service'
+import { HiPencil } from 'react-icons/hi'
 
 interface Props {
   list: IList
@@ -43,7 +44,7 @@ const ListColumn = ({ todos, list, index }: Props) => {
         <div
           {...provided.draggableProps}
           ref={provided.innerRef}
-          className="h-full px-4 w-full text-gray-900 flex-grow"
+          className="h-full px-4 w-full text-gray-900 flex-grow drag-fix"
         >
           <div
             {...provided.dragHandleProps}
@@ -63,7 +64,30 @@ const ListColumn = ({ todos, list, index }: Props) => {
             className="flex items-center mx-auto bg-inherit font-gothic text-center uppercase text-6xl md:text-4xl focus:outline-none hover:bg-stone-300 transition-all"
           />
           <div className="h-full mt-10 md:mt-4 md:text-sm bg-mobile-horizontal-lines md:bg-md-horizontal-lines">
-            <Droppable droppableId={`list-${list.id}`} type="todo">
+            <Droppable
+              droppableId={`list-${list.id}`}
+              type="todo"
+              renderClone={(provided, _snapshot, rubric) => {
+                // renderClone allows to move todo item to other parent (CALENDAR VIEW) whilte maintaining the correct styles
+                const draggedTodoText = todos!.filter(
+                  (todo) => todo.id === rubric.draggableId,
+                )[0].text
+
+                return (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    className={`z-50 h-[49px] md:text-sm md:h-[27px] flex items-center justify-between`}
+                  >
+                    <p className="">{draggedTodoText}</p>
+                    <div>
+                      <HiPencil />
+                    </div>
+                  </div>
+                )
+              }}
+            >
               {(provided) => (
                 <div ref={provided.innerRef} {...provided.droppableProps}>
                   {todos &&

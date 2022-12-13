@@ -15,6 +15,7 @@ import clsx from 'clsx'
 import useColumnStore from '@/stores/columns'
 import { IColumn } from '@/stores/columns'
 import useTodoStore, { ITodo } from '@/stores/todos'
+import { HiPencil } from 'react-icons/hi'
 
 interface Props {
   todos: ITodo[] | null
@@ -74,7 +75,30 @@ const Column = ({ todos, column, index, swiperRef }: Props) => {
         </div>
       </div>
       <div className="h-full mt-20 md:mt-4 md:text-sm bg-mobile-horizontal-lines md:bg-md-horizontal-lines">
-        <Droppable droppableId={column.id} type="todo">
+        <Droppable
+          droppableId={column.id}
+          type="todo"
+          renderClone={(provided, _snapshot, rubric) => {
+            // renderClone allows to move todo item to other parent (LIST VIEW) whilte maintaining the correct styles
+            const draggedTodoText = todos!.filter(
+              (todo) => todo.id === rubric.draggableId,
+            )[0].text
+
+            return (
+              <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                className={`z-50 h-[49px] md:text-sm md:h-[27px] flex items-center justify-between`}
+              >
+                <p className="">{draggedTodoText}</p>
+                <div>
+                  <HiPencil />
+                </div>
+              </div>
+            )
+          }}
+        >
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {todos &&
