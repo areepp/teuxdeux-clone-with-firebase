@@ -1,36 +1,36 @@
 import { useAuth } from '@/components/AuthContext'
 import useListStore, { IList } from '@/stores/lists'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IoIosAdd, IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io'
-import Column from './Column'
+import ListColumn from './ListColumn'
 import * as listService from '@/lib/list.service'
-import LIST_DATA from '@/data/columns.json'
 import { Droppable } from 'react-beautiful-dnd'
+import useTodoStore, { ITodo } from '@/stores/todos'
 
 const ListView = () => {
   const [isListVisible, setIsListVisible] = useState(false)
   const listStore = useListStore()
+  const todoStore = useTodoStore()
   const { user } = useAuth()
 
   useEffect(() => {
-    // async function syncColumnToFIrebase() {
-    //   const listResponse = await listService.getLists(user!.uid)
-    //   const listMapped = listResponse.docs.map((doc) => ({
-    //     ...doc.data(),
-    //     id: doc.id,
-    //   }))
-    //   listStore.setLists(listMapped as IList[])
-    // }
-    // syncColumnToFIrebase()
+    async function syncColumnToFirebase() {
+      const listResponse = await listService.getLists(user!.uid)
+      const listMapped = listResponse.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }))
+      listStore.setLists(listMapped as IList[])
+      listStore.setListOrder(listMapped.map((list) => list.id))
+    }
+    syncColumnToFirebase()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleAddList = async () => {
-    // listStore.addList()
-    // await listService.addList(user!.uid)
+    listStore.addList()
+    await listService.addList(user!.uid)
   }
-
-  console.log(LIST_DATA)
 
   return (
     <div className="bg-zinc-50 px-5 py-2">
@@ -57,10 +57,27 @@ const ListView = () => {
               className="relative flex min-h-[500px]"
             >
               {listStore.listOrder.map((id, index) => {
-                const list = LIST_DATA.columns.filter(
-                  (column) => column.id === id,
-                )[0]
-                return <Column list={list} key={list.id} index={index} />
+                let listTodos
+
+                const list = listStore.lists.filter((list) => list.id === id)[0]
+
+                if (list.order.length === 0) {
+                  listTodos = null
+                } else {
+                  listTodos = list.order.map(
+                    (id) =>
+                      todoStore.todos.find((todo) => todo.id === id) as ITodo,
+                  )
+                }
+
+                return (
+                  <ListColumn
+                    list={list}
+                    todos={listTodos}
+                    key={list.id}
+                    index={index}
+                  />
+                )
               })}
               {provided.placeholder}
             </div>

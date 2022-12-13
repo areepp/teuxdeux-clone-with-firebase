@@ -24,7 +24,7 @@ const CalendarView = () => {
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
   const [navigationDisabled, setNavigationDisabled] = useState(false)
 
-  const syncColumnToFIrebase = async (localState: IColumn[]) => {
+  const syncColumnToFirebase = async (localState: IColumn[]) => {
     const calendarResponse = await calendarService.getColumnByIds(
       user!.uid,
       localState.map((day) => day.id),
@@ -34,7 +34,7 @@ const CalendarView = () => {
   }
 
   useEffect(() => {
-    syncColumnToFIrebase(getInitialColumns())
+    syncColumnToFirebase(getInitialColumns())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -43,7 +43,7 @@ const CalendarView = () => {
       <NavLeft
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
-        syncColumnToFIrebase={syncColumnToFIrebase}
+        syncColumnToFirebase={syncColumnToFirebase}
       />
       <div className="h-full md:w-main">
         <Swiper
@@ -66,7 +66,7 @@ const CalendarView = () => {
                 columnStore.columns[columnStore.columns.length - 1].id,
               )
               columnStore.pushColumns(nextFourDays)
-              await syncColumnToFIrebase([
+              await syncColumnToFirebase([
                 ...columnStore.columns,
                 ...nextFourDays,
               ])
@@ -74,7 +74,7 @@ const CalendarView = () => {
             if (e.activeIndex === 3) {
               const pastFourDays = getPastFourDays(columnStore.columns[0].id)
               columnStore.unshiftColumns(pastFourDays.reverse())
-              await syncColumnToFIrebase([
+              await syncColumnToFirebase([
                 ...pastFourDays.reverse(),
                 ...columnStore.columns,
               ])
@@ -112,7 +112,7 @@ const CalendarView = () => {
       <NavRight
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
-        syncColumnToFIrebase={syncColumnToFIrebase}
+        syncColumnToFirebase={syncColumnToFirebase}
       />
     </main>
   )

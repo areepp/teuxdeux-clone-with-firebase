@@ -4,10 +4,11 @@ import useColumnStore, { IColumn } from '@/stores/columns'
 import ListView from './ListView'
 import * as calendarService from '@/lib/calendar.service'
 import * as todoService from '@/lib/todo.service'
+import * as listService from '@/lib/list.service'
 import { useAuth } from '../AuthContext'
 import { useEffect } from 'react'
 import useTodoStore, { ITodo } from '@/stores/todos'
-import useListStore from '@/stores/lists'
+import useListStore, { IList } from '@/stores/lists'
 
 const Dashboard = () => {
   const { user } = useAuth()
@@ -52,12 +53,33 @@ const Dashboard = () => {
       return
     }
 
-    const startColumn = columnStore.columns.find(
-      (col) => col.id === source.droppableId,
-    ) as IColumn
-    const finishColumn = columnStore.columns.find(
-      (col) => col.id === destination.droppableId,
-    ) as IColumn
+    const destinationIsList = destination.droppableId.startsWith('list-')
+    const sourceIsList = source.droppableId.startsWith('list-')
+
+    let startColumn: IColumn | IList
+    let finishColumn: IColumn | IList
+
+    // determine whether or not the destination / source is list or calendar to use the correct store.
+
+    if (sourceIsList) {
+      startColumn = listStore.lists.find(
+        (list) => list.id === source.droppableId.split('-').pop(),
+      ) as IList
+    } else {
+      startColumn = columnStore.columns.find(
+        (col) => col.id === source.droppableId,
+      ) as IColumn
+    }
+
+    if (destinationIsList) {
+      finishColumn = listStore.lists.find(
+        (list) => list.id === destination.droppableId.split('-').pop(),
+      ) as IList
+    } else {
+      finishColumn = columnStore.columns.find(
+        (col) => col.id === destination.droppableId,
+      ) as IColumn
+    }
 
     if (startColumn === finishColumn) {
       // reorder array within the same column
@@ -70,10 +92,13 @@ const Dashboard = () => {
         order: newOrder,
       }
 
-      columnStore.editColumn(newColumn.id, newColumn)
-
-      // sync to firebase
-      calendarService.rearrangeOrder(user!.uid, finishColumn.id, newOrder)
+      if (destinationIsList) {
+        listStore.editList(newColumn.id, newColumn as IList)
+        listService.rearrangeTodoOrder(user!.uid, finishColumn.id, newOrder)
+      } else {
+        columnStore.editColumn(newColumn.id, newColumn)
+        calendarService.rearrangeOrder(user!.uid, finishColumn.id, newOrder) // sync to firebase
+      }
     } else {
       // move todo from one column to another
       const newStartOrder = Array.from(startColumn.order)
@@ -92,12 +117,29 @@ const Dashboard = () => {
         order: newFinishOrder,
       }
 
-      columnStore.editColumn(startColumn.id, newStartColumn)
-      columnStore.editColumn(finishColumn.id, newFinishColumn)
+      if (sourceIsList) {
+        listStore.editList(startColumn.id, newStartColumn as IList)
+        listService.rearrangeTodoOrder(user!.uid, startColumn.id, newStartOrder)
+      } else {
+        columnStore.editColumn(startColumn.id, newStartColumn)
+        calendarService.rearrangeOrder(user!.uid, startColumn.id, newStartOrder)
+      }
 
-      // sync to firebase
-      calendarService.rearrangeOrder(user!.uid, startColumn.id, newStartOrder)
-      calendarService.rearrangeOrder(user!.uid, finishColumn.id, newFinishOrder)
+      if (destinationIsList) {
+        listStore.editList(finishColumn.id, newFinishColumn as IList)
+        listService.rearrangeTodoOrder(
+          user!.uid,
+          finishColumn.id,
+          newFinishOrder,
+        )
+      } else {
+        columnStore.editColumn(finishColumn.id, newFinishColumn)
+        calendarService.rearrangeOrder(
+          user!.uid,
+          finishColumn.id,
+          newFinishOrder,
+        )
+      }
     }
   }
 

@@ -7,13 +7,13 @@ import useColumnStore, { IColumn } from '@/stores/columns'
 interface Props {
   navigationDisabled: boolean
   swiperRef: SwiperCore | undefined
-  syncColumnToFIrebase: (_localState: IColumn[]) => Promise<void>
+  syncColumnToFirebase: (_localState: IColumn[]) => Promise<void>
 }
 
 const NavLeft = ({
   navigationDisabled,
   swiperRef,
-  syncColumnToFIrebase,
+  syncColumnToFirebase,
 }: Props) => {
   const columnStore = useColumnStore()
   const onClick = async () => {
@@ -23,7 +23,7 @@ const NavLeft = ({
       swiperRef?.slideTo(todayIndex, 600)
     } else {
       columnStore.setColumns(getInitialColumns())
-      await syncColumnToFIrebase(getInitialColumns())
+      await syncColumnToFirebase(getInitialColumns())
     }
   }
 

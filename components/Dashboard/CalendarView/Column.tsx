@@ -27,7 +27,6 @@ const Column = ({ todos, column, index, swiperRef }: Props) => {
   const { user } = useAuth()
   const columnStore = useColumnStore()
   const todoStore = useTodoStore()
-
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
   const isToday = checkIsToday(column.id)
   const isPast = checkIsPast(column.id)
@@ -75,7 +74,7 @@ const Column = ({ todos, column, index, swiperRef }: Props) => {
         </div>
       </div>
       <div className="h-full mt-20 md:mt-4 md:text-sm bg-mobile-horizontal-lines md:bg-md-horizontal-lines">
-        <Droppable droppableId={column.id}>
+        <Droppable droppableId={column.id} type="todo">
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {todos &&
