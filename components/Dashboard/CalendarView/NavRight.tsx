@@ -65,7 +65,7 @@ const NavRight = ({
   }
 
   return (
-    <nav className="z-50 pt-2 md:w-16 absolute top-14 right-2 md:static  md:border-l border-stone-200">
+    <nav className="z-30 pt-2 md:w-16 absolute top-14 right-2 md:static  md:border-l border-stone-200">
       <div className="flex flex-col items-center relative">
         <Arrow
           navigationDisabled={navigationDisabled}

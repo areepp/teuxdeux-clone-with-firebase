@@ -9,9 +9,11 @@ import SwiperCore from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import NavLeft from './NavLeft'
 import NavRight from './NavRight'
+import ReOrderListModal from './ReOrderListModal'
 
 const ListView = () => {
   const [isListVisible, setIsListVisible] = useState(true)
+  const [isReOrderModalVisible, setIsReOrderModalVisible] = useState(false)
   const listStore = useListStore()
   const todoStore = useTodoStore()
   const { user } = useAuth()
@@ -52,7 +54,15 @@ const ListView = () => {
         >
           {isListVisible ? <IoMdArrowDropdown /> : <IoMdArrowDropup />}
         </button>
-        <div>re-order list</div>
+        <button onClick={() => setIsReOrderModalVisible(true)}>
+          re-order list
+        </button>
+        {isReOrderModalVisible && (
+          <ReOrderListModal
+            setIsReOrderModalVisible={setIsReOrderModalVisible}
+          />
+        )}
+
         <button onClick={handleAddList} className="text-3xl text-gray-400">
           <IoIosAdd />
         </button>

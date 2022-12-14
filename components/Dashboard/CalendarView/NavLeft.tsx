@@ -28,7 +28,7 @@ const NavLeft = ({
   }
 
   return (
-    <nav className="z-50 md:w-16 absolute md:static top-14 left-2 flex flex-col items-center pt-2 md:border-r border-stone-200">
+    <nav className="z-30 md:w-16 absolute md:static top-14 left-2 flex flex-col items-center pt-2 md:border-r border-stone-200">
       <Arrow
         left
         navigationDisabled={navigationDisabled}
