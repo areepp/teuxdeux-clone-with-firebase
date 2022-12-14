@@ -9,7 +9,9 @@ interface Props {
 const Arrow = ({ left, onClick, navigationDisabled }: Props) => {
   return (
     <button
-      className="text-primary text-4xl"
+      className={`${
+        navigationDisabled ? 'text-gray-400' : 'text-primary'
+      } text-primary text-4xl`}
       disabled={navigationDisabled}
       onClick={onClick}
     >

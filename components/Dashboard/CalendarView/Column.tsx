@@ -33,6 +33,8 @@ const Column = ({ todos, column, index, swiperRef }: Props) => {
   const isPast = checkIsPast(column.id)
   const isRealIndex = index === swiperRef?.realIndex
 
+  console.log(isPast)
+
   const handleAddTodo = async () => {
     const res = await todoService.addTodo(user!.uid, {
       text: newTodoInputValue,
@@ -61,7 +63,7 @@ const Column = ({ todos, column, index, swiperRef }: Props) => {
         isToday && 'text-primary',
         !isPast && !isToday && 'text-gray-900',
         !isRealIndex && 'border-l border-stone-200',
-        'px-4 h-full text-primary flex-grow',
+        'px-4 h-full flex-grow',
       )}
     >
       <div className="w-full text-center">
