@@ -12,7 +12,9 @@ const NavRight = ({ swiperRef, activeSlideIndex }: Props) => {
   return (
     <nav className="z-30 md:w-16 absolute md:static top-14 right-2 flex flex-col items-center pt-2 md:border-l border-stone-200">
       <Arrow
-        navigationDisabled={activeSlideIndex === listOrder.length - 3}
+        navigationDisabled={
+          activeSlideIndex === listOrder.length - 3 || listOrder.length < 4
+        }
         onClick={(e: any) => e.stopPropagation() || swiperRef?.slideNext()}
       />
     </nav>

@@ -59,7 +59,7 @@ const ListView = () => {
         <div className="flex items-center">
           <SlideProgress activeSlideIndex={activeSlideIndex} />
           <button
-            className="ml-4 px-3 py-1 text-xs rounded bg-zinc-200"
+            className="ml-4 px-3 py-1 text-xs rounded bg-zinc-200 hover:bg-zinc-300 transition-all"
             onClick={() => setIsReOrderModalVisible(true)}
           >
             Re-order

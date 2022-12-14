@@ -48,7 +48,7 @@ const ListColumn = ({ todos, list }: Props) => {
       <div className="relative left-40 md:left-0">
         <button
           onClick={openListOption}
-          className="mt-20 w-full flex justify-start text-xl"
+          className="mt-20 flex justify-start py-1 rounded text-xl hover:bg-zinc-300 transition-all"
         >
           <TbDotsVertical />
         </button>
