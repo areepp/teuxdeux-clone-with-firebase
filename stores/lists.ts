@@ -11,6 +11,7 @@ interface ListStore {
   lists: IList[]
   listOrder: string[]
   addList: (_id: string) => void
+  deleteList: (_deletedId: string) => void
   setListTitle: (_listId: string, _title: string) => void
   setLists: (_newLists: IList[]) => void
   setListOrder: (_listOrder: string[]) => void
@@ -20,6 +21,7 @@ interface ListStore {
 
 interface State {
   lists: IList[]
+  listOrder: string[]
 }
 
 const useListStore = create<ListStore>((set: any) => ({
@@ -29,6 +31,11 @@ const useListStore = create<ListStore>((set: any) => ({
     set((state: any) => ({
       lists: [...state.lists, { id, title: '', order: [] }],
       listOrder: [...state.listOrder, id],
+    })),
+  deleteList: (deletedId: string) =>
+    set((state: State) => ({
+      lists: state.lists.filter((list) => list.id !== deletedId),
+      listOrder: state.listOrder.filter((id) => id !== deletedId),
     })),
   setListTitle: (listId: string, title: string) =>
     set((state: State) => ({

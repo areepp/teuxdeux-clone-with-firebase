@@ -39,7 +39,7 @@ const CalendarView = () => {
   }, [])
 
   return (
-    <div className="relative flex-grow min-h-[500px] pt-12 md:flex">
+    <div className="relative bg-white flex-grow min-h-[500px] pt-12 md:flex">
       <NavLeft
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}

@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { IoIosAdd, IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io'
 import ListColumn from './ListColumn'
 import * as listService from '@/lib/list.service'
-import { Droppable } from 'react-beautiful-dnd'
 import useTodoStore, { ITodo } from '@/stores/todos'
 import SwiperCore from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -59,62 +58,44 @@ const ListView = () => {
         </button>
       </div>
       {isListVisible && (
-        <div className="relative flex">
+        <div className="relative flex min-h-[500px]">
           <NavLeft swiperRef={swiperRef} />
-          <Droppable droppableId="all-lists" direction="horizontal" type="list">
-            {(provided) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className="relative flex min-h-[500px] w-full md:w-main"
-              >
-                <Swiper
-                  className="w-full h-full"
-                  onSwiper={setSwiperRef}
-                  initialSlide={0}
-                  slidesPerView={1}
-                  allowTouchMove={false}
-                  speed={600}
-                  breakpoints={{
-                    768: {
-                      slidesPerView: 3,
-                    },
-                  }}
-                >
-                  {listStore.listOrder.map((id, index) => {
-                    let listTodos
 
-                    const list = listStore.lists.filter(
-                      (list) => list.id === id,
-                    )[0]
+          <div className="flex w-full md:w-main">
+            <Swiper
+              className="w-full"
+              onSwiper={setSwiperRef}
+              initialSlide={0}
+              slidesPerView={1}
+              allowTouchMove={false}
+              speed={600}
+              breakpoints={{
+                768: {
+                  slidesPerView: 3,
+                },
+              }}
+            >
+              {listStore.listOrder.map((id) => {
+                let listTodos
+                const list = listStore.lists.filter((list) => list.id === id)[0]
+                if (list.order.length === 0) {
+                  listTodos = null
+                } else {
+                  listTodos = list.order.map(
+                    (id) =>
+                      todoStore.todos.find((todo) => todo.id === id) as ITodo,
+                  )
+                }
 
-                    if (list.order.length === 0) {
-                      listTodos = null
-                    } else {
-                      listTodos = list.order.map(
-                        (id) =>
-                          todoStore.todos.find(
-                            (todo) => todo.id === id,
-                          ) as ITodo,
-                      )
-                    }
+                return (
+                  <SwiperSlide className="w-full" key={list.id}>
+                    <ListColumn list={list} todos={listTodos} key={list.id} />
+                  </SwiperSlide>
+                )
+              })}
+            </Swiper>
+          </div>
 
-                    return (
-                      <SwiperSlide className="w-full" key={list.id}>
-                        <ListColumn
-                          list={list}
-                          todos={listTodos}
-                          key={list.id}
-                          index={index}
-                        />
-                      </SwiperSlide>
-                    )
-                  })}
-                  {provided.placeholder}
-                </Swiper>
-              </div>
-            )}
-          </Droppable>
           <NavRight swiperRef={swiperRef} />
         </div>
       )}

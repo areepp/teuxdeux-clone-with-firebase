@@ -9,6 +9,7 @@ import {
   query,
   documentId,
   where,
+  writeBatch,
 } from 'firebase/firestore'
 import { db } from './firebaseClient'
 
@@ -36,6 +37,19 @@ export const addTodo = async (userId: string, newTodo: Omit<ITodo, 'id'>) => {
 
 export const deleteTodo = async (userId: string, todoId: string) => {
   return deleteDoc(getTodoDocRef(userId, todoId))
+}
+
+export const deleteMultipleTodos = async (
+  userId: string,
+  deletedIds: string[],
+) => {
+  const batch = writeBatch(db)
+
+  for (let id in deletedIds) {
+    batch.delete(getTodoDocRef(userId, id))
+  }
+
+  return batch.commit()
 }
 
 export const editTodoChecked = async (

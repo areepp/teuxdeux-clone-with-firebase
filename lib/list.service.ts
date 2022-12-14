@@ -1,8 +1,10 @@
 import { IList } from '@/stores/lists'
 import {
   addDoc,
+  arrayRemove,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -28,6 +30,10 @@ export const addList = async (userId: string) => {
   return addDoc(getListCollectionRef(userId), { title: '', order: [] })
 }
 
+export const deleteList = async (userId: string, deletedId: string) => {
+  return deleteDoc(getListDocRef(userId, deletedId))
+}
+
 export const editListTitle = async (
   userId: string,
   id: string,
@@ -45,6 +51,19 @@ export const addToListOrder = async (userId: string, listId: string) => {
     getListOrderDocRef(userId),
     {
       order: arrayUnion(listId),
+    },
+    { merge: true },
+  )
+}
+
+export const deleteFromListOrder = async (
+  userId: string,
+  deletedId: string,
+) => {
+  return setDoc(
+    getListOrderDocRef(userId),
+    {
+      order: arrayRemove(deletedId),
     },
     { merge: true },
   )
