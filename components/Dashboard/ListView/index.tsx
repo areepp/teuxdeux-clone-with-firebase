@@ -10,6 +10,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import NavLeft from './NavLeft'
 import NavRight from './NavRight'
 import ReOrderListModal from './ReOrderListModal'
+import SlideProgress from './SlideProgress'
 
 const ListView = () => {
   const [isListVisible, setIsListVisible] = useState(true)
@@ -18,6 +19,7 @@ const ListView = () => {
   const todoStore = useTodoStore()
   const { user } = useAuth()
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0)
 
   useEffect(() => {
     async function syncColumnToFirebase() {
@@ -54,9 +56,16 @@ const ListView = () => {
         >
           {isListVisible ? <IoMdArrowDropdown /> : <IoMdArrowDropup />}
         </button>
-        <button onClick={() => setIsReOrderModalVisible(true)}>
-          re-order list
-        </button>
+        <div className="flex items-center">
+          <SlideProgress activeSlideIndex={activeSlideIndex} />
+          <button
+            className="ml-4 px-3 py-1 text-xs rounded bg-zinc-200"
+            onClick={() => setIsReOrderModalVisible(true)}
+          >
+            Re-order
+          </button>
+        </div>
+
         {isReOrderModalVisible && (
           <ReOrderListModal
             setIsReOrderModalVisible={setIsReOrderModalVisible}
@@ -69,7 +78,7 @@ const ListView = () => {
       </div>
       {isListVisible && (
         <div className="relative flex min-h-[500px]">
-          <NavLeft swiperRef={swiperRef} />
+          <NavLeft activeSlideIndex={activeSlideIndex} swiperRef={swiperRef} />
 
           <div className="flex w-full md:w-main">
             <Swiper
@@ -83,6 +92,11 @@ const ListView = () => {
                 768: {
                   slidesPerView: 3,
                 },
+              }}
+              onActiveIndexChange={(e) => setActiveSlideIndex(e.activeIndex)}
+              onSlidesLengthChange={(e) => {
+                if (e.slides.length <= 4) return
+                swiperRef?.slideTo(e.slides.length - 3) // swipe when new list is created
               }}
             >
               {listStore.listOrder.map((id) => {
@@ -106,7 +120,7 @@ const ListView = () => {
             </Swiper>
           </div>
 
-          <NavRight swiperRef={swiperRef} />
+          <NavRight activeSlideIndex={activeSlideIndex} swiperRef={swiperRef} />
         </div>
       )}
     </div>

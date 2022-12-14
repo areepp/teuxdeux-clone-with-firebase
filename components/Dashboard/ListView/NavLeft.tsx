@@ -4,13 +4,15 @@ import Arrow from '../Common/Arrow'
 
 interface Props {
   swiperRef: SwiperCore | undefined
+  activeSlideIndex: number
 }
 
-const NavLeft = ({ swiperRef }: Props) => {
+const NavLeft = ({ swiperRef, activeSlideIndex }: Props) => {
   return (
     <nav className="z-30 md:w-16 absolute md:static top-14 left-2 flex flex-col items-center pt-2 md:border-r border-stone-200">
       <Arrow
         left
+        navigationDisabled={activeSlideIndex === 0}
         onClick={(e: any) => e.stopPropagation() || swiperRef?.slidePrev()}
       />
       <button
