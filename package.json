@@ -8,7 +8,8 @@
     "start": "next start",
     "test": "jest",
     "lint": "next lint",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@react-query-firebase/firestore": "^1.0.0-dev.7",

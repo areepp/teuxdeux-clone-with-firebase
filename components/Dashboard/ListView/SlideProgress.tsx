@@ -1,5 +1,4 @@
 import useListStore from '@/stores/lists'
-import SwiperCore from 'swiper'
 
 interface Props {
   activeSlideIndex: number
