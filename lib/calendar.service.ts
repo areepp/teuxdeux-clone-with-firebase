@@ -13,7 +13,6 @@ import {
 import { db } from './firebaseClient'
 
 const getColumnDocRef = (userId: string, columnId: string) =>
-  // firestore doesn't accept forward slash as id, so i transform the forward slash of the date to '-' first
   doc(db, 'users', userId, 'calendar', columnId)
 
 export const rearrangeOrder = async (

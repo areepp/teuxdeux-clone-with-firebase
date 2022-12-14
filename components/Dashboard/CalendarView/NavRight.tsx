@@ -2,30 +2,28 @@ import { useState } from 'react'
 import { DayPicker } from 'react-day-picker'
 import { IoCalendar } from 'react-icons/io5'
 import SwiperCore from 'swiper'
-import Arrow from './Arrow'
+import Arrow from '../Common/Arrow'
 
 import 'react-day-picker/dist/style.css'
 import {
   getReInitiatedDays,
   transformDateSlashToDash,
 } from '@/utils/dateHelper'
-import { IColumn } from './Column'
+import useColumnStore, { IColumn } from '@/stores/columns'
 
 interface Props {
   navigationDisabled: boolean
   swiperRef: SwiperCore | undefined
-  columns: IColumn[]
-  setColumns: React.Dispatch<React.SetStateAction<IColumn[]>>
-  syncToFirebase: (_localState: IColumn[]) => Promise<void>
+  syncColumnToFirebase: (_localState: IColumn[]) => Promise<void>
 }
 
 const NavRight = ({
   navigationDisabled,
   swiperRef,
-  columns,
-  setColumns,
-  syncToFirebase,
+  syncColumnToFirebase,
 }: Props) => {
+  const columnStore = useColumnStore()
+
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const [isCalendarClicked, setIsCalendarClicked] = useState(false)
 
@@ -37,14 +35,17 @@ const NavRight = ({
   }
 
   const handleDayClick = async (day: Date) => {
-    const clickedDayIndex = columns
+    const clickedDayIndex = columnStore.columns
       .map((col) => col.id)
       .indexOf(transformDateSlashToDash(day.toLocaleDateString()))
 
     const withinReach = () => {
       if (clickedDayIndex === -1) {
         return false
-      } else if (clickedDayIndex > columns.length - 4 || clickedDayIndex < 3) {
+      } else if (
+        clickedDayIndex > columnStore.columns.length - 4 ||
+        clickedDayIndex < 3
+      ) {
         return false
       } else {
         return true
@@ -54,8 +55,8 @@ const NavRight = ({
     if (withinReach()) {
       swiperRef?.slideTo(clickedDayIndex, 600)
     } else {
-      setColumns(getReInitiatedDays(day))
-      await syncToFirebase(getReInitiatedDays(day))
+      columnStore.setColumns(getReInitiatedDays(day))
+      await syncColumnToFirebase(getReInitiatedDays(day))
       swiperRef?.slideTo(7, 0)
     }
 
@@ -64,7 +65,7 @@ const NavRight = ({
   }
 
   return (
-    <nav className="z-50 pt-2 md:w-16 absolute top-14 right-2 md:static  md:border-l border-stone-200">
+    <nav className="z-30 pt-2 md:w-16 absolute top-14 right-2 md:static  md:border-l border-stone-200">
       <div className="flex flex-col items-center relative">
         <Arrow
           navigationDisabled={navigationDisabled}

@@ -1,26 +1,22 @@
 import * as todoService from '@/lib/todo.service'
-import * as columnService from '@/lib/column.service'
+import * as calendarService from '@/lib/calendar.service'
 import { useEffect, useRef, useState } from 'react'
 import { HiOutlineX, HiPencil } from 'react-icons/hi'
 
-import { useAuth } from '../AuthContext'
+import { useAuth } from '../../AuthContext'
 import { Draggable } from 'react-beautiful-dnd'
-
-export interface ITodo {
-  id: string
-  text: string
-  checked: boolean
-}
+import useTodoStore, { ITodo } from '@/stores/todos'
 
 interface Props {
   item: ITodo
-  setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>
   index: number
   colId: string
 }
 
-const TodoItem = ({ item, setTodos, index, colId }: Props) => {
+const TodoItem = ({ item, index, colId }: Props) => {
   const { user } = useAuth()
+  const todoStore = useTodoStore()
+
   const [isEditing, setIsEditing] = useState(false)
   const editTodoInputRef = useRef<HTMLInputElement>(null)
 
@@ -29,17 +25,13 @@ const TodoItem = ({ item, setTodos, index, colId }: Props) => {
   }, [isEditing])
 
   const handleDeleteTodo = async () => {
-    setTodos((prev) => (prev ? prev.filter((el) => el.id !== item.id) : prev))
+    todoStore.deleteTodo(item.id)
     await todoService.deleteTodo(user!.uid, item.id)
-    columnService.deleteFromOrderList(user!.uid, colId, item.id)
+    calendarService.deleteFromOrderList(user!.uid, colId, item.id)
   }
 
   const handleCheckTodo = async (data: { checked: boolean }) => {
-    setTodos((todos) =>
-      todos.map((todo) =>
-        todo.id === item.id ? { ...todo, checked: data.checked } : todo,
-      ),
-    )
+    todoStore.editTodoChecked(item.id, data.checked)
     await todoService.editTodoChecked(user!.uid, item.id, data)
   }
 
@@ -70,15 +62,7 @@ const TodoItem = ({ item, setTodos, index, colId }: Props) => {
               className="h-full flex items-center w-full focus:outline-none bg-transparent"
               type="text"
               value={item.text}
-              onChange={(e) =>
-                setTodos((todos) =>
-                  todos.map((todo) =>
-                    todo.id === item.id
-                      ? { ...todo, text: e.target.value }
-                      : todo,
-                  ),
-                )
-              }
+              onChange={(e) => todoStore.editTodoText(item.id, e.target.value)}
               onBlur={() => handleOnBlur({ text: item.text })}
               onKeyDown={handleKeyDown}
             />

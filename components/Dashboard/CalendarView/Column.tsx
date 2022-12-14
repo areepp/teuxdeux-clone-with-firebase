@@ -1,4 +1,4 @@
-import * as columnService from '@/lib/column.service'
+import * as calendarService from '@/lib/calendar.service'
 import * as todoService from '@/lib/todo.service'
 import {
   checkIsPast,
@@ -6,37 +6,28 @@ import {
   getDayOfTheWeek,
   getFullDate,
 } from '@/utils/dateHelper'
-import update from 'immutability-helper'
 import { KeyboardEvent, useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
 import SwiperCore from 'swiper'
-import { useAuth } from '../AuthContext'
-import TodoItem, { ITodo } from './TodoItem'
+import { useAuth } from '../../AuthContext'
+import TodoItem from './TodoItem'
 import clsx from 'clsx'
-
-export interface IColumn {
-  id: string
-  order: string[]
-}
+import useColumnStore from '@/stores/columns'
+import { IColumn } from '@/stores/columns'
+import useTodoStore, { ITodo } from '@/stores/todos'
+import { HiPencil } from 'react-icons/hi'
 
 interface Props {
   todos: ITodo[] | null
   column: IColumn
-  setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>
-  setColumns: React.Dispatch<React.SetStateAction<IColumn[]>>
   swiperRef: SwiperCore | undefined
   index: number
 }
 
-const Column = ({
-  todos,
-  column,
-  setTodos,
-  setColumns,
-  index,
-  swiperRef,
-}: Props) => {
+const Column = ({ todos, column, index, swiperRef }: Props) => {
   const { user } = useAuth()
+  const columnStore = useColumnStore()
+  const todoStore = useTodoStore()
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
   const isToday = checkIsToday(column.id)
   const isPast = checkIsPast(column.id)
@@ -50,25 +41,11 @@ const Column = ({
 
     setNewTodoInputValue('')
 
-    setColumns((prev) =>
-      prev.map((c) =>
-        c.id === column.id
-          ? update(c, {
-              order: {
-                $push: [res.id],
-              },
-            })
-          : c,
-      ),
-    )
+    columnStore.pushToColumnOrder(column.id, res.id)
 
-    setTodos((prev) =>
-      update(prev, {
-        $push: [{ id: res.id, text: newTodoInputValue, checked: false }],
-      }),
-    )
+    todoStore.pushTodo({ id: res.id, text: newTodoInputValue, checked: false })
 
-    await columnService.addToOrderList(user!.uid, column.id, res.id)
+    await calendarService.addToOrderList(user!.uid, column.id, res.id)
   }
 
   const handleKeyDown = async (e: KeyboardEvent) => {
@@ -84,7 +61,7 @@ const Column = ({
         isToday && 'text-primary',
         !isPast && !isToday && 'text-gray-900',
         !isRealIndex && 'border-l border-stone-200',
-        'px-4 h-full text-primary flex-grow',
+        'px-4 h-full flex-grow',
       )}
     >
       <div className="w-full text-center">
@@ -98,7 +75,30 @@ const Column = ({
         </div>
       </div>
       <div className="h-full mt-20 md:mt-4 md:text-sm bg-mobile-horizontal-lines md:bg-md-horizontal-lines">
-        <Droppable droppableId={column.id}>
+        <Droppable
+          droppableId={column.id}
+          type="todo"
+          renderClone={(provided, _snapshot, rubric) => {
+            // renderClone allows to move todo item to other parent (LIST VIEW) whilte maintaining the correct styles
+            const draggedTodoText = todos!.filter(
+              (todo) => todo.id === rubric.draggableId,
+            )[0].text
+
+            return (
+              <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                className={`z-50 h-[49px] md:text-sm md:h-[27px] flex items-center justify-between`}
+              >
+                <p className="">{draggedTodoText}</p>
+                <div>
+                  <HiPencil />
+                </div>
+              </div>
+            )
+          }}
+        >
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {todos &&
@@ -109,7 +109,6 @@ const Column = ({
                       item={item}
                       index={i}
                       key={item.id}
-                      setTodos={setTodos}
                       colId={column.id}
                     />
                   )

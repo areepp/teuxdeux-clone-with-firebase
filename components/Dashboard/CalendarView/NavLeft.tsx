@@ -1,37 +1,34 @@
-import { getInitialDays, transformDateSlashToDash } from '@/utils/dateHelper'
+import { getInitialColumns, transformDateSlashToDash } from '@/utils/dateHelper'
 import { IoHome } from 'react-icons/io5'
 import SwiperCore from 'swiper'
-import Arrow from './Arrow'
-import { IColumn } from './Column'
+import Arrow from '../Common/Arrow'
+import useColumnStore, { IColumn } from '@/stores/columns'
 
 interface Props {
   navigationDisabled: boolean
   swiperRef: SwiperCore | undefined
-  columns: IColumn[]
-  setColumns: React.Dispatch<React.SetStateAction<IColumn[]>>
-  syncToFirebase: (_localState: IColumn[]) => Promise<void>
+  syncColumnToFirebase: (_localState: IColumn[]) => Promise<void>
 }
 
 const NavLeft = ({
-  columns,
-  setColumns,
   navigationDisabled,
   swiperRef,
-  syncToFirebase,
+  syncColumnToFirebase,
 }: Props) => {
+  const columnStore = useColumnStore()
   const onClick = async () => {
     const today = transformDateSlashToDash(new Date().toLocaleDateString())
-    const todayIndex = columns.map((col) => col.id).indexOf(today)
+    const todayIndex = columnStore.columns.map((col) => col.id).indexOf(today)
     if (todayIndex !== -1) {
       swiperRef?.slideTo(todayIndex, 600)
     } else {
-      setColumns(getInitialDays())
-      await syncToFirebase(getInitialDays())
+      columnStore.setColumns(getInitialColumns())
+      await syncColumnToFirebase(getInitialColumns())
     }
   }
 
   return (
-    <nav className="z-50 md:w-16 absolute md:static top-14 left-2 flex flex-col items-center pt-2 md:border-r border-stone-200">
+    <nav className="z-30 md:w-16 absolute md:static top-14 left-2 flex flex-col items-center pt-2 md:border-r border-stone-200">
       <Arrow
         left
         navigationDisabled={navigationDisabled}
