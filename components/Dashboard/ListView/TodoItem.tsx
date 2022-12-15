@@ -29,7 +29,7 @@ const TodoItem = ({ item, index, listId }: Props) => {
     listStore.deleteTodoFromList(listId, item.id)
     Promise.all([
       todoService.deleteTodo(user!.uid, item.id),
-      listService.deleteTodoFromListOrder(user!.uid, listId, item.id),
+      listService.deleteTodoFromList(user!.uid, listId, item.id),
     ])
   }
 

@@ -21,7 +21,7 @@ export const onDragEndLogic = (
     newListOrder.splice(destination.index, 0, draggableId)
 
     listStore.setListOrder(newListOrder)
-    listService.rearrangeListOrder(user!.uid, newListOrder)
+    listService.editListOrder(user!.uid, newListOrder)
 
     return
   }
@@ -75,7 +75,7 @@ export const onDragEndLogic = (
 
     if (destinationIsList) {
       listStore.editList(newColumn.id, newColumn as IList)
-      listService.rearrangeTodoOrder(user!.uid, finishColumn.id, newOrder)
+      listService.editTodoOrder(user!.uid, finishColumn.id, newOrder)
     } else {
       columnStore.editColumnById(newColumn.id, newColumn)
       dayService.editTodoOrder(user!.uid, finishColumn.id, newOrder)
@@ -100,7 +100,7 @@ export const onDragEndLogic = (
 
     if (sourceIsList) {
       listStore.editList(startColumn.id, newStartColumn as IList)
-      listService.rearrangeTodoOrder(user!.uid, startColumn.id, newStartOrder)
+      listService.editTodoOrder(user!.uid, startColumn.id, newStartOrder)
     } else {
       columnStore.editColumnById(startColumn.id, newStartColumn)
       dayService.editTodoOrder(user!.uid, startColumn.id, newStartOrder)
@@ -108,7 +108,7 @@ export const onDragEndLogic = (
 
     if (destinationIsList) {
       listStore.editList(finishColumn.id, newFinishColumn as IList)
-      listService.rearrangeTodoOrder(user!.uid, finishColumn.id, newFinishOrder)
+      listService.editTodoOrder(user!.uid, finishColumn.id, newFinishOrder)
     } else {
       columnStore.editColumnById(finishColumn.id, newFinishColumn)
       dayService.editTodoOrder(user!.uid, finishColumn.id, newFinishOrder)

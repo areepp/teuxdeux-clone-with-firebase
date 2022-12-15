@@ -29,7 +29,7 @@ const ListColumn = ({ todos, list }: Props) => {
     })
     listStore.pushToListOrder(list.id, res.id)
     todoStore.pushTodo({ id: res.id, text: newTodoInputValue, checked: false })
-    await listService.addTodoToListOrder(user!.uid, list.id, res.id)
+    await listService.addTodoToList(user!.uid, list.id, res.id)
   }
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {

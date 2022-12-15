@@ -18,7 +18,6 @@ export const getRenderClone =
       (todo: ITodo) => todo.id === rubric.draggableId,
     )[0].text
 
-    console.log(todos)
     return (
       <div
         ref={provided.innerRef}

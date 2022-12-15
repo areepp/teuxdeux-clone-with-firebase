@@ -26,6 +26,10 @@ export const getLists = async (userId: string) => {
   return getDocs(getListCollectionRef(userId))
 }
 
+export const getListOrder = async (userId: string) => {
+  return getDoc(getListOrderDocRef(userId))
+}
+
 export const addList = async (userId: string) => {
   return addDoc(getListCollectionRef(userId), { title: '', order: [] })
 }
@@ -40,10 +44,6 @@ export const editListTitle = async (
   newData: Pick<IList, 'title'>,
 ) => {
   return updateDoc(getListDocRef(userId, id), newData)
-}
-
-export const getListOrder = async (userId: string) => {
-  return getDoc(getListOrderDocRef(userId))
 }
 
 export const addToListOrder = async (userId: string, listId: string) => {
@@ -69,16 +69,13 @@ export const deleteFromListOrder = async (
   )
 }
 
-export const rearrangeListOrder = async (
-  userId: string,
-  listOrder: string[],
-) => {
+export const editListOrder = async (userId: string, listOrder: string[]) => {
   return updateDoc(getListOrderDocRef(userId), {
     order: listOrder,
   })
 }
 
-export const addTodoToListOrder = async (
+export const addTodoToList = async (
   userId: string,
   listId: string,
   todoId: string,
@@ -92,7 +89,7 @@ export const addTodoToListOrder = async (
   )
 }
 
-export const deleteTodoFromListOrder = async (
+export const deleteTodoFromList = async (
   userId: string,
   listId: string,
   todoId: string,
@@ -106,7 +103,7 @@ export const deleteTodoFromListOrder = async (
   )
 }
 
-export const rearrangeTodoOrder = async (
+export const editTodoOrder = async (
   userId: string,
   listId: string,
   order: string[],
