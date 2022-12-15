@@ -55,7 +55,7 @@ const Login = () => {
             <span className="text-xs">This field is required</span>
           )}
 
-          <Input text="password" register={register} />
+          <Input text="password" type="password" register={register} />
           {errors.password && (
             <span className="text-xs">This field is required</span>
           )}
