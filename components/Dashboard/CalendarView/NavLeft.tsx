@@ -12,10 +12,12 @@ interface Props {
 
 const NavLeft = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
   const columnStore = useColumnStore()
-  const onClick = async () => {
-    const today = transformDateSlashToDash(new Date().toLocaleDateString())
+
+  const handleHomeClick = async () => {
+    const today = transformDateSlashToDash(new Date().toLocaleDateString()) // need to replace '/' to '-' because firestore doesn't accept '/' as document name
     const todayIndex = columnStore.columns.map((col) => col.id).indexOf(today)
     if (todayIndex !== -1) {
+      // current day is within reach
       swiperRef?.slideTo(todayIndex, 600)
     } else {
       columnStore.setColumns(getInitialColumns())
@@ -31,7 +33,7 @@ const NavLeft = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
         onClick={(e: any) => e.stopPropagation() || swiperRef?.slidePrev()}
       />
       <button
-        onClick={onClick}
+        onClick={handleHomeClick}
         className="mt-2 text-xl text-gray-400 hover:text-primary transition-all duration-300"
       >
         <IoHome />

@@ -21,7 +21,7 @@ const ListColumn = ({ todos, list }: Props) => {
   const todoStore = useTodoStore()
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
   const [isOptionVisible, setIsOptionVisible] = useState(false)
-  const renderClone = getRenderClone(todos) // renderClone allows to move todo item to other parent (CALENDAR VIEW) whilte maintaining the correct styles
+  const renderClone = getRenderClone(todos) // renderClone allows to move todo item to other parent (CALENDAR VIEW) while maintaining the desired drag behavior
 
   const handleAddTodo = async () => {
     setNewTodoInputValue('')

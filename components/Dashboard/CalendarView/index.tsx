@@ -5,12 +5,8 @@ import useColumnStore from '@/stores/columns'
 import { IColumn } from '@/stores/columns'
 import { ITodo } from '@/stores/todos'
 import useTodoStore from '@/stores/todos'
-import {
-  getInitialColumns,
-  getNextFourDays,
-  getPastFourDays,
-} from '@/utils/dateHelper'
-import { useEffect, useState } from 'react'
+import { getNextFourDays, getPastFourDays } from '@/utils/dateHelper'
+import { useState } from 'react'
 import SwiperCore from 'swiper'
 import 'swiper/css'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -25,11 +21,6 @@ const CalendarView = ({ syncDayColumns }: Props) => {
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
   const [navigationDisabled, setNavigationDisabled] = useState(false)
 
-  useEffect(() => {
-    syncDayColumns(getInitialColumns())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   return (
     <section className="relative bg-white flex-grow min-h-[500px] pt-12 md:flex">
       <NavLeft
@@ -37,11 +28,12 @@ const CalendarView = ({ syncDayColumns }: Props) => {
         navigationDisabled={navigationDisabled}
         syncDayColumns={syncDayColumns}
       />
+
       <div className="h-full md:w-main">
         <Swiper
           className="h-full"
           onSwiper={setSwiperRef}
-          initialSlide={7} // initial set to current day
+          initialSlide={7} // initial set to the current day
           slidesPerView={1}
           allowTouchMove={false}
           speed={600}
@@ -98,6 +90,7 @@ const CalendarView = ({ syncDayColumns }: Props) => {
           })}
         </Swiper>
       </div>
+
       <NavRight
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}

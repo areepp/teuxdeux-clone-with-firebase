@@ -18,7 +18,6 @@ interface Props {
 
 const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
   const columnStore = useColumnStore()
-
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const [isCalendarClicked, setIsCalendarClicked] = useState(false)
 
@@ -26,6 +25,8 @@ const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
     // don't close calendar when day picker is clicked
     if (!isCalendarClicked) {
       setIsCalendarOpen(false)
+    } else {
+      return
     }
   }
 
@@ -61,7 +62,7 @@ const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
 
   return (
     <nav className="z-30 pt-2 md:w-16 absolute top-14 right-2 md:static  md:border-l border-stone-200">
-      <div className="flex flex-col items-center relative">
+      <div className="relative flex flex-col items-center">
         <Arrow
           navigationDisabled={navigationDisabled}
           onClick={(e: any) => e.stopPropagation() || swiperRef?.slideNext()}
