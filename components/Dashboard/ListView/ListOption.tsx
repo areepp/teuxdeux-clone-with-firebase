@@ -18,13 +18,14 @@ const ListOption = ({ listId }: Props) => {
 
   const handleDeleteList = async () => {
     const confirmWindow = confirm(
-      'Eits bentar bentar... Are you sure about this?\n\nDeleting this list will also delete all to-dos within it.',
+      'Eits bentar... Are you sure about this?\n\nDeleting this list will also delete all to-dos within it.',
     )
     if (confirmWindow) {
       listStore.deleteList(listId)
-      const todosInList = listStore.lists.filter(
+      const todosInList = listStore.lists.find(
         (list) => list.id === listId,
-      )[0].order
+      )!.order
+
       Promise.all([
         listService.deleteList(user!.uid, listId),
         listService.deleteFromListOrder(user!.uid, listId),

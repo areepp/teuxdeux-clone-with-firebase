@@ -1,3 +1,4 @@
+import { db } from './firebaseClient'
 import { ITodo } from '@/stores/todos'
 import {
   addDoc,
@@ -11,7 +12,6 @@ import {
   where,
   writeBatch,
 } from 'firebase/firestore'
-import { db } from './firebaseClient'
 
 const getTodoCollectionRef = (userId: string) =>
   collection(db, 'users', userId, 'todos')

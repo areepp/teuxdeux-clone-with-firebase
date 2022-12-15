@@ -48,8 +48,17 @@ const Dashboard = () => {
         id: doc.id,
       }))
 
-      listStore.setLists(listMapped as IList[])
-      listStore.setListOrder(listOrderResponse!.data()!.order)
+      if (listMapped.length === 0) {
+        return
+      } else {
+        listStore.setLists(listMapped as IList[])
+      }
+
+      if (!listOrderResponse.data()) {
+        return
+      } else {
+        listStore.setListOrder(listOrderResponse!.data()!.order)
+      }
     }
     fetchTodos()
     syncListToFirebase()
