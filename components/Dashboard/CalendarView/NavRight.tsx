@@ -1,41 +1,30 @@
-import { useState } from 'react'
-import { DayPicker } from 'react-day-picker'
-import { IoCalendar } from 'react-icons/io5'
-import SwiperCore from 'swiper'
 import Arrow from '../Common/Arrow'
-
-import 'react-day-picker/dist/style.css'
+import useDayStore, { IDayColumn } from '@/stores/days'
 import {
   getReInitiatedDays,
   transformDateSlashToDash,
 } from '@/utils/dateHelper'
-import useColumnStore, { IColumn } from '@/stores/columns'
+import { useState } from 'react'
+import { DayPicker } from 'react-day-picker'
+import 'react-day-picker/dist/style.css'
+import { IoCalendar } from 'react-icons/io5'
+import OutsideClickHandler from 'react-outside-click-handler'
+import SwiperCore from 'swiper'
 
 interface Props {
   navigationDisabled: boolean
   swiperRef: SwiperCore | undefined
-  syncColumnToFirebase: (_localState: IColumn[]) => Promise<void>
+  syncDayColumns: (_localState: IDayColumn[]) => Promise<void>
 }
 
-const NavRight = ({
-  navigationDisabled,
-  swiperRef,
-  syncColumnToFirebase,
-}: Props) => {
-  const columnStore = useColumnStore()
-
+const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
+  const columnStore = useDayStore()
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
-  const [isCalendarClicked, setIsCalendarClicked] = useState(false)
-
-  const handleBlur = () => {
-    // don't close calendar when day picker is clicked
-    if (!isCalendarClicked) {
-      setIsCalendarOpen(false)
-    }
-  }
 
   const handleDayClick = async (day: Date) => {
-    const clickedDayIndex = columnStore.columns
+    setIsCalendarOpen(false)
+
+    const clickedDayIndex = columnStore.dayColumns
       .map((col) => col.id)
       .indexOf(transformDateSlashToDash(day.toLocaleDateString()))
 
@@ -43,7 +32,7 @@ const NavRight = ({
       if (clickedDayIndex === -1) {
         return false
       } else if (
-        clickedDayIndex > columnStore.columns.length - 4 ||
+        clickedDayIndex > columnStore.dayColumns.length - 4 ||
         clickedDayIndex < 3
       ) {
         return false
@@ -56,17 +45,14 @@ const NavRight = ({
       swiperRef?.slideTo(clickedDayIndex, 600)
     } else {
       columnStore.setColumns(getReInitiatedDays(day))
-      await syncColumnToFirebase(getReInitiatedDays(day))
+      await syncDayColumns(getReInitiatedDays(day))
       swiperRef?.slideTo(7, 0)
     }
-
-    setIsCalendarClicked(false)
-    setIsCalendarOpen(false)
   }
 
   return (
     <nav className="z-30 pt-2 md:w-16 absolute top-14 right-2 md:static  md:border-l border-stone-200">
-      <div className="flex flex-col items-center relative">
+      <div className="relative flex flex-col items-center">
         <Arrow
           navigationDisabled={navigationDisabled}
           onClick={(e: any) => e.stopPropagation() || swiperRef?.slideNext()}
@@ -74,18 +60,19 @@ const NavRight = ({
         <button
           className="mt-2 text-xl text-gray-400 hover:text-primary transition-all duration-300"
           onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-          onBlur={handleBlur}
         >
           <IoCalendar />
         </button>
         {isCalendarOpen && (
-          <div
-            id="day-picker"
-            className="absolute right-1/2 top-20 z-50 bg-zinc-50 shadow-lg rounded"
-            onMouseDown={() => setIsCalendarClicked(true)} // onMouseDown is fired first before onBlur, prevent calendar closed when the day picker is clicked
-          >
-            <DayPicker mode="single" onDayClick={handleDayClick} />
-          </div>
+          <OutsideClickHandler onOutsideClick={() => setIsCalendarOpen(false)}>
+            <div
+              id="day-picker"
+              className="absolute right-1/2 top-20 z-50 bg-zinc-50 shadow-lg rounded"
+              onBlur={() => console.log('now')}
+            >
+              <DayPicker mode="single" onDayClick={handleDayClick} />
+            </div>
+          </OutsideClickHandler>
         )}
       </div>
     </nav>

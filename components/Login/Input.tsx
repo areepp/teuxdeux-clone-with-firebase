@@ -4,9 +4,10 @@ import { UseFormRegister } from 'react-hook-form'
 interface Props {
   text: 'email' | 'password'
   register: UseFormRegister<Inputs>
+  [rest: string]: any
 }
 
-const Input = ({ text, register }: Props) => {
+const Input = ({ text, register, ...rest }: Props) => {
   return (
     <div className="w-full border border-gray-200 rounded flex flex-col px-4 py-2">
       <label htmlFor={`${text}-input`} className="text-xs">
@@ -18,6 +19,7 @@ const Input = ({ text, register }: Props) => {
         className="focus:outline-none"
         aria-label={`${text} input`}
         {...register(text, { required: true })}
+        {...rest}
       />
     </div>
   )

@@ -1,3 +1,4 @@
+import { db } from './firebaseClient'
 import {
   arrayRemove,
   arrayUnion,
@@ -10,12 +11,11 @@ import {
   where,
   documentId,
 } from 'firebase/firestore'
-import { db } from './firebaseClient'
 
 const getColumnDocRef = (userId: string, columnId: string) =>
   doc(db, 'users', userId, 'calendar', columnId)
 
-export const rearrangeOrder = async (
+export const editTodoOrder = async (
   userId: string,
   columnId: string,
   order: string[],
@@ -29,7 +29,7 @@ export const rearrangeOrder = async (
   )
 }
 
-export const getColumnByIds = async (
+export const getDayColumnsByIds = async (
   userId: string,
   columnTodosIds: string[],
 ) => {
@@ -52,11 +52,11 @@ export const getColumnByIds = async (
   return Promise.all(batches)
 }
 
-export const getColumn = async (userId: string, columnId: string) => {
+export const getDayColumn = async (userId: string, columnId: string) => {
   return getDoc(getColumnDocRef(userId, columnId))
 }
 
-export const addToOrderList = async (
+export const addTodoToColumn = async (
   userId: string,
   columnId: string,
   todoId: string,
@@ -70,7 +70,7 @@ export const addToOrderList = async (
   )
 }
 
-export const deleteFromOrderList = async (
+export const deleteTodoFromColumn = async (
   userId: string,
   columnId: string,
   todoId: string,

@@ -1,11 +1,11 @@
-import * as todoService from '@/lib/todo.service'
-import * as calendarService from '@/lib/calendar.service'
-import { useEffect, useRef, useState } from 'react'
-import { HiOutlineX, HiPencil } from 'react-icons/hi'
-
 import { useAuth } from '../../AuthContext'
-import { Draggable } from 'react-beautiful-dnd'
+import * as dayService from '@/lib/day.service'
+import * as todoService from '@/lib/todo.service'
+import useDayStore from '@/stores/days'
 import useTodoStore, { ITodo } from '@/stores/todos'
+import { useEffect, useRef, useState } from 'react'
+import { Draggable } from 'react-beautiful-dnd'
+import { HiOutlineX, HiPencil } from 'react-icons/hi'
 
 interface Props {
   item: ITodo
@@ -16,7 +16,7 @@ interface Props {
 const TodoItem = ({ item, index, colId }: Props) => {
   const { user } = useAuth()
   const todoStore = useTodoStore()
-
+  const columnStore = useDayStore()
   const [isEditing, setIsEditing] = useState(false)
   const editTodoInputRef = useRef<HTMLInputElement>(null)
 
@@ -26,8 +26,11 @@ const TodoItem = ({ item, index, colId }: Props) => {
 
   const handleDeleteTodo = async () => {
     todoStore.deleteTodo(item.id)
-    await todoService.deleteTodo(user!.uid, item.id)
-    calendarService.deleteFromOrderList(user!.uid, colId, item.id)
+    columnStore.deleteTodoFromColumn(colId, item.id)
+    Promise.all([
+      todoService.deleteTodo(user!.uid, item.id),
+      dayService.deleteTodoFromColumn(user!.uid, colId, item.id),
+    ])
   }
 
   const handleCheckTodo = async (data: { checked: boolean }) => {

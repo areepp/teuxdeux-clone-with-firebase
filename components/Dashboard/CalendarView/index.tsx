@@ -1,55 +1,39 @@
-import * as calendarService from '@/lib/calendar.service'
-import useColumnStore from '@/stores/columns'
-import {
-  getInitialColumns,
-  getNextFourDays,
-  getPastFourDays,
-} from '@/utils/dateHelper'
-import { useEffect, useState } from 'react'
+import DayColumn from './DayColumn'
+import NavLeft from './NavLeft'
+import NavRight from './NavRight'
+import useDayStore from '@/stores/days'
+import { IDayColumn } from '@/stores/days'
+import { ITodo } from '@/stores/todos'
+import useTodoStore from '@/stores/todos'
+import { getNextFourDays, getPastFourDays } from '@/utils/dateHelper'
+import { useState } from 'react'
 import SwiperCore from 'swiper'
 import 'swiper/css'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { useAuth } from '../../AuthContext'
-import { IColumn } from '@/stores/columns'
-import NavLeft from './NavLeft'
-import NavRight from './NavRight'
-import { ITodo } from '@/stores/todos'
-import Column from './Column'
-import useTodoStore from '@/stores/todos'
 
-const CalendarView = () => {
-  const { user } = useAuth()
-  const columnStore = useColumnStore()
+interface Props {
+  syncDayColumns: (_dayColumns: IDayColumn[]) => Promise<void>
+}
+
+const CalendarView = ({ syncDayColumns }: Props) => {
+  const columnStore = useDayStore()
   const todoStore = useTodoStore()
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
   const [navigationDisabled, setNavigationDisabled] = useState(false)
 
-  const syncColumnToFirebase = async (localState: IColumn[]) => {
-    const calendarResponse = await calendarService.getColumnByIds(
-      user!.uid,
-      localState.map((day) => day.id),
-    )
-    const columnFromFirestore = calendarResponse.flat() as IColumn[]
-    columnStore.syncColumns(columnFromFirestore)
-  }
-
-  useEffect(() => {
-    syncColumnToFirebase(getInitialColumns())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   return (
-    <div className="relative bg-white flex-grow min-h-[500px] pt-12 md:flex">
+    <section className="relative bg-white flex-grow min-h-[500px] pt-12 md:flex">
       <NavLeft
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
-        syncColumnToFirebase={syncColumnToFirebase}
+        syncDayColumns={syncDayColumns}
       />
+
       <div className="h-full md:w-main">
         <Swiper
           className="h-full"
           onSwiper={setSwiperRef}
-          initialSlide={7} // initial set to current day
+          initialSlide={7} // initial set to the current day
           slidesPerView={1}
           allowTouchMove={false}
           speed={600}
@@ -61,22 +45,19 @@ const CalendarView = () => {
           onSlideChangeTransitionStart={() => setNavigationDisabled(true)}
           onSlideChangeTransitionEnd={() => setNavigationDisabled(false)}
           onTransitionEnd={async (e) => {
-            if (e.activeIndex === columnStore.columns.length - 4) {
+            if (e.activeIndex === columnStore.dayColumns.length - 4) {
               const nextFourDays = getNextFourDays(
-                columnStore.columns[columnStore.columns.length - 1].id,
+                columnStore.dayColumns[columnStore.dayColumns.length - 1].id,
               )
               columnStore.pushColumns(nextFourDays)
-              await syncColumnToFirebase([
-                ...columnStore.columns,
-                ...nextFourDays,
-              ])
+              await syncDayColumns([...columnStore.dayColumns, ...nextFourDays])
             }
             if (e.activeIndex === 3) {
-              const pastFourDays = getPastFourDays(columnStore.columns[0].id)
+              const pastFourDays = getPastFourDays(columnStore.dayColumns[0].id)
               columnStore.unshiftColumns(pastFourDays.reverse())
-              await syncColumnToFirebase([
+              await syncDayColumns([
                 ...pastFourDays.reverse(),
-                ...columnStore.columns,
+                ...columnStore.dayColumns,
               ])
             }
           }}
@@ -86,7 +67,7 @@ const CalendarView = () => {
             }
           }}
         >
-          {columnStore.columns.map((column, index) => {
+          {columnStore.dayColumns.map((column, index) => {
             let columnTodos
             if (column.order.length === 0) {
               // there are no todos in the column
@@ -98,7 +79,7 @@ const CalendarView = () => {
             }
             return (
               <SwiperSlide key={column.id}>
-                <Column
+                <DayColumn
                   todos={columnTodos}
                   column={column}
                   swiperRef={swiperRef}
@@ -109,12 +90,13 @@ const CalendarView = () => {
           })}
         </Swiper>
       </div>
+
       <NavRight
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
-        syncColumnToFirebase={syncColumnToFirebase}
+        syncDayColumns={syncDayColumns}
       />
-    </div>
+    </section>
   )
 }
 

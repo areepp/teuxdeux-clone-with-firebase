@@ -33,6 +33,7 @@
   @apply bg-primary text-white;
 }
 
+/* fix for react-beautiful-dnd when item dragged, item is out of position */
 .drag-fix {
   top: auto !important;
   left: auto !important;
