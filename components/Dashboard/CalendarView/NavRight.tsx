@@ -1,5 +1,5 @@
 import Arrow from '../Common/Arrow'
-import useColumnStore, { IColumn } from '@/stores/columns'
+import useDayStore, { IDayColumn } from '@/stores/days'
 import {
   getReInitiatedDays,
   transformDateSlashToDash,
@@ -14,17 +14,17 @@ import SwiperCore from 'swiper'
 interface Props {
   navigationDisabled: boolean
   swiperRef: SwiperCore | undefined
-  syncDayColumns: (_localState: IColumn[]) => Promise<void>
+  syncDayColumns: (_localState: IDayColumn[]) => Promise<void>
 }
 
 const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
-  const columnStore = useColumnStore()
+  const columnStore = useDayStore()
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
   const handleDayClick = async (day: Date) => {
     setIsCalendarOpen(false)
 
-    const clickedDayIndex = columnStore.columns
+    const clickedDayIndex = columnStore.dayColumns
       .map((col) => col.id)
       .indexOf(transformDateSlashToDash(day.toLocaleDateString()))
 
@@ -32,7 +32,7 @@ const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
       if (clickedDayIndex === -1) {
         return false
       } else if (
-        clickedDayIndex > columnStore.columns.length - 4 ||
+        clickedDayIndex > columnStore.dayColumns.length - 4 ||
         clickedDayIndex < 3
       ) {
         return false

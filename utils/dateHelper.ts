@@ -1,4 +1,4 @@
-import { IColumn } from '@/stores/columns'
+import { IDayColumn } from '@/stores/days'
 
 const columnFactory = (date: string) => {
   return {
@@ -11,8 +11,8 @@ const getDaysColumns = (
   initialDate: Date,
   days: number,
   direction: 'future' | 'past',
-): IColumn[] => {
-  let returnValue: IColumn[] = []
+): IDayColumn[] => {
+  let returnValue: IDayColumn[] = []
   let multiplier = 1
 
   if (direction === 'past') multiplier = -1
@@ -27,7 +27,7 @@ const getDaysColumns = (
   return returnValue
 }
 
-export const getInitialColumns = (): IColumn[] => {
+export const getInitialColumns = (): IDayColumn[] => {
   // returns an array of column that contains 21 days (last week and next 2 weeks)
   const today = new Date()
   let nextTwoWeeks = getDaysColumns(today, 14, 'future')
@@ -40,7 +40,7 @@ export const getInitialColumns = (): IColumn[] => {
   ]
 }
 
-export const getReInitiatedDays = (date: Date): IColumn[] => {
+export const getReInitiatedDays = (date: Date): IDayColumn[] => {
   return [
     ...getDaysColumns(date, 7, 'past').reverse(),
     columnFactory(date.toLocaleDateString()),
@@ -48,13 +48,13 @@ export const getReInitiatedDays = (date: Date): IColumn[] => {
   ]
 }
 
-export const getNextFourDays = (startDate: string): IColumn[] => {
+export const getNextFourDays = (startDate: string): IDayColumn[] => {
   const date = new Date(startDate)
 
   return getDaysColumns(date, 4, 'future')
 }
 
-export const getPastFourDays = (startDate: string): IColumn[] => {
+export const getPastFourDays = (startDate: string): IDayColumn[] => {
   const date = new Date(startDate)
 
   return getDaysColumns(date, 4, 'past')

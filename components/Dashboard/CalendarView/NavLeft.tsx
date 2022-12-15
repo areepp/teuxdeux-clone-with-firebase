@@ -1,5 +1,5 @@
 import Arrow from '../Common/Arrow'
-import useColumnStore, { IColumn } from '@/stores/columns'
+import useDayStore, { IDayColumn } from '@/stores/days'
 import { getInitialColumns, transformDateSlashToDash } from '@/utils/dateHelper'
 import { IoHome } from 'react-icons/io5'
 import SwiperCore from 'swiper'
@@ -7,15 +7,17 @@ import SwiperCore from 'swiper'
 interface Props {
   navigationDisabled: boolean
   swiperRef: SwiperCore | undefined
-  syncDayColumns: (_localState: IColumn[]) => Promise<void>
+  syncDayColumns: (_localState: IDayColumn[]) => Promise<void>
 }
 
 const NavLeft = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
-  const columnStore = useColumnStore()
+  const columnStore = useDayStore()
 
   const handleHomeClick = async () => {
     const today = transformDateSlashToDash(new Date().toLocaleDateString()) // need to replace '/' to '-' because firestore doesn't accept '/' as document name
-    const todayIndex = columnStore.columns.map((col) => col.id).indexOf(today)
+    const todayIndex = columnStore.dayColumns
+      .map((col) => col.id)
+      .indexOf(today)
     if (todayIndex !== -1) {
       // current day is within reach
       swiperRef?.slideTo(todayIndex, 600)

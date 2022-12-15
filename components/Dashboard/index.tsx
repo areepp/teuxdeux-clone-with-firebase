@@ -4,7 +4,7 @@ import CalendarView from '@/components/Dashboard/CalendarView/'
 import * as calendarService from '@/lib/calendar.service'
 import * as listService from '@/lib/list.service'
 import * as todoService from '@/lib/todo.service'
-import useColumnStore, { IColumn } from '@/stores/columns'
+import useDayStore, { IDayColumn } from '@/stores/days'
 import useListStore, { IList } from '@/stores/lists'
 import useTodoStore, { ITodo } from '@/stores/todos'
 import { getInitialColumns } from '@/utils/dateHelper'
@@ -15,15 +15,15 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 const Dashboard = () => {
   const { user } = useAuth()
   const todoStore = useTodoStore()
-  const columnStore = useColumnStore()
+  const columnStore = useDayStore()
   const listStore = useListStore()
 
-  const syncDayColumns = async (dayColumns: IColumn[]) => {
+  const syncDayColumns = async (dayColumns: IDayColumn[]) => {
     const calendarResponse = await calendarService.getColumnByIds(
       user!.uid,
       dayColumns.map((day) => day.id),
     )
-    const columnFromFirestore = calendarResponse.flat() as IColumn[]
+    const columnFromFirestore = calendarResponse.flat() as IDayColumn[]
     columnStore.syncColumns(columnFromFirestore)
   }
 

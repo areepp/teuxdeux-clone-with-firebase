@@ -1,7 +1,7 @@
 import { useAuth } from '../../AuthContext'
 import * as calendarService from '@/lib/calendar.service'
 import * as todoService from '@/lib/todo.service'
-import useColumnStore from '@/stores/columns'
+import useDayStore from '@/stores/days'
 import useTodoStore, { ITodo } from '@/stores/todos'
 import { useEffect, useRef, useState } from 'react'
 import { Draggable } from 'react-beautiful-dnd'
@@ -16,7 +16,7 @@ interface Props {
 const TodoItem = ({ item, index, colId }: Props) => {
   const { user } = useAuth()
   const todoStore = useTodoStore()
-  const columnStore = useColumnStore()
+  const columnStore = useDayStore()
   const [isEditing, setIsEditing] = useState(false)
   const editTodoInputRef = useRef<HTMLInputElement>(null)
 

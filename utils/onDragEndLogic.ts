@@ -1,6 +1,6 @@
 import * as calendarService from '@/lib/calendar.service'
 import * as listService from '@/lib/list.service'
-import { ColumnStore, IColumn } from '@/stores/columns'
+import { DayStore, IDayColumn } from '@/stores/days'
 import { IList, ListStore } from '@/stores/lists'
 import { User } from 'firebase/auth'
 import { DropResult } from 'react-beautiful-dnd'
@@ -9,7 +9,7 @@ export const onDragEndLogic = (
   result: DropResult,
   user: User | null,
   listStore: ListStore,
-  columnStore: ColumnStore,
+  columnStore: DayStore,
 ) => {
   const { destination, source, draggableId, type } = result
 
@@ -37,8 +37,8 @@ export const onDragEndLogic = (
   const destinationIsList = destination.droppableId.startsWith('list-')
   const sourceIsList = source.droppableId.startsWith('list-')
 
-  let startColumn: IColumn | IList
-  let finishColumn: IColumn | IList
+  let startColumn: IDayColumn | IList
+  let finishColumn: IDayColumn | IList
 
   // determine whether the destination / source is list or calendar in order to use the correct store.
 
@@ -47,9 +47,9 @@ export const onDragEndLogic = (
       (list) => list.id === source.droppableId.split('-').pop(),
     ) as IList
   } else {
-    startColumn = columnStore.columns.find(
+    startColumn = columnStore.dayColumns.find(
       (col) => col.id === source.droppableId,
-    ) as IColumn
+    ) as IDayColumn
   }
 
   if (destinationIsList) {
@@ -57,9 +57,9 @@ export const onDragEndLogic = (
       (list) => list.id === destination.droppableId.split('-').pop(),
     ) as IList
   } else {
-    finishColumn = columnStore.columns.find(
+    finishColumn = columnStore.dayColumns.find(
       (col) => col.id === destination.droppableId,
-    ) as IColumn
+    ) as IDayColumn
   }
 
   if (startColumn === finishColumn) {
@@ -77,7 +77,7 @@ export const onDragEndLogic = (
       listStore.editList(newColumn.id, newColumn as IList)
       listService.rearrangeTodoOrder(user!.uid, finishColumn.id, newOrder)
     } else {
-      columnStore.editColumn(newColumn.id, newColumn)
+      columnStore.editColumnById(newColumn.id, newColumn)
       calendarService.rearrangeOrder(user!.uid, finishColumn.id, newOrder)
     }
   } else {
@@ -102,7 +102,7 @@ export const onDragEndLogic = (
       listStore.editList(startColumn.id, newStartColumn as IList)
       listService.rearrangeTodoOrder(user!.uid, startColumn.id, newStartOrder)
     } else {
-      columnStore.editColumn(startColumn.id, newStartColumn)
+      columnStore.editColumnById(startColumn.id, newStartColumn)
       calendarService.rearrangeOrder(user!.uid, startColumn.id, newStartOrder)
     }
 
@@ -110,7 +110,7 @@ export const onDragEndLogic = (
       listStore.editList(finishColumn.id, newFinishColumn as IList)
       listService.rearrangeTodoOrder(user!.uid, finishColumn.id, newFinishOrder)
     } else {
-      columnStore.editColumn(finishColumn.id, newFinishColumn)
+      columnStore.editColumnById(finishColumn.id, newFinishColumn)
       calendarService.rearrangeOrder(user!.uid, finishColumn.id, newFinishOrder)
     }
   }

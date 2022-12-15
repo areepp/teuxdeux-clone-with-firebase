@@ -3,8 +3,8 @@ import { getRenderClone } from '../Common/getRenderClone'
 import TodoItem from './TodoItem'
 import * as calendarService from '@/lib/calendar.service'
 import * as todoService from '@/lib/todo.service'
-import useColumnStore from '@/stores/columns'
-import { IColumn } from '@/stores/columns'
+import useDayStore from '@/stores/days'
+import { IDayColumn } from '@/stores/days'
 import useTodoStore, { ITodo } from '@/stores/todos'
 import {
   checkIsPast,
@@ -19,14 +19,14 @@ import SwiperCore from 'swiper'
 
 interface Props {
   todos: ITodo[] | null
-  column: IColumn
+  column: IDayColumn
   swiperRef: SwiperCore | undefined
   index: number
 }
 
-const Column = ({ todos, column, index, swiperRef }: Props) => {
+const DayColumn = ({ todos, column, index, swiperRef }: Props) => {
   const { user } = useAuth()
-  const columnStore = useColumnStore()
+  const columnStore = useDayStore()
   const todoStore = useTodoStore()
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
   const isToday = checkIsToday(column.id)
@@ -40,7 +40,7 @@ const Column = ({ todos, column, index, swiperRef }: Props) => {
       text: newTodoInputValue,
       checked: false,
     })
-    columnStore.pushToColumnOrder(column.id, res.id)
+    columnStore.addTodoToColumn(column.id, res.id)
     todoStore.pushTodo({ id: res.id, text: newTodoInputValue, checked: false })
     await calendarService.addToOrderList(user!.uid, column.id, res.id)
   }
@@ -108,4 +108,4 @@ const Column = ({ todos, column, index, swiperRef }: Props) => {
   )
 }
 
-export default Column
+export default DayColumn
