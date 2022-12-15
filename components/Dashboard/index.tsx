@@ -1,7 +1,7 @@
 import { useAuth } from '../AuthContext'
 import ListView from './ListView'
 import CalendarView from '@/components/Dashboard/CalendarView/'
-import * as calendarService from '@/lib/calendar.service'
+import * as dayService from '@/lib/day.service'
 import * as listService from '@/lib/list.service'
 import * as todoService from '@/lib/todo.service'
 import useDayStore, { IDayColumn } from '@/stores/days'
@@ -19,7 +19,7 @@ const Dashboard = () => {
   const listStore = useListStore()
 
   const syncDayColumns = async (dayColumns: IDayColumn[]) => {
-    const calendarResponse = await calendarService.getColumnByIds(
+    const calendarResponse = await dayService.getDayColumnsByIds(
       user!.uid,
       dayColumns.map((day) => day.id),
     )

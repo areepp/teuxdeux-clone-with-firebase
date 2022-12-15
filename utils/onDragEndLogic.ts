@@ -1,4 +1,4 @@
-import * as calendarService from '@/lib/calendar.service'
+import * as dayService from '@/lib/day.service'
 import * as listService from '@/lib/list.service'
 import { DayStore, IDayColumn } from '@/stores/days'
 import { IList, ListStore } from '@/stores/lists'
@@ -78,7 +78,7 @@ export const onDragEndLogic = (
       listService.rearrangeTodoOrder(user!.uid, finishColumn.id, newOrder)
     } else {
       columnStore.editColumnById(newColumn.id, newColumn)
-      calendarService.rearrangeOrder(user!.uid, finishColumn.id, newOrder)
+      dayService.editTodoOrder(user!.uid, finishColumn.id, newOrder)
     }
   } else {
     // move todo from one column to another
@@ -103,7 +103,7 @@ export const onDragEndLogic = (
       listService.rearrangeTodoOrder(user!.uid, startColumn.id, newStartOrder)
     } else {
       columnStore.editColumnById(startColumn.id, newStartColumn)
-      calendarService.rearrangeOrder(user!.uid, startColumn.id, newStartOrder)
+      dayService.editTodoOrder(user!.uid, startColumn.id, newStartOrder)
     }
 
     if (destinationIsList) {
@@ -111,7 +111,7 @@ export const onDragEndLogic = (
       listService.rearrangeTodoOrder(user!.uid, finishColumn.id, newFinishOrder)
     } else {
       columnStore.editColumnById(finishColumn.id, newFinishColumn)
-      calendarService.rearrangeOrder(user!.uid, finishColumn.id, newFinishOrder)
+      dayService.editTodoOrder(user!.uid, finishColumn.id, newFinishOrder)
     }
   }
 }

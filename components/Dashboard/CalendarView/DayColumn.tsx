@@ -1,7 +1,7 @@
 import { useAuth } from '../../AuthContext'
 import { getRenderClone } from '../Common/getRenderClone'
 import TodoItem from './TodoItem'
-import * as calendarService from '@/lib/calendar.service'
+import * as dayService from '@/lib/day.service'
 import * as todoService from '@/lib/todo.service'
 import useDayStore from '@/stores/days'
 import { IDayColumn } from '@/stores/days'
@@ -42,7 +42,7 @@ const DayColumn = ({ todos, column, index, swiperRef }: Props) => {
     })
     columnStore.addTodoToColumn(column.id, res.id)
     todoStore.pushTodo({ id: res.id, text: newTodoInputValue, checked: false })
-    await calendarService.addToOrderList(user!.uid, column.id, res.id)
+    await dayService.addTodoToColumn(user!.uid, column.id, res.id)
   }
 
   const handleKeyDown = async (e: KeyboardEvent) => {

@@ -1,5 +1,5 @@
 import { useAuth } from '../../AuthContext'
-import * as calendarService from '@/lib/calendar.service'
+import * as dayService from '@/lib/day.service'
 import * as todoService from '@/lib/todo.service'
 import useDayStore from '@/stores/days'
 import useTodoStore, { ITodo } from '@/stores/todos'
@@ -29,7 +29,7 @@ const TodoItem = ({ item, index, colId }: Props) => {
     columnStore.deleteTodoFromColumn(colId, item.id)
     Promise.all([
       todoService.deleteTodo(user!.uid, item.id),
-      calendarService.deleteFromOrderList(user!.uid, colId, item.id),
+      dayService.deleteTodoFromColumn(user!.uid, colId, item.id),
     ])
   }
 
