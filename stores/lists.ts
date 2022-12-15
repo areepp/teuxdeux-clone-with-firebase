@@ -16,6 +16,7 @@ export interface ListStore {
   setLists: (_newLists: IList[]) => void
   setListOrder: (_listOrder: string[]) => void
   pushToListOrder: (_listId: string, _newItem: string) => void
+  deleteTodoFromList: (_listId: string, _todoId: string) => void
   editList: (_listId: string, _newList: IList) => void
 }
 
@@ -58,6 +59,14 @@ const useListStore = create<ListStore>((set: any) => ({
                 $push: [newItem],
               },
             })
+          : list,
+      ),
+    })),
+  deleteTodoFromList: (listId: string, todoId: string) =>
+    set((state: State) => ({
+      lists: state.lists.map((list) =>
+        list.id === listId
+          ? { ...list, order: list.order.filter((id) => id !== todoId) }
           : list,
       ),
     })),

@@ -7,6 +7,10 @@ export interface IColumn {
   order: string[]
 }
 
+interface State {
+  columns: IColumn[]
+}
+
 export interface ColumnStore {
   columns: IColumn[]
   setColumns: (_columns: IColumn[]) => void
@@ -14,6 +18,7 @@ export interface ColumnStore {
   pushColumns: (_newColumns: IColumn[]) => void
   syncColumns: (_cloudColumns: IColumn[]) => void
   pushToColumnOrder: (_columnId: string, _newItem: string) => void
+  deleteTodoFromColumn: (_columnId: string, _todoId: string) => void
   editColumn: (_columnId: string, _newColumn: IColumn) => void
 }
 
@@ -44,6 +49,14 @@ const useColumnStore = create<ColumnStore>((set: any) => ({
                 $push: [newItem],
               },
             })
+          : column,
+      ),
+    })),
+  deleteTodoFromColumn: (columnId: string, todoId: string) =>
+    set((state: State) => ({
+      columns: state.columns.map((column) =>
+        column.id === columnId
+          ? { ...column, order: column.order.filter((id) => id !== todoId) }
           : column,
       ),
     })),

@@ -1,21 +1,21 @@
+import { useAuth } from '../../AuthContext'
+import { getRenderClone } from '../Common/getRenderClone'
+import TodoItem from './TodoItem'
 import * as calendarService from '@/lib/calendar.service'
 import * as todoService from '@/lib/todo.service'
+import useColumnStore from '@/stores/columns'
+import { IColumn } from '@/stores/columns'
+import useTodoStore, { ITodo } from '@/stores/todos'
 import {
   checkIsPast,
   checkIsToday,
   getDayOfTheWeek,
   getFullDate,
 } from '@/utils/dateHelper'
+import clsx from 'clsx'
 import { KeyboardEvent, useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
 import SwiperCore from 'swiper'
-import { useAuth } from '../../AuthContext'
-import TodoItem from './TodoItem'
-import clsx from 'clsx'
-import useColumnStore from '@/stores/columns'
-import { IColumn } from '@/stores/columns'
-import useTodoStore, { ITodo } from '@/stores/todos'
-import { HiPencil } from 'react-icons/hi'
 
 interface Props {
   todos: ITodo[] | null
@@ -32,6 +32,7 @@ const Column = ({ todos, column, index, swiperRef }: Props) => {
   const isToday = checkIsToday(column.id)
   const isPast = checkIsPast(column.id)
   const isRealIndex = index === swiperRef?.realIndex
+  const renderClone = getRenderClone(todos)
 
   const handleAddTodo = async () => {
     const res = await todoService.addTodo(user!.uid, {
@@ -78,26 +79,7 @@ const Column = ({ todos, column, index, swiperRef }: Props) => {
         <Droppable
           droppableId={column.id}
           type="todo"
-          renderClone={(provided, _snapshot, rubric) => {
-            // renderClone allows to move todo item to other parent (LIST VIEW) whilte maintaining the correct styles
-            const draggedTodoText = todos!.filter(
-              (todo) => todo.id === rubric.draggableId,
-            )[0].text
-
-            return (
-              <div
-                ref={provided.innerRef}
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-                className={`z-50 h-[49px] md:text-sm md:h-[27px] flex items-center justify-between`}
-              >
-                <p className="">{draggedTodoText}</p>
-                <div>
-                  <HiPencil />
-                </div>
-              </div>
-            )
-          }}
+          renderClone={renderClone}
         >
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>

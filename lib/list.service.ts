@@ -1,3 +1,4 @@
+import { db } from './firebaseClient'
 import { IList } from '@/stores/lists'
 import {
   addDoc,
@@ -11,7 +12,6 @@ import {
   setDoc,
   updateDoc,
 } from 'firebase/firestore'
-import { db } from './firebaseClient'
 
 const getListCollectionRef = (userId: string) =>
   collection(db, 'users', userId, 'lists', 'listsCollection', 'collection')
@@ -87,6 +87,20 @@ export const addTodoToListOrder = async (
     getListDocRef(userId, listId),
     {
       order: arrayUnion(todoId),
+    },
+    { merge: true },
+  )
+}
+
+export const deleteTodoFromListOrder = async (
+  userId: string,
+  listId: string,
+  todoId: string,
+) => {
+  return setDoc(
+    getListDocRef(userId, listId),
+    {
+      order: arrayRemove(todoId),
     },
     { merge: true },
   )
