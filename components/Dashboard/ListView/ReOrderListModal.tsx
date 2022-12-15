@@ -8,7 +8,6 @@ interface Props {
 
 const ReOrderListModal = ({ setIsReOrderModalVisible }: Props) => {
   const { lists, listOrder } = useListStore()
-
   const orderedLists = listOrder.map(
     (id) => lists.find((list) => list.id === id) as IList,
   )
@@ -19,14 +18,14 @@ const ReOrderListModal = ({ setIsReOrderModalVisible }: Props) => {
   }
 
   return (
-    // modal bakcdrop
+    // MODAL BACKDROP
     <div
       onClick={handleBackDropClick}
       className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-20"
     >
-      {/*modal*/}
+      {/* MODAL*/}
       <div className="w-[300px] md:w-[650px] max-h-[600px] p-5 flex flex-col bg-white rounded-lg shadow-lg">
-        {/*header*/}
+        {/* HEADER */}
         <div className="flex items-start justify-between">
           <h3 className="text-4xl font-gothic">RE-ORDER LIST</h3>
           <button
@@ -37,7 +36,7 @@ const ReOrderListModal = ({ setIsReOrderModalVisible }: Props) => {
           </button>
         </div>
 
-        {/*body*/}
+        {/* BODY */}
         <Droppable droppableId="list-order" type="list">
           {(provided) => (
             <div
@@ -66,7 +65,7 @@ const ReOrderListModal = ({ setIsReOrderModalVisible }: Props) => {
           )}
         </Droppable>
 
-        {/*footer*/}
+        {/* FOOTER */}
         <div className="flex items-center justify-center">
           <button
             className="border border-primary px-3 py-1 rounded hover:bg-primary hover:text-white transition-all"
