@@ -5,7 +5,6 @@ const SignOutBtn = () => {
   const router = useRouter()
   const handleLogOut = async () => {
     await authService.logOut()
-    console.log('hei')
     router.push('/login')
   }
 

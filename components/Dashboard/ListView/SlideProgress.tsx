@@ -7,8 +7,6 @@ interface Props {
 const SlideProgress = ({ activeSlideIndex }: Props) => {
   const { listOrder } = useListStore()
 
-  console.log(activeSlideIndex <= 2)
-
   return (
     <div className="flex gap-2">
       {listOrder.map((list, index) => (

@@ -30,11 +30,9 @@ const Login = () => {
     try {
       await authService.login(data)
       router.push('/')
-      console.log('now')
     } catch (error: any) {
       setErrorMessage('Incorrect email and/or password')
     }
-    console.log('end')
     setLoginButtonDisabled(false)
   }
 
