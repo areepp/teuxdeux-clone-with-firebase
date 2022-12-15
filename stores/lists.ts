@@ -1,5 +1,5 @@
-import create from 'zustand'
 import update from 'immutability-helper'
+import create from 'zustand'
 
 export interface IList {
   id: string
@@ -28,11 +28,13 @@ const useListStore = create<ListStore>((set: any) => ({
   lists: [],
   listOrder: [],
   addList: (id: string) =>
+    // add list to the lists state and listOrder state
     set((state: any) => ({
       lists: [...state.lists, { id, title: '', order: [] }],
       listOrder: [...state.listOrder, id],
     })),
   deleteList: (deletedId: string) =>
+    // delete list from lists state and listOrder state
     set((state: State) => ({
       lists: state.lists.filter((list) => list.id !== deletedId),
       listOrder: state.listOrder.filter((id) => id !== deletedId),
@@ -47,6 +49,7 @@ const useListStore = create<ListStore>((set: any) => ({
   setListOrder: (newListOrder: string[]) =>
     set(() => ({ listOrder: newListOrder })),
   pushToListOrder: (listId: string, newItem: string) =>
+    // add a todo id to the list order
     set((state: State) => ({
       lists: state.lists.map((list) =>
         list.id === listId
@@ -59,6 +62,7 @@ const useListStore = create<ListStore>((set: any) => ({
       ),
     })),
   editList: (listId: string, newList: IList) =>
+    // replace a list with a new provided list
     set((state: State) => ({
       lists: state.lists.map((list) => (list.id === listId ? newList : list)),
     })),

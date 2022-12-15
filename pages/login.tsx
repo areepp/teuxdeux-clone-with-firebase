@@ -15,8 +15,8 @@ export interface Inputs {
 
 const Login = () => {
   const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
-  const [submitDisabled, setSubmitDisabled] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [loginButtonDisabled, setLoginButtonDisabled] = useState(false)
 
   const {
     register,
@@ -25,26 +25,29 @@ const Login = () => {
   } = useForm<Inputs>()
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    setSubmitDisabled(true)
+    setLoginButtonDisabled(true)
     try {
       await authService.login(data)
       router.push('/')
     } catch (error: any) {
-      setError('Incorrect email and/or password')
+      setErrorMessage('Incorrect email and/or password')
     }
-    setSubmitDisabled(false)
+    setLoginButtonDisabled(false)
   }
 
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center">
-      <div className="w-full px-4">
+      <div className="w-full md:max-w-xl px-4">
+        {/* HEADER */}
         <h1 className="font-display text-5xl tracking-tight text-center">
           LOG IN
         </h1>
+
+        {/* FORM */}
         <form className="mt-16 space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          {error && (
+          {errorMessage && (
             <div className="w-full py-4 bg-red-100 border-stone-300 rounded text-center">
-              {error}
+              {errorMessage}
             </div>
           )}
           <Input text="email" register={register} />
@@ -60,11 +63,13 @@ const Login = () => {
           <button
             className="w-full text-lg py-4 bg-red-600 rounded text-gray-100"
             type="submit"
-            disabled={submitDisabled}
+            disabled={loginButtonDisabled}
           >
             Log in
           </button>
         </form>
+
+        {/* FOOTER */}
         <p className="mt-4">
           Don&apos;t have an account?
           <Link href="/signup" legacyBehavior>

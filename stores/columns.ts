@@ -1,6 +1,6 @@
-import create from 'zustand'
-import update from 'immutability-helper'
 import { getInitialColumns } from '@/utils/dateHelper'
+import update from 'immutability-helper'
+import create from 'zustand'
 
 export interface IColumn {
   id: string
@@ -21,10 +21,13 @@ const useColumnStore = create<ColumnStore>((set: any) => ({
   columns: getInitialColumns(),
   setColumns: (newColumns: IColumn[]) => set(() => ({ columns: newColumns })),
   unshiftColumns: (newColumns: IColumn[]) =>
+    // add columns to the beginning of columns state array
     set((state: any) => ({ columns: [...newColumns, ...state.columns] })),
   pushColumns: (newColumns: IColumn[]) =>
+    // add columns to the end of columns state array
     set((state: any) => ({ columns: [...state.columns, ...newColumns] })),
   syncColumns: (cloudColumns: IColumn[]) =>
+    // replace a column from columns state to the ones that are found from api
     set((state: any) => ({
       columns: state.columns.map(
         (local: IColumn) =>
@@ -32,6 +35,7 @@ const useColumnStore = create<ColumnStore>((set: any) => ({
       ),
     })),
   pushToColumnOrder: (columnId: string, newItem: string) =>
+    // add an id to a column order
     set((state: any) => ({
       columns: state.columns.map((column: IColumn) =>
         column.id === columnId
@@ -44,6 +48,7 @@ const useColumnStore = create<ColumnStore>((set: any) => ({
       ),
     })),
   editColumn: (columnId: string, newColumn: IColumn) =>
+    // replace a column with the new provided column
     set((state: any) => ({
       columns: state.columns.map((column: IColumn) =>
         column.id === columnId ? newColumn : column,

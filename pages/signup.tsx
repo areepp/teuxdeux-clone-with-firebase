@@ -1,3 +1,4 @@
+import { Inputs } from './login'
 import Input from '@/components/Login/Input'
 import * as authService from '@/lib/auth.service'
 import { adminAuth } from '@/lib/firebaseAdmin'
@@ -9,8 +10,6 @@ import nookies from 'nookies'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
-import { Inputs } from './login'
-
 interface IMessage {
   text: string
   type: 'success' | 'error'
@@ -18,7 +17,7 @@ interface IMessage {
 
 const SignUp = () => {
   const [message, setMessage] = useState<IMessage | null>(null)
-  const [buttonDisabled, setButtonDisabled] = useState(false)
+  const [signUpButtonDisabled, setSignUpButtonDisabled] = useState(false)
 
   const {
     register,
@@ -28,7 +27,7 @@ const SignUp = () => {
   } = useForm<Inputs>()
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    setButtonDisabled(true)
+    setSignUpButtonDisabled(true)
     try {
       const res = await authService.signup(data)
       const { uid, email } = res.user
@@ -40,15 +39,18 @@ const SignUp = () => {
         setMessage({ text: error.message, type: 'error' })
       }
     }
-    setButtonDisabled(false)
+    setSignUpButtonDisabled(false)
   }
 
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center">
-      <div className="w-full px-4">
+      <div className="w-full md:max-w-xl px-4">
+        {/* HEADER */}
         <h1 className="font-display text-5xl tracking-tight text-center">
           SIGN UP
         </h1>
+
+        {/* FORM */}
         <form className="mt-16 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           {message && (
             <div
@@ -74,11 +76,13 @@ const SignUp = () => {
           <button
             className="w-full text-lg py-4 bg-red-600 rounded text-gray-100"
             type="submit"
-            disabled={buttonDisabled}
+            disabled={signUpButtonDisabled}
           >
             Sign Up
           </button>
         </form>
+
+        {/* FOOTER */}
         <p className="mt-4">
           Already have an account?
           <Link href="/login" legacyBehavior>
