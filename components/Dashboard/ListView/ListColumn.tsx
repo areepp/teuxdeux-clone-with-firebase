@@ -8,7 +8,6 @@ import useListStore, { IList } from '@/stores/lists'
 import useTodoStore, { ITodo } from '@/stores/todos'
 import { useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
-import { TbDotsVertical } from 'react-icons/tb'
 
 interface Props {
   list: IList
@@ -20,7 +19,6 @@ const ListColumn = ({ todos, list }: Props) => {
   const listStore = useListStore()
   const todoStore = useTodoStore()
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
-  const [isOptionVisible, setIsOptionVisible] = useState(false)
   const renderClone = getRenderClone(todos) // renderClone allows to move todo item to other parent (CALENDAR VIEW) while maintaining the desired drag behavior
 
   const handleAddTodo = async () => {
@@ -40,22 +38,11 @@ const ListColumn = ({ todos, list }: Props) => {
     }
   }
 
-  const openListOption = () => {
-    setIsOptionVisible(!isOptionVisible)
-  }
-
   return (
     <div className="relative h-full px-4 w-full text-gray-900 flex-grow drag-fix">
       {/* OPTION */}
-      <div className="relative left-14 md:left-0">
-        <button
-          onClick={openListOption}
-          className="mt-20 flex justify-start py-1 rounded text-xl hover:bg-zinc-300 transition-all"
-        >
-          <TbDotsVertical />
-        </button>
-        {isOptionVisible && <ListOption listId={list.id} />}
-      </div>
+
+      <ListOption listId={list.id} />
 
       {/* TITLE */}
       <input

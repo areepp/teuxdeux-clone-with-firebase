@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
 import { IoCalendar } from 'react-icons/io5'
+import OutsideClickHandler from 'react-outside-click-handler'
 import SwiperCore from 'swiper'
 
 interface Props {
@@ -19,18 +20,10 @@ interface Props {
 const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
   const columnStore = useColumnStore()
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
-  const [isCalendarClicked, setIsCalendarClicked] = useState(false)
-
-  const handleBlur = () => {
-    // don't close calendar when day picker is clicked
-    if (!isCalendarClicked) {
-      setIsCalendarOpen(false)
-    } else {
-      return
-    }
-  }
 
   const handleDayClick = async (day: Date) => {
+    setIsCalendarOpen(false)
+
     const clickedDayIndex = columnStore.columns
       .map((col) => col.id)
       .indexOf(transformDateSlashToDash(day.toLocaleDateString()))
@@ -55,9 +48,6 @@ const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
       await syncDayColumns(getReInitiatedDays(day))
       swiperRef?.slideTo(7, 0)
     }
-
-    setIsCalendarClicked(false)
-    setIsCalendarOpen(false)
   }
 
   return (
@@ -70,18 +60,19 @@ const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
         <button
           className="mt-2 text-xl text-gray-400 hover:text-primary transition-all duration-300"
           onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-          onBlur={handleBlur}
         >
           <IoCalendar />
         </button>
         {isCalendarOpen && (
-          <div
-            id="day-picker"
-            className="absolute right-1/2 top-20 z-50 bg-zinc-50 shadow-lg rounded"
-            onMouseDown={() => setIsCalendarClicked(true)} // onMouseDown is fired first before onBlur, prevent calendar closed when the day picker is clicked
-          >
-            <DayPicker mode="single" onDayClick={handleDayClick} />
-          </div>
+          <OutsideClickHandler onOutsideClick={() => setIsCalendarOpen(false)}>
+            <div
+              id="day-picker"
+              className="absolute right-1/2 top-20 z-50 bg-zinc-50 shadow-lg rounded"
+              onBlur={() => console.log('now')}
+            >
+              <DayPicker mode="single" onDayClick={handleDayClick} />
+            </div>
+          </OutsideClickHandler>
         )}
       </div>
     </nav>
