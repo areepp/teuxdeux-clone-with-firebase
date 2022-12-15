@@ -1,27 +1,22 @@
-import { useState } from 'react'
-import { DayPicker } from 'react-day-picker'
-import { IoCalendar } from 'react-icons/io5'
-import SwiperCore from 'swiper'
 import Arrow from '../Common/Arrow'
-
-import 'react-day-picker/dist/style.css'
+import useColumnStore, { IColumn } from '@/stores/columns'
 import {
   getReInitiatedDays,
   transformDateSlashToDash,
 } from '@/utils/dateHelper'
-import useColumnStore, { IColumn } from '@/stores/columns'
+import { useState } from 'react'
+import { DayPicker } from 'react-day-picker'
+import 'react-day-picker/dist/style.css'
+import { IoCalendar } from 'react-icons/io5'
+import SwiperCore from 'swiper'
 
 interface Props {
   navigationDisabled: boolean
   swiperRef: SwiperCore | undefined
-  syncColumnToFirebase: (_localState: IColumn[]) => Promise<void>
+  syncDayColumns: (_localState: IColumn[]) => Promise<void>
 }
 
-const NavRight = ({
-  navigationDisabled,
-  swiperRef,
-  syncColumnToFirebase,
-}: Props) => {
+const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
   const columnStore = useColumnStore()
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
@@ -56,7 +51,7 @@ const NavRight = ({
       swiperRef?.slideTo(clickedDayIndex, 600)
     } else {
       columnStore.setColumns(getReInitiatedDays(day))
-      await syncColumnToFirebase(getReInitiatedDays(day))
+      await syncDayColumns(getReInitiatedDays(day))
       swiperRef?.slideTo(7, 0)
     }
 

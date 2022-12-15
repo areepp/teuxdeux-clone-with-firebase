@@ -7,7 +7,7 @@ export interface IColumn {
   order: string[]
 }
 
-interface ColumnStore {
+export interface ColumnStore {
   columns: IColumn[]
   setColumns: (_columns: IColumn[]) => void
   unshiftColumns: (_newColumns: IColumn[]) => void

@@ -1,5 +1,10 @@
-import * as calendarService from '@/lib/calendar.service'
+import Column from './Column'
+import NavLeft from './NavLeft'
+import NavRight from './NavRight'
 import useColumnStore from '@/stores/columns'
+import { IColumn } from '@/stores/columns'
+import { ITodo } from '@/stores/todos'
+import useTodoStore from '@/stores/todos'
 import {
   getInitialColumns,
   getNextFourDays,
@@ -9,41 +14,28 @@ import { useEffect, useState } from 'react'
 import SwiperCore from 'swiper'
 import 'swiper/css'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { useAuth } from '../../AuthContext'
-import { IColumn } from '@/stores/columns'
-import NavLeft from './NavLeft'
-import NavRight from './NavRight'
-import { ITodo } from '@/stores/todos'
-import Column from './Column'
-import useTodoStore from '@/stores/todos'
 
-const CalendarView = () => {
-  const { user } = useAuth()
+interface Props {
+  syncDayColumns: (_dayColumns: IColumn[]) => Promise<void>
+}
+
+const CalendarView = ({ syncDayColumns }: Props) => {
   const columnStore = useColumnStore()
   const todoStore = useTodoStore()
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
   const [navigationDisabled, setNavigationDisabled] = useState(false)
 
-  const syncColumnToFirebase = async (localState: IColumn[]) => {
-    const calendarResponse = await calendarService.getColumnByIds(
-      user!.uid,
-      localState.map((day) => day.id),
-    )
-    const columnFromFirestore = calendarResponse.flat() as IColumn[]
-    columnStore.syncColumns(columnFromFirestore)
-  }
-
   useEffect(() => {
-    syncColumnToFirebase(getInitialColumns())
+    syncDayColumns(getInitialColumns())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <div className="relative bg-white flex-grow min-h-[500px] pt-12 md:flex">
+    <section className="relative bg-white flex-grow min-h-[500px] pt-12 md:flex">
       <NavLeft
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
-        syncColumnToFirebase={syncColumnToFirebase}
+        syncDayColumns={syncDayColumns}
       />
       <div className="h-full md:w-main">
         <Swiper
@@ -66,15 +58,12 @@ const CalendarView = () => {
                 columnStore.columns[columnStore.columns.length - 1].id,
               )
               columnStore.pushColumns(nextFourDays)
-              await syncColumnToFirebase([
-                ...columnStore.columns,
-                ...nextFourDays,
-              ])
+              await syncDayColumns([...columnStore.columns, ...nextFourDays])
             }
             if (e.activeIndex === 3) {
               const pastFourDays = getPastFourDays(columnStore.columns[0].id)
               columnStore.unshiftColumns(pastFourDays.reverse())
-              await syncColumnToFirebase([
+              await syncDayColumns([
                 ...pastFourDays.reverse(),
                 ...columnStore.columns,
               ])
@@ -112,9 +101,9 @@ const CalendarView = () => {
       <NavRight
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
-        syncColumnToFirebase={syncColumnToFirebase}
+        syncDayColumns={syncDayColumns}
       />
-    </div>
+    </section>
   )
 }
 

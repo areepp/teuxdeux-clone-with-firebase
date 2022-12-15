@@ -7,7 +7,7 @@ export interface IList {
   order: string[]
 }
 
-interface ListStore {
+export interface ListStore {
   lists: IList[]
   listOrder: string[]
   addList: (_id: string) => void

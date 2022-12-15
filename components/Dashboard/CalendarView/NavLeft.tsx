@@ -1,20 +1,16 @@
+import Arrow from '../Common/Arrow'
+import useColumnStore, { IColumn } from '@/stores/columns'
 import { getInitialColumns, transformDateSlashToDash } from '@/utils/dateHelper'
 import { IoHome } from 'react-icons/io5'
 import SwiperCore from 'swiper'
-import Arrow from '../Common/Arrow'
-import useColumnStore, { IColumn } from '@/stores/columns'
 
 interface Props {
   navigationDisabled: boolean
   swiperRef: SwiperCore | undefined
-  syncColumnToFirebase: (_localState: IColumn[]) => Promise<void>
+  syncDayColumns: (_localState: IColumn[]) => Promise<void>
 }
 
-const NavLeft = ({
-  navigationDisabled,
-  swiperRef,
-  syncColumnToFirebase,
-}: Props) => {
+const NavLeft = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
   const columnStore = useColumnStore()
   const onClick = async () => {
     const today = transformDateSlashToDash(new Date().toLocaleDateString())
@@ -23,7 +19,7 @@ const NavLeft = ({
       swiperRef?.slideTo(todayIndex, 600)
     } else {
       columnStore.setColumns(getInitialColumns())
-      await syncColumnToFirebase(getInitialColumns())
+      await syncDayColumns(getInitialColumns())
     }
   }
 
