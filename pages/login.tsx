@@ -1,4 +1,5 @@
 import Input from '@/components/Login/Input'
+import Spinner from '@/components/Login/Spinner'
 import * as authService from '@/lib/auth.service'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
@@ -29,9 +30,11 @@ const Login = () => {
     try {
       await authService.login(data)
       router.push('/')
+      console.log('now')
     } catch (error: any) {
       setErrorMessage('Incorrect email and/or password')
     }
+    console.log('end')
     setLoginButtonDisabled(false)
   }
 
@@ -65,7 +68,7 @@ const Login = () => {
             type="submit"
             disabled={loginButtonDisabled}
           >
-            Log in
+            {loginButtonDisabled ? <Spinner /> : 'Log in'}
           </button>
         </form>
 
