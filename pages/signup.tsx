@@ -44,7 +44,6 @@ const SignUp = () => {
     //   }
     // }
     // setSignUpButtonDisabled(false)
-    console.log('disabled')
   }
 
   return (
