@@ -1,11 +1,10 @@
+import { clientAuth } from './firebaseClient'
 import { Inputs } from '@/pages/login'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth'
-
-import { clientAuth } from './firebaseClient'
 
 export const signup = (data: Inputs) => {
   const { email, password } = data
