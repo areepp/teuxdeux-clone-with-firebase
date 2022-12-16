@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Inputs } from './login'
 import Input from '@/components/Login/Input'
 import * as authService from '@/lib/auth.service'
@@ -16,7 +17,10 @@ interface IMessage {
 }
 
 const SignUp = () => {
-  const [message, setMessage] = useState<IMessage | null>(null)
+  const [message, setMessage] = useState<IMessage | null>({
+    type: 'error',
+    text: 'go to readme for the demo accounts https://github.com/areepp/teuxdeux-clone#readme',
+  })
   const [signUpButtonDisabled, setSignUpButtonDisabled] = useState(false)
 
   const {
@@ -27,19 +31,19 @@ const SignUp = () => {
   } = useForm<Inputs>()
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    setSignUpButtonDisabled(true)
-    try {
-      const res = await authService.signup(data)
-      const { uid, email } = res.user
-      if (email) await userService.storeUserToFirestore({ uid, email })
-      setMessage({ text: 'Sign up succesful', type: 'success' })
-      reset()
-    } catch (error: unknown) {
-      if (error instanceof FirebaseError) {
-        setMessage({ text: error.message, type: 'error' })
-      }
-    }
-    setSignUpButtonDisabled(false)
+    // setSignUpButtonDisabled(true)
+    // try {
+    //   const res = await authService.signup(data)
+    //   const { uid, email } = res.user
+    //   if (email) await userService.storeUserToFirestore({ uid, email })
+    //   setMessage({ text: 'Sign up succesful', type: 'success' })
+    //   reset()
+    // } catch (error: unknown) {
+    //   if (error instanceof FirebaseError) {
+    //     setMessage({ text: error.message, type: 'error' })
+    //   }
+    // }
+    // setSignUpButtonDisabled(false)
   }
 
   return (
@@ -74,9 +78,11 @@ const SignUp = () => {
           )}
 
           <button
-            className="w-full text-lg py-4 bg-red-600 rounded text-gray-100"
+            className={`w-full text-lg py-4 bg-red-600 rounded text-gray-100 ${
+              true && 'cursor-not-allowed bg-gray-400'
+            }`}
             type="submit"
-            disabled={signUpButtonDisabled}
+            disabled={true}
           >
             Sign Up
           </button>

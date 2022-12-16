@@ -68,7 +68,6 @@ const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
             <div
               id="day-picker"
               className="absolute right-1/2 top-20 z-50 bg-zinc-50 shadow-lg rounded"
-              onBlur={() => console.log('now')}
             >
               <DayPicker mode="single" onDayClick={handleDayClick} />
             </div>

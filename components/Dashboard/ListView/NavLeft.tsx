@@ -1,6 +1,6 @@
+import Arrow from '../Common/Arrow'
 import { IoHome } from 'react-icons/io5'
 import SwiperCore from 'swiper'
-import Arrow from '../Common/Arrow'
 
 interface Props {
   swiperRef: SwiperCore | undefined
