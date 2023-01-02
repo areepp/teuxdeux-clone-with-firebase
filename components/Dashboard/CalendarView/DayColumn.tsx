@@ -16,6 +16,7 @@ import clsx from 'clsx'
 import { KeyboardEvent, useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
 import SwiperCore from 'swiper'
+import { v4 as uuidv4 } from 'uuid'
 
 interface Props {
   todos: ITodo[] | null
@@ -36,13 +37,22 @@ const DayColumn = ({ todos, column, index, swiperRef }: Props) => {
 
   const handleAddTodo = async () => {
     setNewTodoInputValue('')
-    const res = await todoService.addTodo(user!.uid, {
+    const newTodoId = uuidv4()
+
+    columnStore.addTodoToColumn(column.id, newTodoId)
+    todoStore.pushTodo({
+      id: newTodoId,
       text: newTodoInputValue,
       checked: false,
     })
-    columnStore.addTodoToColumn(column.id, res.id)
-    todoStore.pushTodo({ id: res.id, text: newTodoInputValue, checked: false })
-    await dayService.addTodoToColumn(user!.uid, column.id, res.id)
+
+    Promise.all([
+      todoService.addTodo(user!.uid, newTodoId, {
+        text: newTodoInputValue,
+        checked: false,
+      }),
+      dayService.addTodoToColumn(user!.uid, column.id, newTodoId),
+    ])
   }
 
   const handleKeyDown = async (e: KeyboardEvent) => {

@@ -8,6 +8,7 @@ import useListStore, { IList } from '@/stores/lists'
 import useTodoStore, { ITodo } from '@/stores/todos'
 import { useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
+import { v4 as uuidv4 } from 'uuid'
 
 interface Props {
   list: IList
@@ -23,13 +24,20 @@ const ListColumn = ({ todos, list }: Props) => {
 
   const handleAddTodo = async () => {
     setNewTodoInputValue('')
-    const res = await todoService.addTodo(user!.uid, {
+    const newTodoId = uuidv4()
+    listStore.pushToListOrder(list.id, newTodoId)
+    todoStore.pushTodo({
+      id: newTodoId,
       text: newTodoInputValue,
       checked: false,
     })
-    listStore.pushToListOrder(list.id, res.id)
-    todoStore.pushTodo({ id: res.id, text: newTodoInputValue, checked: false })
-    await listService.addTodoToList(user!.uid, list.id, res.id)
+    Promise.all([
+      todoService.addTodo(user!.uid, newTodoId, {
+        text: newTodoInputValue,
+        checked: false,
+      }),
+      listService.addTodoToList(user!.uid, list.id, newTodoId),
+    ])
   }
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {

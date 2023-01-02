@@ -23,7 +23,7 @@ const ListView = () => {
 
   const handleAddList = async () => {
     const res = await listService.addList(user!.uid)
-    await listService.addToListOrder(user!.uid, res.id)
+    listService.addToListOrder(user!.uid, res.id)
     listStore.addList(res.id)
   }
 

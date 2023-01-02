@@ -1,7 +1,6 @@
 import { db } from './firebaseClient'
 import { ITodo } from '@/stores/todos'
 import {
-  addDoc,
   collection,
   doc,
   getDocs,
@@ -11,6 +10,7 @@ import {
   documentId,
   where,
   writeBatch,
+  setDoc,
 } from 'firebase/firestore'
 
 const getTodoCollectionRef = (userId: string) =>
@@ -31,8 +31,12 @@ export const getColumnTodos = (userId: string, columnTodosIds: string[]) => {
   return getDocs(q)
 }
 
-export const addTodo = async (userId: string, newTodo: Omit<ITodo, 'id'>) => {
-  return addDoc(getTodoCollectionRef(userId), newTodo)
+export const addTodo = async (
+  userId: string,
+  newTodoId: string,
+  newTodo: Omit<ITodo, 'id'>,
+) => {
+  return setDoc(getTodoDocRef(userId, newTodoId), newTodo)
 }
 
 export const deleteTodo = async (userId: string, todoId: string) => {
