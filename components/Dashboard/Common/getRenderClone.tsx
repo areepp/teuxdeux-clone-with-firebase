@@ -14,9 +14,9 @@ export const getRenderClone =
     _snapshot: DraggableStateSnapshot,
     rubric: DraggableRubric,
   ) => {
-    const draggedTodoText = todos?.filter(
+    const item = todos?.filter(
       (todo: ITodo) => todo.id === rubric.draggableId,
-    )[0].text
+    )[0]
 
     return (
       <div
@@ -25,7 +25,9 @@ export const getRenderClone =
         {...provided.dragHandleProps}
         className={`z-50 h-[49px] md:text-sm md:h-[27px] flex items-center justify-between`}
       >
-        <p className="">{draggedTodoText}</p>
+        <p className={item!.checked ? 'line-through  text-stone-300' : ''}>
+          {item!.text}
+        </p>
         <div>
           <HiPencil />
         </div>
