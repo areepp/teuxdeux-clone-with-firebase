@@ -1,7 +1,8 @@
 import { useAuth } from '../../AuthContext'
-import * as dayService from '@/lib/day.service'
+import * as listService from '@/lib/list.service'
 import * as todoService from '@/lib/todo.service'
 import useDayStore from '@/stores/days'
+import useListStore from '@/stores/lists'
 import useTodoStore, { ITodo } from '@/stores/todos'
 import { useEffect, useRef, useState } from 'react'
 import { Draggable } from 'react-beautiful-dnd'
@@ -11,12 +12,14 @@ interface Props {
   item: ITodo
   index: number
   colId: string
+  childOf: 'calendar' | 'list'
 }
 
-const TodoItem = ({ item, index, colId }: Props) => {
+const TodoItem = ({ item, index, colId, childOf }: Props) => {
   const { user } = useAuth()
   const todoStore = useTodoStore()
-  const columnStore = useDayStore()
+  const listStore = useListStore()
+  const dayStore = useDayStore()
   const [isEditing, setIsEditing] = useState(false)
   const editTodoInputRef = useRef<HTMLInputElement>(null)
 
@@ -26,10 +29,16 @@ const TodoItem = ({ item, index, colId }: Props) => {
 
   const handleDeleteTodo = async () => {
     todoStore.deleteTodo(item.id)
-    columnStore.deleteTodoFromColumn(colId, item.id)
+
+    if (childOf === 'calendar') {
+      dayStore.deleteTodoFromColumn(colId, item.id)
+    } else {
+      listStore.deleteTodoFromList(colId, item.id)
+    }
+
     Promise.all([
       todoService.deleteTodo(user!.uid, item.id),
-      dayService.deleteTodoFromColumn(user!.uid, colId, item.id),
+      listService.deleteTodoFromList(user!.uid, colId, item.id),
     ])
   }
 
@@ -57,7 +66,7 @@ const TodoItem = ({ item, index, colId }: Props) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`h-[49px] md:h-[27px] flex items-center justify-between cursor-grab drag-fix`} // drag-fix class is used to fix the dragged item not inline with cursor issue
+          className={`z-50 h-[49px] md:h-[27px] flex items-center justify-between drag-fix`} // drag-fix class is used to fix the dragged item not inline with cursor issue
         >
           {isEditing ? (
             <input

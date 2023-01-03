@@ -1,6 +1,6 @@
 import { useAuth } from '../../AuthContext'
+import TodoItem from '../Common/TodoItem'
 import { getRenderClone } from '../Common/getRenderClone'
-import TodoItem from './TodoItem'
 import * as dayService from '@/lib/day.service'
 import * as todoService from '@/lib/todo.service'
 import useDayStore from '@/stores/days'
@@ -99,6 +99,7 @@ const DayColumn = ({ todos, column, index, swiperRef }: Props) => {
                       index={i}
                       key={item.id}
                       colId={column.id}
+                      childOf="calendar"
                     />
                   )
                 })}
