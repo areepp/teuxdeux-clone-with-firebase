@@ -1,4 +1,5 @@
 import { useAuth } from '../../AuthContext'
+import * as dayService from '@/lib/day.service'
 import * as listService from '@/lib/list.service'
 import * as todoService from '@/lib/todo.service'
 import useDayStore from '@/stores/days'
@@ -30,11 +31,6 @@ const TodoItem = ({ item, index, colId, childOf }: Props) => {
   }, [isEditing])
 
   const handleDeleteTodo = async () => {
-    Promise.all([
-      todoService.deleteTodo(user!.uid, item.id),
-      listService.deleteTodoFromList(user!.uid, colId, item.id),
-    ])
-
     todoStore.deleteTodo(item.id)
 
     if (childOf === 'calendar') {
@@ -42,6 +38,27 @@ const TodoItem = ({ item, index, colId, childOf }: Props) => {
     } else {
       listStore.deleteTodoFromList(colId, item.id)
     }
+
+    todoService.deleteTodo(user!.uid, item.id)
+
+    // if (childOf === 'calendar') {
+    //   // Promise.all([
+    //   //   todoService.deleteTodo(user!.uid, item.id),
+    //   //   dayService.deleteTodoFromColumn(user!.uid, colId, item.id),
+    //   // ])
+
+    //   try {
+    //     await todoService.deleteTodo(user!.uid, item.id)
+    //     await dayService.deleteTodoFromColumn(user!.uid, colId, item.id)
+    //   } catch (error) {
+    //     console.log(error)
+    //   }
+    // } else {
+    //   Promise.all([
+    //     todoService.deleteTodo(user!.uid, item.id),
+    //     listService.deleteTodoFromList(user!.uid, colId, item.id),
+    //   ])
+    // }
   }
 
   const handleCheckTodo = async (data: { checked: boolean }) => {
