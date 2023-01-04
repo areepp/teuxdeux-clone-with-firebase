@@ -1,6 +1,6 @@
+import TodoItem from '../Common/TodoItem'
 import { getRenderClone } from '../Common/getRenderClone'
 import ListOption from './ListOption'
-import TodoItem from './TodoItem'
 import { useAuth } from '@/components/AuthContext'
 import * as listService from '@/lib/list.service'
 import * as todoService from '@/lib/todo.service'
@@ -82,7 +82,8 @@ const ListColumn = ({ todos, list }: Props) => {
                       item={item}
                       index={i}
                       key={item.id}
-                      listId={list.id}
+                      colId={list.id}
+                      childOf="list"
                     />
                   )
                 })}
