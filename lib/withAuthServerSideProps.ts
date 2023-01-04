@@ -1,8 +1,9 @@
 import { adminAuth } from '@/lib/firebaseAdmin'
+import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'
 
 export function withAuthServerSideProps(getServerSidePropsFunc?: Function) {
-  return async (context: any) => {
+  return async (context: GetServerSidePropsContext) => {
     try {
       // user found in the cookies
       const { token } = nookies.get(context)

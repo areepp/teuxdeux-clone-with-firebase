@@ -1,5 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import Loading from './Login/Loading'
 import { clientAuth } from '@/lib/firebaseClient'
 import { onIdTokenChanged, User } from 'firebase/auth'
+import { useRouter } from 'next/router'
 import nookies from 'nookies'
 import { createContext, useContext, useEffect, useState } from 'react'
 
@@ -10,6 +13,7 @@ const AuthContext = createContext<{ user: User | null }>({
 export function AuthProvider({ children }: any) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState<Boolean>(true)
+  const router = useRouter()
 
   // listen for token changes
   useEffect(() => {
@@ -21,8 +25,9 @@ export function AuthProvider({ children }: any) {
       } else {
         const token = await user.getIdToken()
         setUser(user)
-        setLoading(false)
         nookies.set(undefined, 'token', token, { path: '/' })
+        await router.push('/')
+        setLoading(false)
       }
     })
   }, [])
@@ -40,7 +45,7 @@ export function AuthProvider({ children }: any) {
 
   return (
     <AuthContext.Provider value={{ user }}>
-      {!loading && children}
+      {loading ? <Loading /> : children}
     </AuthContext.Provider>
   )
 }
