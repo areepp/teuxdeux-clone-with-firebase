@@ -85,7 +85,7 @@ const TodoItem = ({ item, index, colId, childOf }: Props) => {
         >
           <div
             className={clsx(
-              'absolute top-0 pt-1 w-full flex items-center justify-between',
+              'absolute top-0 w-full flex items-center justify-between',
               isEditing && 'bg-transparent h-full',
               isHovered && 'min-h-full h-fit bg-red-100',
               !isHovered && 'h-full',
@@ -122,14 +122,14 @@ const TodoItem = ({ item, index, colId, childOf }: Props) => {
               <>
                 {item.checked ? (
                   <button
-                    className="self-start mr-1"
+                    className="self-start mt-4 md:mt-[6px] mr-1"
                     onClick={() => handleDeleteTodo()}
                   >
                     <HiOutlineX />
                   </button>
                 ) : (
                   <button
-                    className="self-start mr-1"
+                    className="self-start mt-4 md:mt-[6px] mr-1"
                     onClick={() => setIsEditing(true)}
                   >
                     <HiPencil />
