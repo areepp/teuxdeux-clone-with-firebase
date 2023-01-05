@@ -7,7 +7,7 @@ const columnFactory = (date: string) => {
   }
 }
 
-const getDaysColumns = (
+export const getDaysColumns = (
   initialDate: Date,
   days: number,
   direction: 'future' | 'past',

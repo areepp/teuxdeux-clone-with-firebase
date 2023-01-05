@@ -28,7 +28,8 @@
     "__tests__/pages/login.spec.js",
     "__tests__/pages/login.spects",
     "__tests__/pages/login.test.jsx",
-    "jest.setup.js"
+    "jest.setup.js",
+    "__tests__/helper/dateHelper.test.ts"
   ],
   "exclude": ["node_modules"]
 }

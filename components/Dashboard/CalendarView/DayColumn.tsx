@@ -1,17 +1,17 @@
 import { useAuth } from '../../AuthContext'
 import TodoItem from '../Common/TodoItem'
 import { getRenderClone } from '../Common/getRenderClone'
-import * as dayService from '@/lib/day.service'
-import * as todoService from '@/lib/todo.service'
-import useDayStore from '@/stores/days'
-import { IDayColumn } from '@/stores/days'
-import useTodoStore, { ITodo } from '@/stores/todos'
 import {
   checkIsPast,
   checkIsToday,
   getDayOfTheWeek,
   getFullDate,
-} from '@/utils/dateHelper'
+} from '@/helper/dateHelper'
+import * as dayService from '@/lib/day.service'
+import * as todoService from '@/lib/todo.service'
+import useDayStore from '@/stores/days'
+import { IDayColumn } from '@/stores/days'
+import useTodoStore, { ITodo } from '@/stores/todos'
 import clsx from 'clsx'
 import { KeyboardEvent, useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
