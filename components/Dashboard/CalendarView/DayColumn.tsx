@@ -33,7 +33,7 @@ const DayColumn = ({ todos, column, index, swiperRef }: Props) => {
   const isToday = checkIsToday(column.id)
   const isPast = checkIsPast(column.id)
   const isColumnOnFarLeft = index === swiperRef?.realIndex
-  const renderClone = getRenderClone(todos) // renderClone allows to move todo item to other parent (LIST VIEW) while maintaining the desired drag behavior
+  const renderClone = getRenderClone(todos) // renderClone allows to move todo item to other parent (ex.CALENDAR VIEW -> LIST VIEW) while maintaining the desired drag behavior
 
   const handleAddTodo = async () => {
     setNewTodoInputValue('')

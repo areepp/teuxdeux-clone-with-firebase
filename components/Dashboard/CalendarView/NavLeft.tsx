@@ -22,9 +22,10 @@ const NavLeft = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
       .map((col) => col.id)
       .indexOf(today)
     if (todayIndex !== -1) {
-      // current day is within reach
+      // current day is currently on the DOM tree -> within reach
       swiperRef?.slideTo(todayIndex, 600)
     } else {
+      // current day is not on the DOM tree -> out of reach
       columnStore.setColumns(getInitialColumns())
       await syncDayColumns(getInitialColumns())
     }

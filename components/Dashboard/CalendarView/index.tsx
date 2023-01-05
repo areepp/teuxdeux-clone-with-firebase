@@ -42,16 +42,19 @@ const CalendarView = ({ syncDayColumns }: Props) => {
               slidesPerView: 3,
             },
           }}
+          // disable navigation on transition so that the "onTransitionEnd" hook properly called
           onSlideChangeTransitionStart={() => setNavigationDisabled(true)}
           onSlideChangeTransitionEnd={() => setNavigationDisabled(false)}
           onTransitionEnd={async (e) => {
             if (e.activeIndex === columnStore.dayColumns.length - 4) {
+              // add new columns when reaching the end, in this case three elements away from the end of the column array (right navigation)
               const nextFourDays = getNextFourDays(
                 columnStore.dayColumns[columnStore.dayColumns.length - 1].id,
               )
               columnStore.pushColumns(nextFourDays)
               await syncDayColumns([...columnStore.dayColumns, ...nextFourDays])
             }
+            // add new columns when reaching the end, in this case the fourth element of the column array (left navigation)
             if (e.activeIndex === 3) {
               const pastFourDays = getPastFourDays(columnStore.dayColumns[0].id)
               columnStore.unshiftColumns(pastFourDays.reverse())
@@ -63,6 +66,7 @@ const CalendarView = ({ syncDayColumns }: Props) => {
           }}
           onSlidesLengthChange={(e) => {
             if (e.activeIndex === 3) {
+              // jump to the correct day, instead of staying at the newly created column
               swiperRef?.slideTo(7, 0)
             }
           }}
