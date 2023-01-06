@@ -1,14 +1,14 @@
-import { useAuth } from '../../AuthContext'
+import clsx from 'clsx'
+import { useEffect, useRef, useState } from 'react'
+import { Draggable } from 'react-beautiful-dnd'
+import { HiOutlineX, HiPencil } from 'react-icons/hi'
 import * as dayService from '@/lib/day.service'
 import * as listService from '@/lib/list.service'
 import * as todoService from '@/lib/todo.service'
 import useDayStore from '@/stores/days'
 import useListStore from '@/stores/lists'
 import useTodoStore, { ITodo } from '@/stores/todos'
-import clsx from 'clsx'
-import { useEffect, useRef, useState } from 'react'
-import { Draggable } from 'react-beautiful-dnd'
-import { HiOutlineX, HiPencil } from 'react-icons/hi'
+import { useAuth } from '../../AuthContext'
 
 interface Props {
   item: ITodo
@@ -56,6 +56,15 @@ const TodoItem = ({ item, index, colId, childOf }: Props) => {
     await todoService.editTodoChecked(user!.uid, item.id, data)
   }
 
+  const handleCheckTodoKeyDown = async (
+    e: React.KeyboardEvent,
+    data: { checked: boolean },
+  ) => {
+    if (e.key === 'Enter') {
+      await handleCheckTodo(data)
+    }
+  }
+
   const handleOnBlur = async (data: { text: string }) => {
     setIsEditing(false)
     await todoService.editTodoText(user!.uid, item.id, data)
@@ -97,15 +106,20 @@ const TodoItem = ({ item, index, colId, childOf }: Props) => {
                 className="h-full flex-auto focus:outline-none bg-transparent"
                 type="text"
                 value={item.text}
+                // prettier-ignore
                 onChange={(e) =>
-                  todoStore.editTodoText(item.id, e.target.value)
-                }
+                  todoStore.editTodoText(item.id, e.target.value)}
                 onBlur={() => handleOnBlur({ text: item.text })}
                 onKeyDown={handleKeyDown}
               />
             ) : (
               <div
+                role="checkbox"
+                tabIndex={0}
+                aria-checked={item.checked}
                 onClick={() => handleCheckTodo({ checked: !item.checked })}
+                onKeyDown={(e) =>
+                  handleCheckTodoKeyDown(e, { checked: !item.checked })} // prettier-ignore
                 className={clsx(
                   'h-full flex-auto break-all flex items-center',
                   isHovered && 'max-w-[92%] break-all text-gray-900',
@@ -118,24 +132,29 @@ const TodoItem = ({ item, index, colId, childOf }: Props) => {
                 </span>
               </div>
             )}
-            {isHovered && (
-              <>
-                {item.checked ? (
-                  <button
-                    className="self-start mt-4 md:mt-[6px] mr-1"
-                    onClick={() => handleDeleteTodo()}
-                  >
-                    <HiOutlineX />
-                  </button>
-                ) : (
-                  <button
-                    className="self-start mt-4 md:mt-[6px] mr-1"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    <HiPencil />
-                  </button>
+
+            {item.checked ? (
+              <button
+                type="button"
+                className={clsx(
+                  'self-start mt-4 md:mt-[6px] mr-1',
+                  !isHovered && 'hidden',
                 )}
-              </>
+                onClick={() => handleDeleteTodo()}
+              >
+                <HiOutlineX />
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={clsx(
+                  'self-start mt-4 md:mt-[6px] mr-1',
+                  !isHovered && 'hidden',
+                )}
+                onClick={() => setIsEditing(true)}
+              >
+                <HiPencil />
+              </button>
             )}
           </div>
         </div>

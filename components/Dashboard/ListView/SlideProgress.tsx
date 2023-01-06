@@ -17,7 +17,7 @@ const SlideProgress = ({ activeSlideIndex }: Props) => {
               ? 'bg-primary'
               : 'bg-gray-400'
           } w-[6px] h-[6px] rounded-full`}
-        ></div>
+        />
       ))}
     </div>
   )

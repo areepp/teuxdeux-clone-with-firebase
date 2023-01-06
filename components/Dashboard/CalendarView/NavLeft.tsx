@@ -1,11 +1,11 @@
-import Arrow from '../Common/Arrow'
+import { IoHome } from 'react-icons/io5'
+import SwiperCore from 'swiper'
 import {
   getInitialColumns,
   transformDateSlashToDash,
 } from '@/helper/dateHelper'
 import useDayStore, { IDayColumn } from '@/stores/days'
-import { IoHome } from 'react-icons/io5'
-import SwiperCore from 'swiper'
+import Arrow from '../Common/Arrow'
 
 interface Props {
   navigationDisabled: boolean
@@ -17,7 +17,8 @@ const NavLeft = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
   const columnStore = useDayStore()
 
   const handleHomeClick = async () => {
-    const today = transformDateSlashToDash(new Date().toLocaleDateString()) // need to replace '/' to '-' because firestore doesn't accept '/' as document name
+    // need to replace '/' to '-' because firestore doesn't accept '/' as document name
+    const today = transformDateSlashToDash(new Date().toLocaleDateString())
     const todayIndex = columnStore.dayColumns
       .map((col) => col.id)
       .indexOf(today)
@@ -39,6 +40,7 @@ const NavLeft = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
         onClick={(e: any) => e.stopPropagation() || swiperRef?.slidePrev()}
       />
       <button
+        type="button"
         onClick={handleHomeClick}
         className="mt-2 text-xl text-gray-400 hover:text-primary transition-all duration-300"
       >

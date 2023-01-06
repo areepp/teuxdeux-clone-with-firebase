@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import { Inputs } from './login'
-import Input from '@/components/Login/Input'
-import * as authService from '@/lib/auth.service'
-import { adminAuth } from '@/lib/firebaseAdmin'
-import * as userService from '@/lib/user.service'
 import { FirebaseError } from 'firebase/app'
 import { GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
 import nookies from 'nookies'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import Input from '@/components/Auth/Input'
+import * as authService from '@/lib/auth.service'
+import { adminAuth } from '@/lib/firebaseAdmin'
+import * as userService from '@/lib/user.service'
+import { Inputs } from './login'
 
 interface IMessage {
   text: string
@@ -59,7 +60,7 @@ const SignUp = () => {
           {message && (
             <div
               className={`w-full ${
-                message.type == 'error'
+                message.type === 'error'
                   ? 'bg-red-100 border-stone-300'
                   : 'bg-green-500 text-white'
               }  text-center py-4 rounded`}
@@ -82,7 +83,7 @@ const SignUp = () => {
               true && 'cursor-not-allowed bg-gray-400'
             }`}
             type="submit"
-            disabled={true}
+            disabled
           >
             Sign Up
           </button>
@@ -92,7 +93,9 @@ const SignUp = () => {
         <p className="mt-4">
           Already have an account?
           <Link href="/login" legacyBehavior>
-            <a className="underline ml-2">Log in here</a>
+            <button type="button" className="underline ml-2">
+              Log in here
+            </button>
           </Link>
         </p>
       </div>
@@ -112,7 +115,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     ctx.res.end()
     return { props: {} as never }
   } catch (err) {
-    //user not found in the cookies
+    // user not found in the cookies
     return { props: {} as never }
   }
 }

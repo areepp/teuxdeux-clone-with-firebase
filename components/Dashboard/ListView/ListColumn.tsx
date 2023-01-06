@@ -1,14 +1,14 @@
-import TodoItem from '../Common/TodoItem'
-import { getRenderClone } from '../Common/getRenderClone'
-import ListOption from './ListOption'
+import { useState } from 'react'
+import { Droppable } from 'react-beautiful-dnd'
+import { v4 as uuidv4 } from 'uuid'
 import { useAuth } from '@/components/AuthContext'
 import * as listService from '@/lib/list.service'
 import * as todoService from '@/lib/todo.service'
 import useListStore, { IList } from '@/stores/lists'
 import useTodoStore, { ITodo } from '@/stores/todos'
-import { useState } from 'react'
-import { Droppable } from 'react-beautiful-dnd'
-import { v4 as uuidv4 } from 'uuid'
+import TodoItem from '../Common/TodoItem'
+import { getRenderClone } from '../Common/getRenderClone'
+import ListOption from './ListOption'
 
 interface Props {
   list: IList
@@ -20,7 +20,9 @@ const ListColumn = ({ todos, list }: Props) => {
   const listStore = useListStore()
   const todoStore = useTodoStore()
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
-  const renderClone = getRenderClone(todos) // renderClone allows to move todo item to other parent (CALENDAR VIEW) while maintaining the desired drag behavior
+  const renderClone = getRenderClone(todos)
+  // renderClone allows to move todo item to other parent
+  // (CALENDAR VIEW) while maintaining the desired drag behavior
 
   const handleAddTodo = async () => {
     setNewTodoInputValue('')
@@ -58,10 +60,9 @@ const ListColumn = ({ todos, list }: Props) => {
         value={list.title}
         onChange={(e) => listStore.setListTitle(list.id, e.target.value)}
         onBlur={async () =>
-          await listService.editListTitle(user!.uid, list.id, {
+          listService.editListTitle(user!.uid, list.id, {
             title: list.title,
-          })
-        }
+          })} // prettier-ignore
         className="flex items-center mx-auto bg-inherit font-gothic text-center uppercase text-6xl md:text-4xl focus:outline-none hover:bg-stone-300 transition-all"
       />
 
@@ -76,7 +77,7 @@ const ListColumn = ({ todos, list }: Props) => {
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {todos &&
                 todos.map((item, i) => {
-                  if (!item) return
+                  if (!item) return undefined
                   return (
                     <TodoItem
                       item={item}

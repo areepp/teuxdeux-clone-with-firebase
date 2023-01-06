@@ -1,42 +1,45 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Loading from './Login/Loading'
-import { clientAuth } from '@/lib/firebaseClient'
 import { onIdTokenChanged, User } from 'firebase/auth'
 import { useRouter } from 'next/router'
 import nookies from 'nookies'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { clientAuth } from '@/lib/firebaseClient'
+import Loading from './Auth/Loading'
 
 const AuthContext = createContext<{ user: User | null }>({
   user: null,
 })
 
-export function AuthProvider({ children }: any) {
+export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<User | null>(null)
+
   const [loading, setLoading] = useState<Boolean>(true)
   const router = useRouter()
 
   // listen for token changes
-  useEffect(() => {
-    return onIdTokenChanged(clientAuth, async (user) => {
-      if (!user) {
-        setUser(null)
-        nookies.set(undefined, 'token', '', { path: '/' })
-        setLoading(false)
-      } else {
-        const token = await user.getIdToken()
-        setUser(user)
-        nookies.set(undefined, 'token', token, { path: '/' })
-        await router.push('/')
-        setLoading(false)
-      }
-    })
-  }, [])
+  useEffect(
+    () =>
+      onIdTokenChanged(clientAuth, async (userFirebaseAuth) => {
+        if (!userFirebaseAuth) {
+          setUser(null)
+          nookies.set(undefined, 'token', '', { path: '/' })
+          setLoading(false)
+        } else {
+          const token = await userFirebaseAuth.getIdToken()
+          setUser(userFirebaseAuth)
+          nookies.set(undefined, 'token', token, { path: '/' })
+          await router.push('/')
+          setLoading(false)
+        }
+      }),
+    [],
+  )
 
   // force refresh the token every 10 minutes
   useEffect(() => {
     const handle = setInterval(async () => {
-      const user = clientAuth.currentUser
-      if (user) await user.getIdToken(true)
+      const userFirebaseAuth = clientAuth.currentUser
+      if (userFirebaseAuth) await userFirebaseAuth.getIdToken(true)
     }, 10 * 60 * 1000)
 
     // clean up setInterval
@@ -50,6 +53,4 @@ export function AuthProvider({ children }: any) {
   )
 }
 
-export const useAuth = () => {
-  return useContext(AuthContext)
-}
+export const useAuth = () => useContext(AuthContext)

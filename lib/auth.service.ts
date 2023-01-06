@@ -1,10 +1,10 @@
-import { clientAuth } from './firebaseClient'
-import { Inputs } from '@/pages/login'
+import { Inputs } from '@/components/Auth/Input'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth'
+import { clientAuth } from './firebaseClient'
 
 export const signup = (data: Inputs) => {
   const { email, password } = data
@@ -16,6 +16,6 @@ export const login = async (data: Inputs) => {
   return signInWithEmailAndPassword(clientAuth, email, password)
 }
 
-export const logOut = async () => {
-  return signOut(clientAuth)
-}
+// prettier-ignore
+export const logOut = async () =>
+  signOut(clientAuth)

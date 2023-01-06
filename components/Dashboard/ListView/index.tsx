@@ -1,16 +1,16 @@
+import { useState } from 'react'
+import { IoIosAdd, IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io'
+import SwiperCore from 'swiper'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { useAuth } from '@/components/AuthContext'
+import * as listService from '@/lib/list.service'
+import useListStore, { IList } from '@/stores/lists'
+import useTodoStore, { ITodo } from '@/stores/todos'
 import ListColumn from './ListColumn'
 import NavLeft from './NavLeft'
 import NavRight from './NavRight'
 import ReOrderListModal from './ReOrderListModal'
 import SlideProgress from './SlideProgress'
-import { useAuth } from '@/components/AuthContext'
-import * as listService from '@/lib/list.service'
-import useListStore, { IList } from '@/stores/lists'
-import useTodoStore, { ITodo } from '@/stores/todos'
-import { useState } from 'react'
-import { IoIosAdd, IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io'
-import SwiperCore from 'swiper'
-import { Swiper, SwiperSlide } from 'swiper/react'
 
 const ListView = () => {
   const { user } = useAuth()
@@ -33,6 +33,7 @@ const ListView = () => {
       <div className="px-5 flex items-center justify-between">
         {/* ACTUAL TOGGLER */}
         <button
+          type="button"
           className={`text-3xl ${
             isListVisible ? 'text-primary' : 'text-gray-400'
           }`}
@@ -45,6 +46,7 @@ const ListView = () => {
         <div className="flex items-center">
           <SlideProgress activeSlideIndex={activeSlideIndex} />
           <button
+            type="button"
             className="ml-4 px-3 py-1 text-xs rounded bg-zinc-200 hover:bg-zinc-300 transition-all"
             onClick={() => setIsReOrderModalVisible(true)}
           >
@@ -59,7 +61,11 @@ const ListView = () => {
         )}
 
         {/* ADD NEW LIST BUTTON */}
-        <button onClick={handleAddList} className="text-3xl text-gray-400">
+        <button
+          type="button"
+          onClick={handleAddList}
+          className="text-3xl text-gray-400"
+        >
           <IoIosAdd />
         </button>
       </div>
@@ -90,15 +96,13 @@ const ListView = () => {
             >
               {listStore.listOrder.map((id) => {
                 let listTodos
-                const list = listStore.lists.find(
-                  (list) => list.id === id,
-                ) as IList
+                const list = listStore.lists.find((el) => el.id === id) as IList
                 if (list.order.length === 0) {
                   listTodos = null
                 } else {
                   listTodos = list.order.map(
-                    (id) =>
-                      todoStore.todos.find((todo) => todo.id === id) as ITodo,
+                    (elId) =>
+                      todoStore.todos.find((todo) => todo.id === elId) as ITodo,
                   )
                 }
 

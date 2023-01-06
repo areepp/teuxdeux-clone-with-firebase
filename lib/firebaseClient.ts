@@ -20,14 +20,7 @@ const initializeAppIfNecessary = () => {
   }
 }
 
-let app = initializeAppIfNecessary()
-
-// let app
-// if (typeof window !== 'undefined' && !getApps().length) {
-//   app = initializeApp(firebaseConfig)
-// } else {
-//   app = getApp()
-// }
+const app = initializeAppIfNecessary()
 
 const clientAuth = getAuth(app)
 const db = getFirestore(app)
