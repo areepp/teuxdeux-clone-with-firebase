@@ -1,5 +1,3 @@
-import { db } from './firebaseClient'
-import { ITodo } from '@/stores/todos'
 import {
   collection,
   doc,
@@ -12,6 +10,8 @@ import {
   writeBatch,
   setDoc,
 } from 'firebase/firestore'
+import { ITodo } from '@/stores/todos'
+import { db } from './firebaseClient'
 
 const getTodoCollectionRef = (userId: string) =>
   collection(db, 'users', userId, 'todos')
@@ -19,9 +19,8 @@ const getTodoCollectionRef = (userId: string) =>
 const getTodoDocRef = (userId: string, todoId: string) =>
   doc(db, 'users', userId, 'todos', todoId)
 
-export const getAllTodos = (userId: string) => {
-  return getDocs(getTodoCollectionRef(userId))
-}
+export const getAllTodos = (userId: string) =>
+  getDocs(getTodoCollectionRef(userId))
 
 export const getColumnTodos = (userId: string, columnTodosIds: string[]) => {
   const q = query(
@@ -35,13 +34,10 @@ export const addTodo = async (
   userId: string,
   newTodoId: string,
   newTodo: Omit<ITodo, 'id'>,
-) => {
-  return setDoc(getTodoDocRef(userId, newTodoId), newTodo)
-}
+) => setDoc(getTodoDocRef(userId, newTodoId), newTodo)
 
-export const deleteTodo = async (userId: string, todoId: string) => {
-  return deleteDoc(getTodoDocRef(userId, todoId))
-}
+export const deleteTodo = async (userId: string, todoId: string) =>
+  deleteDoc(getTodoDocRef(userId, todoId))
 
 export const deleteMultipleTodos = async (
   userId: string,
@@ -49,10 +45,9 @@ export const deleteMultipleTodos = async (
 ) => {
   const batch = writeBatch(db)
 
-  for (let id in deletedIds) {
-    batch.delete(getTodoDocRef(userId, id))
+  for (let i = 0; i < deletedIds.length; i++) {
+    batch.delete(getTodoDocRef(userId, deletedIds[i]))
   }
-
   return batch.commit()
 }
 
@@ -60,14 +55,10 @@ export const editTodoChecked = async (
   userId: string,
   todoId: string,
   newData: Pick<ITodo, 'checked'>,
-) => {
-  return updateDoc(getTodoDocRef(userId, todoId), newData)
-}
+) => updateDoc(getTodoDocRef(userId, todoId), newData)
 
 export const editTodoText = async (
   userId: string,
   todoId: string,
   newData: Pick<ITodo, 'text'>,
-) => {
-  return updateDoc(getTodoDocRef(userId, todoId), newData)
-}
+) => updateDoc(getTodoDocRef(userId, todoId), newData)

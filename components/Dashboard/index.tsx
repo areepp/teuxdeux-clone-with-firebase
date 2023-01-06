@@ -1,5 +1,5 @@
-import { useAuth } from '../AuthContext'
-import ListView from './ListView'
+import { useEffect } from 'react'
+import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import CalendarView from '@/components/Dashboard/CalendarView/'
 import { getInitialColumns } from '@/helper/dateHelper'
 import { onDragEndLogic } from '@/helper/onDragEndLogic'
@@ -9,8 +9,8 @@ import * as todoService from '@/lib/todo.service'
 import useDayStore, { IDayColumn } from '@/stores/days'
 import useListStore, { IList } from '@/stores/lists'
 import useTodoStore, { ITodo } from '@/stores/todos'
-import { useEffect } from 'react'
-import { DragDropContext, DropResult } from 'react-beautiful-dnd'
+import { useAuth } from '../AuthContext'
+import ListView from './ListView'
 
 const Dashboard = () => {
   const { user } = useAuth()
@@ -48,17 +48,12 @@ const Dashboard = () => {
         id: doc.id,
       }))
 
-      if (listMapped.length === 0) {
+      if (listMapped.length === 0 || !listOrderResponse.data()) {
         return
-      } else {
-        listStore.setLists(listMapped as IList[])
       }
 
-      if (!listOrderResponse.data()) {
-        return
-      } else {
-        listStore.setListOrder(listOrderResponse!.data()!.order)
-      }
+      listStore.setLists(listMapped as IList[])
+      listStore.setListOrder(listOrderResponse!.data()!.order)
     }
     fetchTodos()
     syncListToFirebase()

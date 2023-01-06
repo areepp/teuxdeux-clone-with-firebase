@@ -7,8 +7,8 @@ import {
 } from 'react-beautiful-dnd'
 
 /* eslint-disable react/display-name */
-export const getRenderClone =
-  (todos: ITodo[] | null) =>
+// prettier-ignore
+export const getRenderClone = (todos: ITodo[] | null) =>
   (
     provided: DraggableProvided,
     _snapshot: DraggableStateSnapshot,
@@ -18,12 +18,14 @@ export const getRenderClone =
       (todo: ITodo) => todo.id === rubric.draggableId,
     )[0]
 
+    const { innerRef, draggableProps, dragHandleProps } = provided
+
     return (
       <div
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
-        className={`z-50 h-[49px] md:text-sm md:h-[27px] flex items-center justify-between overflow-hidden bg-red-100 truncate`}
+        ref={innerRef}
+        {...draggableProps}
+        {...dragHandleProps}
+        className="z-50 h-[49px] md:text-sm md:h-[27px] flex items-center justify-between overflow-hidden bg-red-100 truncate"
       >
         <p className={clsx('truncate', item!.checked && 'line-through')}>
           {item!.text}

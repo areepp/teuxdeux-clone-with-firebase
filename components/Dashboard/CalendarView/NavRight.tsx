@@ -1,15 +1,15 @@
-import Arrow from '../Common/Arrow'
-import {
-  getReInitiatedDays,
-  transformDateSlashToDash,
-} from '@/helper/dateHelper'
-import useDayStore, { IDayColumn } from '@/stores/days'
 import { useState } from 'react'
 import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
 import { IoCalendar } from 'react-icons/io5'
 import OutsideClickHandler from 'react-outside-click-handler'
 import SwiperCore from 'swiper'
+import {
+  getReInitiatedDays,
+  transformDateSlashToDash,
+} from '@/helper/dateHelper'
+import useDayStore, { IDayColumn } from '@/stores/days'
+import Arrow from '../Common/Arrow'
 
 interface Props {
   navigationDisabled: boolean
@@ -31,14 +31,15 @@ const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
     const withinReach = () => {
       if (clickedDayIndex === -1) {
         return false
-      } else if (
-        clickedDayIndex > columnStore.dayColumns.length - 4 ||
-        clickedDayIndex < 3
+      }
+      // prettier-ignore
+      if (
+        clickedDayIndex > columnStore.dayColumns.length - 4
+        || clickedDayIndex < 3
       ) {
         return false
-      } else {
-        return true
       }
+      return true
     }
 
     if (withinReach()) {
@@ -58,6 +59,7 @@ const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
           onClick={(e: any) => e.stopPropagation() || swiperRef?.slideNext()}
         />
         <button
+          type="button"
           className="mt-2 text-xl text-gray-400 hover:text-primary transition-all duration-300"
           onClick={() => setIsCalendarOpen(!isCalendarOpen)}
         >

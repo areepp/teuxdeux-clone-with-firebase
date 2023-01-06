@@ -1,15 +1,13 @@
-import DayColumn from './DayColumn'
-import NavLeft from './NavLeft'
-import NavRight from './NavRight'
-import { getNextFourDays, getPastFourDays } from '@/helper/dateHelper'
-import useDayStore from '@/stores/days'
-import { IDayColumn } from '@/stores/days'
-import { ITodo } from '@/stores/todos'
-import useTodoStore from '@/stores/todos'
 import { useState } from 'react'
 import SwiperCore from 'swiper'
 import 'swiper/css'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { getNextFourDays, getPastFourDays } from '@/helper/dateHelper'
+import useDayStore, { IDayColumn } from '@/stores/days'
+import useTodoStore, { ITodo } from '@/stores/todos'
+import DayColumn from './DayColumn'
+import NavLeft from './NavLeft'
+import NavRight from './NavRight'
 
 interface Props {
   syncDayColumns: (_dayColumns: IDayColumn[]) => Promise<void>
@@ -47,14 +45,16 @@ const CalendarView = ({ syncDayColumns }: Props) => {
           onSlideChangeTransitionEnd={() => setNavigationDisabled(false)}
           onTransitionEnd={async (e) => {
             if (e.activeIndex === columnStore.dayColumns.length - 4) {
-              // add new columns when reaching the end, in this case three elements away from the end of the column array (right navigation)
+              // add new columns when reaching the end, in this case three elements away
+              // from the end of the column array (right navigation)
               const nextFourDays = getNextFourDays(
                 columnStore.dayColumns[columnStore.dayColumns.length - 1].id,
               )
               columnStore.pushColumns(nextFourDays)
               await syncDayColumns([...columnStore.dayColumns, ...nextFourDays])
             }
-            // add new columns when reaching the end, in this case the fourth element of the column array (left navigation)
+            // add new columns when reaching the end, in this case
+            // the fourth element of the column array (left navigation)
             if (e.activeIndex === 3) {
               const pastFourDays = getPastFourDays(columnStore.dayColumns[0].id)
               columnStore.unshiftColumns(pastFourDays.reverse())

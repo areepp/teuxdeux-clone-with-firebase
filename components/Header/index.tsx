@@ -1,8 +1,8 @@
-import { useAuth } from '../AuthContext'
-import * as authService from '@/lib/auth.service'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import OutsideClickHandler from 'react-outside-click-handler'
+import * as authService from '../../lib/auth.service'
+import { useAuth } from '../AuthContext'
 
 const Profile = () => {
   const router = useRouter()
@@ -16,15 +16,18 @@ const Profile = () => {
 
   return (
     <div className="absolute h-11 top-0 right-4 flex items-center">
-      <p
+      <button
+        type="button"
         className="cursor-pointer hover:text-white transition-all"
         onClick={() => setIsProfileClicked(!isProfileClicked)}
       >
         {user?.email}
-      </p>
+      </button>
+
       {isProfileClicked && (
         <OutsideClickHandler onOutsideClick={() => setIsProfileClicked(false)}>
           <button
+            type="button"
             className="z-50 absolute top-3/4 left-2 bg-white px-2 py-1 rounded text-xs font-inter text-primary border border-primary"
             onClick={handleLogOut}
           >
@@ -36,13 +39,11 @@ const Profile = () => {
   )
 }
 
-const Header = () => {
-  return (
-    <header className="relative flex-none w-full h-11 bg-primary font-gothic text-xl text-gray-200 flex items-center justify-center">
-      <h1>BLUPBLUPBLUP</h1>
-      <Profile />
-    </header>
-  )
-}
+const Header = () => (
+  <header className="relative flex-none w-full h-11 bg-primary font-gothic text-xl text-gray-200 flex items-center justify-center">
+    <h1>BLUPBLUPBLUP</h1>
+    <Profile />
+  </header>
+)
 
 export default Header

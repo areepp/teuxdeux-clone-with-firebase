@@ -1,6 +1,6 @@
-import Arrow from '../Common/Arrow'
-import useListStore from '@/stores/lists'
 import SwiperCore from 'swiper'
+import useListStore from '@/stores/lists'
+import Arrow from '../Common/Arrow'
 
 interface Props {
   swiperRef: SwiperCore | undefined

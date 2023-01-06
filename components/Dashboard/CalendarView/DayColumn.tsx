@@ -1,6 +1,8 @@
-import { useAuth } from '../../AuthContext'
-import TodoItem from '../Common/TodoItem'
-import { getRenderClone } from '../Common/getRenderClone'
+import clsx from 'clsx'
+import { KeyboardEvent, useState } from 'react'
+import { Droppable } from 'react-beautiful-dnd'
+import SwiperCore from 'swiper'
+import { v4 as uuidv4 } from 'uuid'
 import {
   checkIsPast,
   checkIsToday,
@@ -9,14 +11,11 @@ import {
 } from '@/helper/dateHelper'
 import * as dayService from '@/lib/day.service'
 import * as todoService from '@/lib/todo.service'
-import useDayStore from '@/stores/days'
-import { IDayColumn } from '@/stores/days'
+import useDayStore, { IDayColumn } from '@/stores/days'
 import useTodoStore, { ITodo } from '@/stores/todos'
-import clsx from 'clsx'
-import { KeyboardEvent, useState } from 'react'
-import { Droppable } from 'react-beautiful-dnd'
-import SwiperCore from 'swiper'
-import { v4 as uuidv4 } from 'uuid'
+import { useAuth } from '../../AuthContext'
+import TodoItem from '../Common/TodoItem'
+import { getRenderClone } from '../Common/getRenderClone'
 
 interface Props {
   todos: ITodo[] | null
@@ -33,7 +32,9 @@ const DayColumn = ({ todos, column, index, swiperRef }: Props) => {
   const isToday = checkIsToday(column.id)
   const isPast = checkIsPast(column.id)
   const isColumnOnFarLeft = index === swiperRef?.realIndex
-  const renderClone = getRenderClone(todos) // renderClone allows to move todo item to other parent (ex.CALENDAR VIEW -> LIST VIEW) while maintaining the desired drag behavior
+  const renderClone = getRenderClone(todos)
+  // renderClone allows to move todo item to other parent
+  // (ex.CALENDAR VIEW -> LIST VIEW) while maintaining the desired drag behavior
 
   const handleAddTodo = async () => {
     setNewTodoInputValue('')
@@ -90,9 +91,10 @@ const DayColumn = ({ todos, column, index, swiperRef }: Props) => {
         >
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
+              {/* eslint-disable-next-line operator-linebreak */}
               {todos &&
                 todos.map((item, i) => {
-                  if (!item) return
+                  if (!item) return undefined
                   return (
                     <TodoItem
                       item={item}

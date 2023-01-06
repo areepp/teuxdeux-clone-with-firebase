@@ -1,5 +1,5 @@
-import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
+import { adminAuth } from '@/lib/firebaseAdmin'
 import nookies from 'nookies'
 
 export function withAuthServerSideProps(getServerSidePropsFunc?: Function) {
@@ -15,7 +15,7 @@ export function withAuthServerSideProps(getServerSidePropsFunc?: Function) {
 
       return { props: {} as never }
     } catch (err) {
-      //user not found in the cookies
+      // user not found in the cookies
       context.res.writeHead(302, {
         Location: '/login',
       })

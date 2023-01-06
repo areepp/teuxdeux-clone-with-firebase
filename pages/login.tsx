@@ -1,18 +1,13 @@
-import Input from '@/components/Login/Input'
-import Spinner from '@/components/Login/Spinner'
-import * as authService from '@/lib/auth.service'
-import { adminAuth } from '@/lib/firebaseAdmin'
 import { GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import nookies from 'nookies'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-
-export interface Inputs {
-  email: string
-  password: string
-}
+import Input, { Inputs } from '@/components/Auth/Input'
+import Spinner from '@/components/Auth/Spinner'
+import * as authService from '@/lib/auth.service'
+import { adminAuth } from '@/lib/firebaseAdmin'
 
 const Login = () => {
   const router = useRouter()
@@ -74,7 +69,9 @@ const Login = () => {
         <p className="mt-4">
           Don&apos;t have an account?
           <Link href="/signup" legacyBehavior>
-            <a className="underline ml-2">Sign up here</a>
+            <button type="button" className="underline ml-2">
+              Sign up here
+            </button>
           </Link>
         </p>
       </div>
@@ -94,7 +91,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     ctx.res.end()
     return { props: {} as never }
   } catch (err) {
-    //user not found in the cookies
+    // user not found in the cookies
     return { props: {} as never }
   }
 }
