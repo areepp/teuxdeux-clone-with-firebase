@@ -2,7 +2,7 @@
 import { onIdTokenChanged, User } from 'firebase/auth'
 import { useRouter } from 'next/router'
 import nookies from 'nookies'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { clientAuth } from '@/lib/firebaseClient'
 import Loading from './Auth/Loading'
 
@@ -46,8 +46,10 @@ export const AuthProvider = ({ children }: any) => {
     return () => clearInterval(handle)
   }, [])
 
+  const value = useMemo(() => ({ user }), [user])
+
   return (
-    <AuthContext.Provider value={{ user }}>
+    <AuthContext.Provider value={value}>
       {loading ? <Loading /> : children}
     </AuthContext.Provider>
   )
