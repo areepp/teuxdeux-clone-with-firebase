@@ -27,6 +27,9 @@
     "__tests__/pages/login.spec.js",
     "__tests__/pages/login.spects",
     "__tests__/pages/login.test.jsx",
+    "__tests__/pages/signup.spec.js",
+    "__tests__/pages/signup.spects",
+    "__tests__/pages/signup.test.jsx",
     "jest.setup.js",
     "__tests__/helper/dateHelper.test.ts"
   ],

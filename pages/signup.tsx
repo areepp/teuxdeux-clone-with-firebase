@@ -6,11 +6,10 @@ import Link from 'next/link'
 import nookies from 'nookies'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import Input from '@/components/Auth/Input'
+import Input, { Inputs } from '@/components/Auth/Input'
 import * as authService from '@/lib/auth.service'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import * as userService from '@/lib/user.service'
-import { Inputs } from './login'
 
 interface IMessage {
   text: string
