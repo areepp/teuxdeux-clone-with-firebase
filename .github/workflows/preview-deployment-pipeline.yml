@@ -1,6 +1,6 @@
 name: Preview Deployment pipeline
 
-env: 
+env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
@@ -29,7 +29,8 @@ jobs:
     steps:
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.55.0
-        env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   vercel-deployment:
     if: ${{ github.event_name == 'push' }}
     needs: [simple_deployment_pipeline]
