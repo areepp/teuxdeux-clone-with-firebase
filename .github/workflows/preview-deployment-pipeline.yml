@@ -23,7 +23,6 @@ jobs:
       - name: test
         run: npm run test
   vercel-deployment:
-    if: ${{ github.event_name == 'push' }}
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
     steps:
