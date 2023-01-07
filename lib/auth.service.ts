@@ -17,5 +17,4 @@ export const login = async (data: Inputs) => {
 }
 
 // prettier-ignore
-export const logOut = async () =>
-  signOut(clientAuth)
+export const logOut = async () => signOut(clientAuth)
