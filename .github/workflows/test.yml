@@ -1,0 +1,13 @@
+name: test
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: simple echo
+        run: echo "is it running"
