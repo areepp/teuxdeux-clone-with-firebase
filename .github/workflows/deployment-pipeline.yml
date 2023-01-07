@@ -1,6 +1,9 @@
 name: Deployment pipeline
 
-on: [pull_request]
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
 
 jobs:
   simple_deployment_pipeline:
@@ -16,3 +19,11 @@ jobs:
         run: npm run lint
       - name: test
         run: npm run test
+  tag_release:
+    if: ${{ github.event_name == 'push' }}
+    needs: [simple_deploymen_pipeline]
+    run-on: ubuntu-latest
+    steps:
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.55.0
+        env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
