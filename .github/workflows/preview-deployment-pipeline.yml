@@ -1,9 +1,5 @@
 name: Preview Deployment pipeline
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 on:
   pull_request:
     branches: [main]
@@ -22,16 +18,16 @@ jobs:
         run: npm run lint
       - name: test
         run: npm run test
-  # vercel-deployment:
-  #   needs: [simple_deployment_pipeline]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Install Vercel CLI
-  #       run: npm install --global vercel@latest
-  #     - name: Pull Vercel Environment Information
-  #       run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-  #     - name: Build Project Artifacts
-  #       run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-  #     - name: Deploy Project Artifacts to Vercel
-  #       run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+  vercel-deployment:
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm run build
+      - uses: amondnet/vercel-action@v20 #deploy
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}} #Required
+          working-directory: ./
