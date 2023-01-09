@@ -18,6 +18,8 @@ jobs:
         run: npm run lint
       - name: test
         run: npm run test
+      - name: build
+        run: npm run build
   vercel-deployment:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
