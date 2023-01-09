@@ -1,14 +1,30 @@
-name: Merge to main pipeline
+name: Simple Pipeline
+
 on:
   pull_request:
-    types:
-      - closed
+    branches: [main]
+  push:
     branches:
       - main
 
 jobs:
-  if_merged:
-    if: github.event.pull_request.merged
+  simple_deployment_pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: npm install
+        run: npm install
+      - name: lint
+        run: npm run lint
+      - name: test
+        run: npm run test
+
+  tag_release:
+    if: ${{ github.event_name == 'push' }}
+    needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
