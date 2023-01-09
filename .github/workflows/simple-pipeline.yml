@@ -3,6 +3,9 @@ name: Simple Pipeline
 on:
   pull_request:
     branches: [main]
+  push:
+    branches:
+      - main
 
 jobs:
   simple_deployment_pipeline:
@@ -28,3 +31,4 @@ jobs:
         uses: anothrNick/github-tag-action@1.55.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: true
