@@ -48,6 +48,13 @@ const ListColumn = ({ todos, list }: Props) => {
     }
   }
 
+  const handleInputBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.value === '') {
+      return
+    }
+    await handleAddTodo()
+  }
+
   return (
     <div className="relative h-full px-4 w-full text-gray-900 flex-grow drag-fix">
       {/* OPTION */}
@@ -95,6 +102,7 @@ const ListColumn = ({ todos, list }: Props) => {
                 value={newTodoInputValue}
                 onChange={(e) => setNewTodoInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
+                onBlur={handleInputBlur}
               />
             </div>
           )}

@@ -62,6 +62,13 @@ const DayColumn = ({ todos, column, index, swiperRef }: Props) => {
     }
   }
 
+  const handleInputBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.value === '') {
+      return
+    }
+    await handleAddTodo()
+  }
+
   return (
     <div
       className={clsx(
@@ -112,6 +119,7 @@ const DayColumn = ({ todos, column, index, swiperRef }: Props) => {
                 value={newTodoInputValue}
                 onChange={(e) => setNewTodoInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
+                onBlur={handleInputBlur}
               />
             </div>
           )}
