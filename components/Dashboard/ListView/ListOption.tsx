@@ -1,11 +1,11 @@
 import { useAuth } from '@/components/AuthContext'
+import MyOutsideClickHandler from '@/components/Common/MyOutsideClickHandler'
 import * as listService from '@/lib/list.service'
 import * as todoService from '@/lib/todo.service'
 import useListStore from '@/stores/lists'
 import { useState } from 'react'
 import { TbDotsVertical } from 'react-icons/tb'
 import { TfiTrash } from 'react-icons/tfi'
-import OutsideClickHandler from 'react-outside-click-handler'
 
 interface Props {
   listId: string
@@ -48,7 +48,7 @@ const ListOption = ({ listId }: Props) => {
         <TbDotsVertical />
       </button>
       {isOptionOpen && (
-        <OutsideClickHandler onOutsideClick={() => setIsOptionOpen(false)}>
+        <MyOutsideClickHandler onOutsideClick={() => setIsOptionOpen(false)}>
           <div className="absolute left-0 top-8 rounded-xl shadow bg-white overflow-hidden">
             <button
               type="button"
@@ -59,7 +59,7 @@ const ListOption = ({ listId }: Props) => {
               <span className="ml-2 md:text-sm">Delete</span>
             </button>
           </div>
-        </OutsideClickHandler>
+        </MyOutsideClickHandler>
       )}
     </div>
   )

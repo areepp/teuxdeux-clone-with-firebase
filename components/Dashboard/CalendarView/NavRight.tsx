@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
 import { IoCalendar } from 'react-icons/io5'
-import OutsideClickHandler from 'react-outside-click-handler'
 import SwiperCore from 'swiper'
 import {
   getReInitiatedDays,
   transformDateSlashToDash,
 } from '@/helper/dateHelper'
+import MyOutsideClickHandler from '@/components/Common/MyOutsideClickHandler'
+
 import useDayStore, { IDayColumn } from '@/stores/days'
 import Arrow from '../Common/Arrow'
 
@@ -66,14 +67,16 @@ const NavRight = ({ navigationDisabled, swiperRef, syncDayColumns }: Props) => {
           <IoCalendar />
         </button>
         {isCalendarOpen && (
-          <OutsideClickHandler onOutsideClick={() => setIsCalendarOpen(false)}>
+          <MyOutsideClickHandler
+            onOutsideClick={() => setIsCalendarOpen(false)}
+          >
             <div
               id="day-picker"
               className="absolute right-1/2 top-20 z-50 bg-zinc-50 shadow-lg rounded"
             >
               <DayPicker mode="single" onDayClick={handleDayClick} />
             </div>
-          </OutsideClickHandler>
+          </MyOutsideClickHandler>
         )}
       </div>
     </nav>

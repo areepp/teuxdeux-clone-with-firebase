@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import OutsideClickHandler from 'react-outside-click-handler'
 import * as authService from '../../lib/auth.service'
 import { useAuth } from '../AuthContext'
+import MyOutsideClickHandler from '../Common/MyOutsideClickHandler'
 
 const Profile = () => {
   const router = useRouter()
@@ -25,7 +25,9 @@ const Profile = () => {
       </button>
 
       {isProfileClicked && (
-        <OutsideClickHandler onOutsideClick={() => setIsProfileClicked(false)}>
+        <MyOutsideClickHandler
+          onOutsideClick={() => setIsProfileClicked(!isProfileClicked)}
+        >
           <button
             type="button"
             className="z-50 absolute top-3/4 left-2 bg-white px-2 py-1 rounded text-xs font-inter text-primary border border-primary"
@@ -33,7 +35,7 @@ const Profile = () => {
           >
             log out
           </button>
-        </OutsideClickHandler>
+        </MyOutsideClickHandler>
       )}
     </div>
   )
