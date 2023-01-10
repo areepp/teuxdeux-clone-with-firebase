@@ -2,13 +2,15 @@ name: Simple Pipeline
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
   push:
     branches:
       - main
 
 jobs:
   simple_deployment_pipeline:
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
