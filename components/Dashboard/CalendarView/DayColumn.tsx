@@ -11,8 +11,10 @@ import {
 } from '@/helper/dateHelper'
 import * as dayService from '@/lib/day.service'
 import * as todoService from '@/lib/todo.service'
-import useDayStore, { IDayColumn } from '@/stores/days'
+import useDayStore from '@/stores/days'
 import useTodoStore, { ITodo } from '@/stores/todos'
+import { IDayColumn } from '@/types/IDayColumn'
+
 import { useAuth } from '../../AuthContext'
 import TodoItem from '../Common/TodoItem'
 import { getRenderClone } from '../Common/getRenderClone'

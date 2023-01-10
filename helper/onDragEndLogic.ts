@@ -1,7 +1,8 @@
 import * as dayService from '@/lib/day.service'
 import * as listService from '@/lib/list.service'
-import { DayStore, IDayColumn } from '@/stores/days'
+import { DayStore } from '@/stores/days'
 import { IList, ListStore } from '@/stores/lists'
+import { IDayColumn } from '@/types/IDayColumn'
 import { User } from 'firebase/auth'
 import { DropResult } from 'react-beautiful-dnd'
 
@@ -40,7 +41,8 @@ export const onDragEndLogic = (
   let startColumn: IDayColumn | IList
   let finishColumn: IDayColumn | IList
 
-  // determine whether the destination / source is list or calendar in order to use the correct store.
+  // determine whether the destination / source is list
+  // or calendar in order to use the correct store.
 
   if (sourceIsList) {
     startColumn = listStore.lists.find(
@@ -64,7 +66,7 @@ export const onDragEndLogic = (
 
   if (startColumn === finishColumn) {
     // reorder todo within the same column
-    const newOrder = Array.from(startColumn.order)
+    const newOrder = Array.from(startColumn.order) as string[]
     newOrder.splice(source.index, 1)
     newOrder.splice(destination.index, 0, draggableId)
 
@@ -82,7 +84,7 @@ export const onDragEndLogic = (
     }
   } else {
     // move todo from one column to another
-    const newStartOrder = Array.from(startColumn.order)
+    const newStartOrder = Array.from(startColumn.order) as string[]
     newStartOrder.splice(source.index, 1)
 
     const newStartColumn = {
@@ -90,7 +92,7 @@ export const onDragEndLogic = (
       order: newStartOrder,
     }
 
-    const newFinishOrder = Array.from(finishColumn.order)
+    const newFinishOrder = Array.from(finishColumn.order) as string[]
     newFinishOrder.splice(destination.index, 0, draggableId)
 
     const newFinishColumn = {

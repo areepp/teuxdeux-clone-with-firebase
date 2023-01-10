@@ -43,8 +43,7 @@ const useListStore = create<ListStore>((set: any) => ({
   setListTitle: (listId: string, title: string) =>
     set((state: State) => ({
       lists: state.lists.map((list) =>
-        list.id === listId ? { ...list, title } : list,
-      ),
+        (list.id === listId ? { ...list, title } : list)),
     })),
   setLists: (newLists: IList[]) => set(() => ({ lists: newLists })),
   setListOrder: (newListOrder: string[]) =>
@@ -53,22 +52,20 @@ const useListStore = create<ListStore>((set: any) => ({
     // add a todo id to the list order
     set((state: State) => ({
       lists: state.lists.map((list) =>
-        list.id === listId
+        (list.id === listId
           ? update(list, {
-              order: {
-                $push: [newItem],
-              },
-            })
-          : list,
-      ),
+            order: {
+              $push: [newItem],
+            },
+          })
+          : list)),
     })),
   deleteTodoFromList: (listId: string, todoId: string) =>
     set((state: State) => ({
       lists: state.lists.map((list) =>
-        list.id === listId
+        (list.id === listId
           ? { ...list, order: list.order.filter((id) => id !== todoId) }
-          : list,
-      ),
+          : list)),
     })),
   editList: (listId: string, newList: IList) =>
     // replace a list with a new provided list

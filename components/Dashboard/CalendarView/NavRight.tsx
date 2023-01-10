@@ -9,7 +9,9 @@ import {
 } from '@/helper/dateHelper'
 import MyOutsideClickHandler from '@/components/Common/MyOutsideClickHandler'
 
-import useDayStore, { IDayColumn } from '@/stores/days'
+import useDayStore from '@/stores/days'
+import { IDayColumn } from '@/types/IDayColumn'
+
 import Arrow from '../Common/Arrow'
 
 interface Props {
