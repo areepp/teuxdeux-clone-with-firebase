@@ -2,9 +2,11 @@ name: Simple Pipeline
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   simple_deployment_pipeline:
