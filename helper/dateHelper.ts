@@ -1,18 +1,19 @@
-import { IDayColumn } from '@/stores/days'
+import { IDayColumn } from '@/types/IDayColumn'
 
-const columnFactory = (date: string) => {
-  return {
-    id: transformDateSlashToDash(date),
-    order: [],
-  }
-}
+export const transformDateSlashToDash = (date: string) =>
+  date.replace(/\//g, '-')
+
+const columnFactory = (date: string) => ({
+  id: transformDateSlashToDash(date),
+  order: [],
+})
 
 export const getDaysColumns = (
   initialDate: Date,
   days: number,
   direction: 'future' | 'past',
 ): IDayColumn[] => {
-  let returnValue: IDayColumn[] = []
+  const returnValue: IDayColumn[] = []
   let multiplier = 1
 
   if (direction === 'past') multiplier = -1
@@ -30,8 +31,8 @@ export const getDaysColumns = (
 export const getInitialColumns = (): IDayColumn[] => {
   // returns an array of column that contains 21 days (last week and next 2 weeks)
   const today = new Date()
-  let nextTwoWeeks = getDaysColumns(today, 14, 'future')
-  let lastWeek = getDaysColumns(today, 7, 'past')
+  const nextTwoWeeks = getDaysColumns(today, 14, 'future')
+  const lastWeek = getDaysColumns(today, 7, 'past')
 
   return [
     ...lastWeek.reverse(),
@@ -40,13 +41,11 @@ export const getInitialColumns = (): IDayColumn[] => {
   ]
 }
 
-export const getReInitiatedDays = (date: Date): IDayColumn[] => {
-  return [
-    ...getDaysColumns(date, 7, 'past').reverse(),
-    columnFactory(date.toLocaleDateString()),
-    ...getDaysColumns(date, 7, 'future'),
-  ]
-}
+export const getReInitiatedDays = (date: Date): IDayColumn[] => [
+  ...getDaysColumns(date, 7, 'past').reverse(),
+  columnFactory(date.toLocaleDateString()),
+  ...getDaysColumns(date, 7, 'future'),
+]
 
 export const getNextFourDays = (startDate: string): IDayColumn[] => {
   const date = new Date(startDate)
@@ -75,15 +74,11 @@ export const getFullDate = (prop: string) => {
   })
 }
 
-export const transformDateSlashToDash = (date: string) => {
-  return date.replace(/\//g, '-')
-}
-
 export const checkIsToday = (date: string) => {
   const todayDate = new Date()
   const inputDate = new Date(date)
 
-  return inputDate.setHours(0, 0, 0, 0) == todayDate.setHours(0, 0, 0, 0)
+  return inputDate.setHours(0, 0, 0, 0) === todayDate.setHours(0, 0, 0, 0)
 }
 
 export const checkIsPast = (date: string) => {

@@ -48,6 +48,13 @@ const ListColumn = ({ todos, list }: Props) => {
     }
   }
 
+  const handleInputBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.value === '') {
+      return
+    }
+    await handleAddTodo()
+  }
+
   return (
     <div className="relative h-full px-4 w-full text-gray-900 flex-grow drag-fix">
       {/* OPTION */}
@@ -63,7 +70,7 @@ const ListColumn = ({ todos, list }: Props) => {
           listService.editListTitle(user!.uid, list.id, {
             title: list.title,
           })} // prettier-ignore
-        className="flex items-center mx-auto bg-inherit font-gothic text-center uppercase text-6xl md:text-4xl focus:outline-none hover:bg-stone-300 transition-all"
+        className="flex items-center mx-auto bg-inherit font-gothic text-center uppercase text-6xl md:text-4xl focus:outline-none hover:bg-stone-300 transition-all w-full"
       />
 
       {/* TODOS */}
@@ -95,6 +102,7 @@ const ListColumn = ({ todos, list }: Props) => {
                 value={newTodoInputValue}
                 onChange={(e) => setNewTodoInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
+                onBlur={handleInputBlur}
               />
             </div>
           )}

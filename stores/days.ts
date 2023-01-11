@@ -1,11 +1,7 @@
 import { getInitialColumns } from '@/helper/dateHelper'
+import { IDayColumn } from '@/types/IDayColumn'
 import update from 'immutability-helper'
 import create from 'zustand'
-
-export interface IDayColumn {
-  id: string
-  order: string[]
-}
 
 interface State {
   dayColumns: IDayColumn[]
@@ -48,29 +44,26 @@ const useDayStore = create<DayStore>((set: any) => ({
     // add an id to a column order
     set((state: State) => ({
       dayColumns: state.dayColumns.map((column: IDayColumn) =>
-        column.id === columnId
+        (column.id === columnId
           ? update(column, {
-              order: {
-                $push: [newItem],
-              },
-            })
-          : column,
-      ),
+            order: {
+              $push: [newItem],
+            },
+          })
+          : column)),
     })),
   deleteTodoFromColumn: (columnId: string, todoId: string) =>
     set((state: State) => ({
       dayColumns: state.dayColumns.map((column) =>
-        column.id === columnId
+        (column.id === columnId
           ? { ...column, order: column.order.filter((id) => id !== todoId) }
-          : column,
-      ),
+          : column)),
     })),
   editColumnById: (columnId: string, newColumn: IDayColumn) =>
     // replace a column with the new provided column
     set((state: State) => ({
       dayColumns: state.dayColumns.map((column: IDayColumn) =>
-        column.id === columnId ? newColumn : column,
-      ),
+        (column.id === columnId ? newColumn : column)),
     })),
 }))
 

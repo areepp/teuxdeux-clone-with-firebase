@@ -36,14 +36,12 @@ const useTodoStore = create<TodoStore>((set: any) => ({
   editTodoChecked: (todoId: string, data: boolean) =>
     set((state: State) => ({
       todos: state.todos.map((todo) =>
-        todo.id === todoId ? { ...todo, checked: data } : todo,
-      ),
+        (todo.id === todoId ? { ...todo, checked: data } : todo)), // prettier-ignore
     })),
   editTodoText: (todoId: string, text: string) =>
     set((state: State) => ({
       todos: state.todos.map((todo) =>
-        todo.id === todoId ? { ...todo, text } : todo,
-      ),
+        (todo.id === todoId ? { ...todo, text } : todo)), // prettier-ignore
     })),
 }))
 
