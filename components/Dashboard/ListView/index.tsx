@@ -6,6 +6,7 @@ import { useAuth } from '@/components/AuthContext'
 import * as listService from '@/lib/list.service'
 import useListStore, { IList } from '@/stores/lists'
 import useTodoStore, { ITodo } from '@/stores/todos'
+import useSettingStore from '@/stores/settings'
 import ListColumn from './ListColumn'
 import NavLeft from './NavLeft'
 import NavRight from './NavRight'
@@ -16,6 +17,7 @@ const ListView = () => {
   const { user } = useAuth()
   const listStore = useListStore()
   const todoStore = useTodoStore()
+  const settingStore = useSettingStore()
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
   const [isListVisible, setIsListVisible] = useState(true)
   const [isReOrderModalVisible, setIsReOrderModalVisible] = useState(false)
@@ -34,9 +36,7 @@ const ListView = () => {
         {/* ACTUAL TOGGLER */}
         <button
           type="button"
-          className={`text-3xl ${
-            isListVisible ? 'text-primary' : 'text-gray-400'
-          }`}
+          className="text-3xl text-gray-400 hover:text-primary transition-all duration-300"
           onClick={() => setIsListVisible(!isListVisible)}
         >
           {isListVisible ? <IoMdArrowDropdown /> : <IoMdArrowDropup />}
@@ -64,7 +64,7 @@ const ListView = () => {
         <button
           type="button"
           onClick={handleAddList}
-          className="text-3xl text-gray-400"
+          className="text-3xl text-gray-400 hover:text-primary transition-all duration-300"
         >
           <IoIosAdd />
         </button>
@@ -80,14 +80,9 @@ const ListView = () => {
               className="w-full"
               onSwiper={setSwiperRef}
               initialSlide={0}
-              slidesPerView={1}
+              slidesPerView={settingStore.slidesPerView}
               allowTouchMove={false}
               speed={600}
-              breakpoints={{
-                768: {
-                  slidesPerView: 3,
-                },
-              }}
               onActiveIndexChange={(e) => setActiveSlideIndex(e.activeIndex)}
               onSlidesLengthChange={(e) => {
                 if (e.slides.length <= 4) return

@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { getNextFourDays, getPastFourDays } from '@/helper/dateHelper'
 import useDayStore from '@/stores/days'
 import { IDayColumn } from '@/types/IDayColumn'
-
+import useSettingStore from '@/stores/settings'
 import useTodoStore, { ITodo } from '@/stores/todos'
 import DayColumn from './DayColumn'
 import NavLeft from './NavLeft'
@@ -18,11 +18,12 @@ interface Props {
 const CalendarView = ({ syncDayColumns }: Props) => {
   const columnStore = useDayStore()
   const todoStore = useTodoStore()
+  const settingStore = useSettingStore()
   const [swiperRef, setSwiperRef] = useState<SwiperCore>()
   const [navigationDisabled, setNavigationDisabled] = useState(false)
 
   return (
-    <section className="relative bg-white flex-grow min-h-[500px] pt-12 md:flex">
+    <section className="relative bg-white flex-grow min-h-[500px] pt-12 md:pt-4 md:flex">
       <NavLeft
         swiperRef={swiperRef}
         navigationDisabled={navigationDisabled}
@@ -34,19 +35,15 @@ const CalendarView = ({ syncDayColumns }: Props) => {
           className="h-full"
           onSwiper={setSwiperRef}
           initialSlide={7} // initial set to the current day
-          slidesPerView={1}
+          slidesPerView={settingStore.slidesPerView}
           allowTouchMove={false}
           speed={600}
-          breakpoints={{
-            768: {
-              slidesPerView: 3,
-            },
-          }}
           // disable navigation on transition so that the "onTransitionEnd" hook properly called
           onSlideChangeTransitionStart={() => setNavigationDisabled(true)}
           onSlideChangeTransitionEnd={() => setNavigationDisabled(false)}
           onTransitionEnd={async (e) => {
-            if (e.activeIndex === columnStore.dayColumns.length - 4) {
+            const minusValue = settingStore.slidesPerView + 1
+            if (e.activeIndex === columnStore.dayColumns.length - minusValue) {
               // add new columns when reaching the end, in this case three elements away
               // from the end of the column array (right navigation)
               const nextFourDays = getNextFourDays(
@@ -105,5 +102,4 @@ const CalendarView = ({ syncDayColumns }: Props) => {
     </section>
   )
 }
-
 export default CalendarView

@@ -13,8 +13,8 @@ import * as dayService from '@/lib/day.service'
 import * as todoService from '@/lib/todo.service'
 import useDayStore from '@/stores/days'
 import useTodoStore, { ITodo } from '@/stores/todos'
+import useSettingStore from '@/stores/settings'
 import { IDayColumn } from '@/types/IDayColumn'
-
 import { useAuth } from '../../AuthContext'
 import TodoItem from '../Common/TodoItem'
 import { getRenderClone } from '../Common/getRenderClone'
@@ -30,6 +30,7 @@ const DayColumn = ({ todos, column, index, swiperRef }: Props) => {
   const { user } = useAuth()
   const columnStore = useDayStore()
   const todoStore = useTodoStore()
+  const settingStore = useSettingStore()
   const [newTodoInputValue, setNewTodoInputValue] = useState<string>('')
   const isToday = checkIsToday(column.id)
   const isPast = checkIsPast(column.id)
@@ -83,10 +84,15 @@ const DayColumn = ({ todos, column, index, swiperRef }: Props) => {
     >
       {/* HEADER */}
       <div className="w-full text-center">
-        <h2 className="font-gothic text-6xl md:text-4xl">
+        <h2
+          className={clsx(
+            'font-gothic text-6xl md:text-4xl',
+            settingStore.slidesPerView === 7 && 'md:text-2xl lg:text-4xl',
+          )}
+        >
           {getDayOfTheWeek(column.id).toUpperCase()}
         </h2>
-        <p className="mt-2 font-inter text-xs  ">
+        <p className="mt-2 font-inter text-xs">
           {getFullDate(column.id).toUpperCase()}
         </p>
       </div>

@@ -70,7 +70,7 @@ const ListColumn = ({ todos, list }: Props) => {
           listService.editListTitle(user!.uid, list.id, {
             title: list.title,
           })} // prettier-ignore
-        className="flex items-center mx-auto bg-inherit font-gothic text-center uppercase text-6xl md:text-4xl focus:outline-none hover:bg-stone-300 transition-all"
+        className="flex items-center mx-auto bg-inherit font-gothic text-center uppercase text-6xl md:text-4xl focus:outline-none hover:bg-stone-300 transition-all w-full"
       />
 
       {/* TODOS */}
