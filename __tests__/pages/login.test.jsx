@@ -42,7 +42,7 @@ describe('Login', () => {
     const emailInput = screen.getByLabelText('email input')
     const passwordInput = screen.getByLabelText('password input')
     const loginButton = screen.getByRole('button', {
-      name: /log in/i,
+      name: /^log in/i,
     })
 
     await act(async () => {
@@ -65,7 +65,7 @@ describe('Login', () => {
     const emailInput = screen.getByLabelText('email input')
     const passwordInput = screen.getByLabelText('password input')
     const loginButton = screen.getByRole('button', {
-      name: /log in/i,
+      name: /^log in/i,
     })
 
     await act(async () => {
@@ -85,7 +85,7 @@ describe('Login', () => {
   it('should show error when trying to submit without entering input value', async () => {
     render(<Login />)
     const loginButton = screen.getByRole('button', {
-      name: /log in/i,
+      name: /^log in/i,
     })
 
     await act(async () => {

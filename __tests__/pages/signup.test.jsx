@@ -6,6 +6,7 @@ jest.mock('@/lib/firebaseAdmin', () => jest.fn())
 jest.mock('@/lib/auth.service.ts', () => ({
   signup: jest.fn(),
 }))
+jest.mock('@/lib/user.service.ts', () => jest.fn())
 jest.mock('firebase/app', () => jest.fn())
 
 describe.skip('SignUp Page', () => {
