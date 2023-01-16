@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
 import { FirebaseError } from 'firebase/app'
 import { GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
@@ -17,10 +15,7 @@ interface IMessage {
 }
 
 const SignUp = () => {
-  const [message, setMessage] = useState<IMessage | null>({
-    type: 'error',
-    text: 'go to readme for the demo accounts https://github.com/areepp/teuxdeux-clone#readme',
-  })
+  const [message, setMessage] = useState<IMessage | null>()
   const [signUpButtonDisabled, setSignUpButtonDisabled] = useState(false)
 
   const {
@@ -31,19 +26,19 @@ const SignUp = () => {
   } = useForm<Inputs>()
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    // setSignUpButtonDisabled(true)
-    // try {
-    //   const res = await authService.signup(data)
-    //   const { uid, email } = res.user
-    //   if (email) await userService.storeUserToFirestore({ uid, email })
-    //   setMessage({ text: 'Sign up succesful', type: 'success' })
-    //   reset()
-    // } catch (error: unknown) {
-    //   if (error instanceof FirebaseError) {
-    //     setMessage({ text: error.message, type: 'error' })
-    //   }
-    // }
-    // setSignUpButtonDisabled(false)
+    setSignUpButtonDisabled(true)
+    try {
+      const res = await authService.signup(data)
+      const { uid, email } = res.user
+      if (email) await userService.storeUserToFirestore({ uid, email })
+      setMessage({ text: 'Sign up succesful', type: 'success' })
+      reset()
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        setMessage({ text: error.message, type: 'error' })
+      }
+    }
+    setSignUpButtonDisabled(false)
   }
 
   return (
@@ -79,10 +74,10 @@ const SignUp = () => {
 
           <button
             className={`w-full text-lg py-4 bg-red-600 rounded text-gray-100 ${
-              true && 'cursor-not-allowed bg-gray-400'
+              signUpButtonDisabled && 'cursor-not-allowed bg-gray-400'
             }`}
             type="submit"
-            disabled
+            disabled={signUpButtonDisabled}
           >
             Sign Up
           </button>
