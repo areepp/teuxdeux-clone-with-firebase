@@ -8,6 +8,7 @@ import Input, { Inputs } from '@/components/Auth/Input'
 import * as authService from '@/lib/auth.service'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import * as userService from '@/lib/user.service'
+import Button from '@/components/Auth/Button'
 
 interface IMessage {
   text: string
@@ -71,16 +72,11 @@ const SignUp = () => {
           {errors.password && (
             <span className="text-xs">This field is required</span>
           )}
-
-          <button
-            className={`w-full text-lg py-4 bg-red-600 rounded text-gray-100 ${
-              signUpButtonDisabled && 'cursor-not-allowed bg-gray-400'
-            }`}
+          <Button
+            text="Sign Up"
             type="submit"
             disabled={signUpButtonDisabled}
-          >
-            Sign Up
-          </button>
+          />
         </form>
 
         {/* FOOTER */}
