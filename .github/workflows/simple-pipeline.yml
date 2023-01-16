@@ -25,7 +25,7 @@ jobs:
         run: npm run test
 
   tag_release:
-    if: ${{ github.event.pull_request.merged }}
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
