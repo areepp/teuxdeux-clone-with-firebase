@@ -5,9 +5,9 @@ import nookies from 'nookies'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Input, { Inputs } from '@/components/Auth/Input'
-import Spinner from '@/components/Auth/Spinner'
 import * as authService from '@/lib/auth.service'
 import { adminAuth } from '@/lib/firebaseAdmin'
+import Button from '@/components/Auth/Button'
 
 const Login = () => {
   const router = useRouter()
@@ -24,6 +24,20 @@ const Login = () => {
     setLoginButtonDisabled(true)
     try {
       await authService.login(data)
+      router.push('/')
+    } catch (error: any) {
+      setErrorMessage('Incorrect email and/or password')
+    }
+    setLoginButtonDisabled(false)
+  }
+
+  const demoLogin = async () => {
+    setLoginButtonDisabled(true)
+    try {
+      await authService.login({
+        email: 'demo@test.com',
+        password: 'demogorgon',
+      })
       router.push('/')
     } catch (error: any) {
       setErrorMessage('Incorrect email and/or password')
@@ -55,15 +69,18 @@ const Login = () => {
           {errors.password && (
             <span className="text-xs">This field is required</span>
           )}
-
-          <button
-            className="w-full text-lg py-4 bg-red-600 rounded text-gray-100"
-            type="submit"
-            disabled={loginButtonDisabled}
-          >
-            {loginButtonDisabled ? <Spinner /> : 'Log in'}
-          </button>
+          <Button text="Log in" disabled={loginButtonDisabled} type="submit" />
         </form>
+
+        <p className="mt-4 w-full text-center">or</p>
+
+        <Button
+          className="mt-4"
+          text="Click here to log in using demo account"
+          disabled={loginButtonDisabled}
+          type="submit"
+          onClick={demoLogin}
+        />
 
         {/* FOOTER */}
         <p className="mt-4">
