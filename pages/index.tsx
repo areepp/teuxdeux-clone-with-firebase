@@ -9,6 +9,8 @@ const Index = () => (
   </div>
 )
 
+// just so that i can push to origin
+
 export const getServerSideProps = withAuthServerSideProps()
 
 export default Index
