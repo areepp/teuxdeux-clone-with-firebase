@@ -3,7 +3,7 @@
 visit here https://teuxdeux-clone.vercel.app/
 <br></br>
 
-https://user-images.githubusercontent.com/90843952/215110302-6a7b4156-c9f2-4337-a0c9-6643c9a5918a.mp4
+https://user-images.githubusercontent.com/90843952/215110302-6a7b4156-c9f2-4337-a0c9-6643c9a5918a.mov
 <br></br>
 
 Built with: Next.js, swiperjs, TailwindCSS, firebase
