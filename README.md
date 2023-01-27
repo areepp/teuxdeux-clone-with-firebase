@@ -3,12 +3,7 @@
 visit here https://teuxdeux-clone.vercel.app/
 <br></br>
 
-![preview](https://user-images.githubusercontent.com/90843952/215110302-6a7b4156-c9f2-4337-a0c9-6643c9a5918a.mp4)
-<br></br>
-
-Built with: Next.js, swiperjs, TailwindCSS, firebase
 
 
-This project is not done yet. There are still a lot of features I want to implement.
+https://user-images.githubusercontent.com/90843952/215113297-66751c7d-7982-470a-8e83-4c84bee534fd.mp4
 
-If you have any feedback or found a bug, please let me know. :)
