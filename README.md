@@ -3,15 +3,12 @@
 visit here https://teuxdeux-clone.vercel.app/
 <br></br>
 
-Currently, I disabled the functionality to sign up for a new new account. However, you can stil login using these demo accounts:
-
-- username: demo@test.com | password: demogorgon
-- username: blup@test.com | password: blupblupblup
-
-If you still want to make your own account, feel free to contact me.
+https://user-images.githubusercontent.com/90843952/215110302-6a7b4156-c9f2-4337-a0c9-6643c9a5918a.mp4
 <br></br>
 
+Built with: Next.js, swiperjs, TailwindCSS, firebase
 
-This project is not done yet. There are still a lot of features I need to implement.
+
+This project is not done yet. There are still a lot of features I want to implement.
 
 If you have any feedback or found a bug, please let me know. :)
