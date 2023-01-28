@@ -43,7 +43,7 @@ const Profile = () => {
 
 const Header = () => (
   <header className="relative flex-none w-full h-11 bg-primary font-gothic text-xl text-gray-200 flex items-center justify-center">
-    <h1>BLUPBLUPBLUP</h1>
+    <h1>TEUXDEUX CLONE</h1>
     <Profile />
   </header>
 )
